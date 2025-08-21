@@ -16,6 +16,19 @@ app.use(cors());
 app.use(express.json()); // Parsear JSON
 app.use(express.urlencoded({ extended: true })); // Parsear formularios
 
+// Rutas de tu API
+app.get("/api/hello", (req, res) => {
+  res.json({ message: "Hola desde el backend 🚀" });
+});
+
+// Servir frontend estático
+app.use(express.static(path.join(__dirname, "../public")));
+
+// Redirigir todas las demás rutas al index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
 // Sirve los archivos estáticos de la carpeta "public"
 app.use(express.static(join(__dirname, "../../public")));
 
