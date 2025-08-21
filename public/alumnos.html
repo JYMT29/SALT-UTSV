@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Alumnos | Sistema Educativo</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #2980b9;
+        --success-color: #2ecc71;
+        --danger-color: #e74c3c;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --gray-color: #95a5a6;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f5f7fa;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background-color: white;
+        box-shadow: var(--box-shadow);
+        padding: 15px 0;
+        margin-bottom: 30px;
+        border-radius: var(--border-radius);
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo i {
+        color: var(--primary-color);
+        font-size: 24px;
+      }
+
+      .logo h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--dark-color);
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .user-info i {
+        color: var(--gray-color);
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 25px;
+        margin-bottom: 30px;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .card-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--dark-color);
+      }
+
+      .scanner-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        text-align: center;
+      }
+
+      .scanner-icon {
+        font-size: 48px;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+      }
+
+      .scanner-instructions {
+        color: var(--dark-color);
+        margin-bottom: 15px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .btn-success {
+        background-color: var(--success-color);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background-color: #27ae60;
+      }
+
+      .btn-danger {
+        background-color: var(--danger-color);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background-color: #c0392b;
+      }
+
+      .btn-secondary {
+        background-color: var(--gray-color);
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background-color: #7f8c8d;
+      }
+
+      .btn:disabled {
+        background-color: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark-color);
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        font-size: 16px;
+        transition: var(--transition);
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      }
+
+      .form-control[readonly] {
+        background-color: #f9f9f9;
+        color: #666;
+      }
+
+      .alert {
+        padding: 15px;
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--box-shadow);
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 500;
+      }
+
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-active {
+        background-color: var(--success-color);
+      }
+
+      .status-inactive {
+        background-color: var(--danger-color);
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .badge-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .badge-success {
+        background-color: var(--success-color);
+        color: white;
+      }
+
+      .badge-warning {
+        background-color: #f39c12;
+        color: white;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        .header-content {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .button-group {
+          flex-wrap: wrap;
+        }
+
+        .btn {
+          flex: 1 1 100%;
+        }
+      }
+      .btn-pulse {
+        animation: pulse 1.5s infinite;
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+        }
+        70% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-graduation-cap"></i>
+          <h1>Registro de Alumnos</h1>
+        </div>
+        <div class="user-info">
+          <i class="fas fa-user-circle"></i>
+          <span id="username">Administrador</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="main-content">
+        <div class="scanner-section">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-qrcode"></i> Lector de Código QR
+              </h2>
+              <span class="badge badge-primary">Activo</span>
+            </div>
+
+            <div class="scanner-container">
+              <div class="scanner-icon">
+                <i class="fas fa-barcode"></i>
+              </div>
+              <div class="scanner-instructions">
+                Escanee el código QR del alumno con su lector físico. Los datos
+                se cargarán automáticamente.
+              </div>
+            </div>
+
+            <div id="qr-result" class="alert alert-success" role="alert">
+              <i class="fas fa-check-circle"></i> Código QR leído correctamente.
+              Verifica los datos antes de registrar.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-user-edit"></i> Datos del Alumno
+              </h2>
+            </div>
+
+            <div class="form-group">
+              <label for="matricula" class="form-label">Matrícula</label>
+              <input type="text" id="matricula" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+              <label for="nombre" class="form-label">Nombre Completo</label>
+              <input type="text" id="nombre" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+              <label for="carrera-nombre" class="form-label"
+                >Nombre de Carrera</label
+              >
+              <input
+                type="text"
+                id="carrera-nombre"
+                class="form-control"
+                readonly
+              />
+            </div>
+
+            <button class="btn btn-success btn-block" id="registrar-btn">
+              <i class="fas fa-save"></i> Registrar Alumno
+            </button>
+          </div>
+        </div>
+
+        <div class="data-section">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-users"></i> Alumnos Registrados
+              </h2>
+              <button class="btn btn-secondary" id="export-btn">
+                <i class="fas fa-file-export"></i> Exportar
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Matrícula</th>
+                    <th>Nombre</th>
+                    <th>Carrera</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body">
+                  <!-- Datos de alumnos se insertarán aquí -->
+                  <tr>
+                    <td colspan="4" class="text-center">
+                      No hay alumnos registrados
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // URL base de tu backend
+      // URL base de tu backend
+      const API_BASE_URL = "http://localhost:3001/api";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Elementos del DOM
+        const qrResult = document.getElementById("qr-result");
+        const registrarBtn = document.getElementById("registrar-btn");
+        const exportBtn = document.getElementById("export-btn");
+        const matriculaInput = document.getElementById("matricula");
+        const nombreInput = document.getElementById("nombre");
+        const carreraNombreInput = document.getElementById("carrera-nombre");
+        const studentsTableBody = document.getElementById(
+          "students-table-body"
+        );
+
+        // Variables de estado
+        let currentStudentData = null;
+        let inputBuffer = "";
+        let inputTimeout = null;
+        let datosParciales = {};
+        let timeoutRegistro = null;
+        let escaneoActivo = false;
+
+        // Función para destacar el botón de registro
+        function destacarBotonRegistro() {
+          const btn = document.getElementById("registrar-btn");
+          if (btn) {
+            btn.classList.add("btn-pulse");
+            btn.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+
+        // Cargar estudiantes desde el backend
+        async function loadStudents() {
+          try {
+            const response = await fetch(`${API_BASE_URL}/estudiantes`);
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(
+                errorData.message || "Error al cargar estudiantes"
+              );
+            }
+
+            const data = await response.json();
+            studentsTableBody.innerHTML = "";
+
+            if (!data.success || data.count === 0) {
+              studentsTableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center">No hay alumnos registrados</td>
+          </tr>
+        `;
+              return;
+            }
+
+            data.data.forEach((student) => {
+              addStudentToTable(student);
+            });
+          } catch (error) {
+            console.error("Error al cargar estudiantes:", error);
+            showAlert(
+              `Error al cargar estudiantes: ${error.message}`,
+              "danger"
+            );
+          }
+        }
+
+        // Añadir estudiante a la tabla
+        function addStudentToTable(student) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+      <td>${student.matricula}</td>
+      <td>${student.nombre}</td>
+      <td>${student.carrera || ""}</td>
+      <td><span class="status-indicator status-active"></span>Activo</td>
+    `;
+          studentsTableBody.appendChild(row);
+        }
+
+        // Función para procesar el código QR
+        function processQRCode(qrData) {
+          try {
+            console.log("Datos QR recibidos:", qrData);
+
+            if (qrData.includes(" Ñ ") || qrData.includes("Ñ")) {
+              const separador = qrData.includes(" Ñ ") ? " Ñ " : "Ñ";
+              const partes = qrData.split(separador);
+
+              if (partes.length === 2) {
+                const campo = partes[0].trim();
+                const valor = partes[1].trim();
+
+                const camposEstandar = {
+                  Nombre: "nombre",
+                  Carrera: "carrera",
+                  "Tipo de Sangre": "tipoSangre",
+                  "Tel. Tutor": "telefonoTutor",
+                  Tutor: "tutor",
+                  Campus: "campus",
+                };
+
+                const campoEstandarizado =
+                  camposEstandar[campo] || campo.toLowerCase();
+                return { [campoEstandarizado]: valor };
+              }
+            }
+
+            if (/^\d{8,10}$/.test(qrData.trim())) {
+              return { matricula: qrData.trim() };
+            }
+
+            if (qrData.includes("NombreÑ") && qrData.includes("CarreraÑ")) {
+              const datos = {};
+              const partes = qrData.split("Ñ");
+
+              const matriculaMatch = qrData.match(/^(\d{8,10})/);
+              if (matriculaMatch) datos.matricula = matriculaMatch[1];
+
+              for (let i = 0; i < partes.length; i++) {
+                if (partes[i].includes("Nombre") && partes[i + 1]) {
+                  datos.nombre = partes[i + 1].trim();
+                }
+                if (partes[i].includes("Carrera") && partes[i + 1]) {
+                  datos.carrera = partes[i + 1].trim();
+                }
+                if (partes[i].includes("Campus") && partes[i + 1]) {
+                  datos.campus = partes[i + 1].trim();
+                }
+              }
+
+              if (!datos.matricula)
+                throw new Error("Falta matrícula en formato consolidado");
+              if (!datos.nombre)
+                throw new Error("Falta nombre en formato consolidado");
+
+              return datos;
+            }
+
+            const formatoLegacy = qrData
+              .replace(/TADEOTSU/g, "TADEO TSU")
+              .replace(/^(\d{8})/, "$1 ")
+              .replace(/\s+/g, " ")
+              .replace(/\s*'\s*/, "' ")
+              .trim();
+
+            const regexLegacy =
+              /^(\d{8})\s(.+?)(?:\s(TSU\sTECNOLOGIAS\sDE\sLA\sINFORMACION\s'?\sDSM))?$/i;
+            const matchLegacy = formatoLegacy.match(regexLegacy);
+
+            if (matchLegacy) {
+              return {
+                matricula: matchLegacy[1],
+                nombre: matchLegacy[2].trim(),
+                carrera:
+                  matchLegacy[3] || "TSU TECNOLOGIAS DE LA INFORMACION ' DSM",
+              };
+            }
+
+            throw new Error("Formato no reconocido");
+          } catch (error) {
+            console.error("Error procesando QR:", error);
+            throw new Error(
+              `Error: ${error.message}\n\nDatos recibidos: ${qrData}`
+            );
+          }
+        }
+
+        // Función para actualizar el formulario
+        function actualizarFormulario(datos) {
+          if (matriculaInput) matriculaInput.value = datos.matricula || "";
+          if (nombreInput) nombreInput.value = datos.nombre || "";
+          if (carreraNombreInput)
+            carreraNombreInput.value = datos.carrera || "";
+        }
+
+        // Función para validar datos completos
+        function validarDatosCompletos(datos) {
+          const camposRequeridos = ["matricula", "nombre", "carrera"];
+          return camposRequeridos.every(
+            (campo) => datos[campo] && datos[campo].trim() !== ""
+          );
+        }
+
+        // Función para obtener campos faltantes
+        function obtenerCamposFaltantes(datos) {
+          const requeridos = ["matricula", "nombre", "carrera"];
+          return requeridos.filter(
+            (campo) => !datos[campo] || datos[campo].trim() === ""
+          );
+        }
+
+        // Función para registrar estudiante
+        async function registerStudent(studentData) {
+          try {
+            if (!studentData.matricula || !studentData.nombre) {
+              throw new Error("Datos incompletos para registrar");
+            }
+
+            const payload = {
+              matricula: studentData.matricula,
+              nombre: studentData.nombre,
+              carrera: studentData.carrera || "",
+            };
+
+            const response = await fetch(`${API_BASE_URL}/estudiantes`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(
+                errorData.error || `Error HTTP! estado: ${response.status}`
+              );
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+              addStudentToTable(payload);
+              showAlert("Estudiante registrado con éxito", "success");
+              resetForm();
+              datosParciales = {};
+            } else {
+              showAlert(
+                result.error || "Error al registrar estudiante",
+                "danger"
+              );
+            }
+          } catch (error) {
+            console.error("Error al registrar:", error);
+            showAlert(error.message, "danger");
+          }
+        }
+
+        // Mostrar alerta
+        function showAlert(message, type) {
+          const alert = qrResult;
+          alert.className = `alert alert-${type}`;
+          alert.innerHTML = `<i class="fas fa-${
+            type === "success" ? "check" : "exclamation"
+          }-circle"></i> ${message}`;
+          alert.style.display = "block";
+
+          setTimeout(() => {
+            alert.style.display = "none";
+          }, 5000);
+        }
+
+        // Resetear el formulario
+        function resetForm() {
+          if (matriculaInput) matriculaInput.value = "";
+          if (nombreInput) nombreInput.value = "";
+          if (carreraNombreInput) carreraNombreInput.value = "";
+        }
+
+        // Función para exportar a JSON
+        async function exportToJSON() {
+          try {
+            const response = await fetch(`${API_BASE_URL}/estudiantes`);
+            const data = await response.json();
+
+            if (!data.success || data.count === 0) {
+              showAlert("No hay datos para exportar", "danger");
+              return;
+            }
+
+            const jsonData = JSON.stringify(data.data, null, 2);
+            const blob = new Blob([jsonData], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `estudiantes_${
+              new Date().toISOString().split("T")[0]
+            }.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showAlert("Datos exportados correctamente", "success");
+          } catch (error) {
+            console.error("Error al exportar datos:", error);
+            showAlert("Error al exportar datos", "danger");
+          }
+        }
+
+        // Manejar entrada del lector QR físico
+        function handleQRInput(event) {
+          if (escaneoActivo) return;
+          if (event.key.length > 1 && event.key !== "Enter") return;
+
+          if (event.key === "Enter") {
+            escaneoActivo = true;
+
+            try {
+              const datosQR = inputBuffer
+                .replace(/[¡¿]/g, "")
+                .replace(/([a-zA-Z])(Ñ)/g, "$1 $2")
+                .trim();
+
+              const datosProcesados = processQRCode(datosQR);
+              Object.assign(datosParciales, datosProcesados);
+
+              actualizarFormulario(datosParciales);
+
+              if (validarDatosCompletos(datosParciales)) {
+                currentStudentData = { ...datosParciales };
+                showAlert(
+                  "¡Estudiante completo! Revise los datos y haga clic en Registrar",
+                  "success"
+                );
+                destacarBotonRegistro();
+                clearTimeout(timeoutRegistro);
+              } else {
+                const faltantes = obtenerCamposFaltantes(datosParciales);
+                showAlert(
+                  `Faltan campos: ${faltantes.join(
+                    ", "
+                  )}. Escanee el siguiente QR`,
+                  "warning"
+                );
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              showAlert(error.message.split("\n")[0], "danger");
+            } finally {
+              inputBuffer = "";
+              escaneoActivo = false;
+              clearTimeout(inputTimeout);
+            }
+          } else {
+            inputBuffer += event.key;
+            clearTimeout(inputTimeout);
+            inputTimeout = setTimeout(() => {
+              inputBuffer = "";
+              escaneoActivo = false;
+            }, 200);
+          }
+        }
+
+        // Event listeners
+        // Event listeners
+        document.addEventListener("keypress", handleQRInput);
+        registrarBtn.addEventListener("click", () => {
+          if (currentStudentData) {
+            registerStudent(currentStudentData); // Solo se registra al hacer clic
+            currentStudentData = null; // Limpia los datos después del registro
+            datosParciales = {};
+            resetForm();
+            const btn = document.getElementById("registrar-btn");
+            if (btn) btn.classList.remove("btn-pulse");
+          } else {
+            showAlert("No hay datos para registrar.", "danger");
+          }
+        });
+        exportBtn.addEventListener("click", exportToJSON);
+
+        // Cargar estudiantes al iniciar
+        loadStudents();
+      });
+    </script>
+  </body>
+</html>

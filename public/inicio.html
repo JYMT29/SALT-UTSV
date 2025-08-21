@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SALT-UTSV | Panel de Control</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/boton.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Estilos para el indicador de carga */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        flex-direction: column;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      .loading-text {
+        color: #3498db;
+        font-size: 16px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Estilos para el mensaje de error */
+      .error-message {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px;
+        text-align: center;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Indicador de carga -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+      <div class="loading-text">Cargando información del usuario...</div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-message" id="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="error-text"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="/img/saltLogo.png" alt="SALT-UTSV" class="logo" />
+        <span class="brand-name">SALT-UTSV</span>
+      </div>
+
+      <ul class="nav-menu" id="nav-menu">
+        <!-- El menú se cargará dinámicamente según el rol -->
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="header">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="page-title">Panel de Control</h1>
+        <div class="user-menu">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <button type="button" class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard Stats -->
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-icon primary">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="card-value">2</div>
+          <div class="card-label">Laboratorios</div>
+        </div>
+        <div class="card">
+          <div class="card-icon success">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="card-value" id="student-count">0</div>
+          <div class="card-label">Alumnos</div>
+        </div>
+        <div class="card">
+          <div class="card-icon danger">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <div class="card-value" id="teacher-count">0</div>
+          <div class="card-label">Docentes</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <h2 style="margin: 2rem 0 1rem; color: var(--text-primary)">
+        Acciones Rápidas
+      </h2>
+      <div class="quick-actions" id="quick-actions">
+        <!-- Las acciones rápidas se cargarán dinámicamente según el rol -->
+      </div>
+    </main>
+
+    <script>
+      // Variable global para almacenar los datos del usuario
+      let currentUser = null;
+
+      // Estructura del menú para cada rol
+      const menuItems = {
+        admin: [
+          {
+            title: "Horario",
+            icon: "fa-calendar-alt",
+            dropdown: [
+              { title: "Laboratorio 1", link: "/horario.html?lab=lab1" },
+              { title: "Laboratorio 2", link: "/horario.html?lab=lab2" },
+            ],
+          },
+          {
+            title: "Informe",
+            icon: "fa-file-alt",
+            dropdown: [
+              { title: "Laboratorio 1", link: "/informe.html?lab=lab1" },
+              { title: "Laboratorio 2", link: "/informe.html?lab=lab2" },
+            ],
+          },
+          {
+            title: "Registro",
+            icon: "fa-edit",
+            dropdown: [
+              { title: "Laboratorio 1", link: "/registro.html?lab=lab1" },
+              { title: "Laboratorio 2", link: "/registro.html?lab=lab2" },
+              { title: "Nuevo Alumno", link: "/alumnos.html" },
+            ],
+          },
+        ],
+        user: [
+          {
+            title: "Registro",
+            icon: "fa-edit",
+            dropdown: [
+              { title: "Laboratorio 1", link: "/registro.html?lab=lab1" },
+              { title: "Laboratorio 2", link: "/registro.html?lab=lab2" },
+            ],
+          },
+          {
+            title: "Horario",
+            icon: "fa-calendar-alt",
+            dropdown: [
+              { title: "Laboratorio 1", link: "/horario.html?lab=lab1" },
+              { title: "Laboratorio 2", link: "/horario.html?lab=lab2" },
+            ],
+          },
+        ],
+      };
+
+      // Acciones rápidas para cada rol
+      const quickActions = {
+        admin: [
+          {
+            icon: "fa-calendar-check",
+            label: "Horario Lab 1",
+            link: "/horario.html?lab=lab1",
+          },
+          {
+            icon: "fa-calendar-check",
+            label: "Horario Lab 2",
+            link: "/horario.html?lab=lab2",
+          },
+          {
+            icon: "fa-file-alt",
+            label: "Informe Lab 1",
+            link: "/informe.html?lab=lab1",
+          },
+          {
+            icon: "fa-file-alt",
+            label: "Informe Lab 2",
+            link: "/informe.html?lab=lab2",
+          },
+          {
+            icon: "fa-user-plus",
+            label: "Nuevo Alumno",
+            link: "/alumnos.html",
+          },
+          {
+            icon: "fa-edit",
+            label: "Registro Lab 1",
+            link: "/registro.html?lab=lab1",
+          },
+          {
+            icon: "fa-edit",
+            label: "Registro Lab 2",
+            link: "/registro.html?lab=lab2",
+          },
+        ],
+        user: [
+          {
+            icon: "fa-edit",
+            label: "Registro Lab 1",
+            link: "/registro.html?lab=lab1",
+          },
+          {
+            icon: "fa-edit",
+            label: "Registro Lab 2",
+            link: "/registro.html?lab=lab2",
+          },
+          {
+            icon: "fa-calendar-check",
+            label: "Horario Lab 1",
+            link: "/horario.html?lab=lab1",
+          },
+          {
+            icon: "fa-calendar-check",
+            label: "Horario Lab 2",
+            link: "/horario.html?lab=lab2",
+          },
+        ],
+      };
+
+      // Inicializar la página cuando se carga
+      document.addEventListener("DOMContentLoaded", function () {
+        // Obtener datos del usuario desde el servidor
+        fetchUserData();
+      });
+
+      // Función para obtener datos del usuario desde el servidor
+      async function fetchUserData() {
+        try {
+          showLoading(true);
+          hideError();
+
+          // Usar el endpoint correcto que existe en tu servidor
+          const response = await fetch("/api/user-info", {
+            method: "GET",
+            credentials: "same-origin", // Incluye cookies de sesión
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.status === 401) {
+            // No autenticado, redirigir al login
+            window.location.href = "/index.html";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
+          }
+
+          const userData = await response.json();
+          currentUser = userData;
+
+          // Cargar la interfaz con los datos del usuario
+          loadUserData();
+          renderNavigation();
+          renderQuickActions();
+        } catch (error) {
+          console.error("Error al obtener datos del usuario:", error);
+          showError("Error al cargar los datos. Usando modo de demostración.");
+
+          // Usar datos de demostración como fallback
+          currentUser = {
+            username: "Usuario Demo",
+            role: "user",
+          };
+
+          loadUserData();
+          renderNavigation();
+          renderQuickActions();
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      // Mostrar/ocultar indicador de carga
+      function showLoading(show) {
+        const overlay = document.getElementById("loading-overlay");
+        overlay.style.display = show ? "flex" : "none";
+      }
+
+      // Mostrar mensaje de error
+      function showError(message) {
+        const errorElement = document.getElementById("error-message");
+        const errorText = document.getElementById("error-text");
+
+        errorText.textContent = message;
+        errorElement.style.display = "block";
+      }
+
+      // Ocultar mensaje de error
+      function hideError() {
+        const errorElement = document.getElementById("error-message");
+        errorElement.style.display = "none";
+      }
+
+      // Cargar datos del usuario en la interfaz
+      function loadUserData() {
+        if (!currentUser) return;
+
+        document.getElementById("user-avatar").textContent =
+          currentUser.username.charAt(0).toUpperCase();
+
+        // Simular datos de estadísticas (en un caso real, vendrían del servidor)
+        document.getElementById("student-count").textContent =
+          currentUser.role === "admin" ? "247" : "150";
+        document.getElementById("teacher-count").textContent =
+          currentUser.role === "admin" ? "36" : "50";
+      }
+
+      // Renderizar la navegación según el rol
+      function renderNavigation() {
+        if (!currentUser) return;
+
+        const navMenu = document.getElementById("nav-menu");
+        navMenu.innerHTML = "";
+
+        const role = currentUser.role || "user"; // Valor por defecto si no hay rol
+
+        // Si el rol no existe en menuItems, usar 'user' como valor por defecto
+        const effectiveRole = menuItems[role] ? role : "user";
+
+        menuItems[effectiveRole].forEach((item) => {
+          const li = document.createElement("li");
+          li.className = "nav-item";
+
+          li.innerHTML = `
+                    <a href="#" class="nav-link" onclick="toggleDropdown('${item.title.toLowerCase()}')">
+                        <i class="fas ${item.icon}"></i>
+                        <span>${item.title}</span>
+                        <i class="fas fa-chevron-down ms-auto" style="font-size: 0.8rem"></i>
+                    </a>
+                    <ul class="dropdown-menu" id="${item.title.toLowerCase()}">
+                        ${item.dropdown
+                          .map(
+                            (dropItem) => `
+                            <li>
+                                <a href="${dropItem.link}" class="dropdown-item">${dropItem.title}</a>
+                            </li>
+                        `
+                          )
+                          .join("")}
+                    </ul>
+                `;
+
+          navMenu.appendChild(li);
+        });
+      }
+
+      // Renderizar acciones rápidas según el rol
+      function renderQuickActions() {
+        if (!currentUser) return;
+
+        const quickActionsContainer = document.getElementById("quick-actions");
+        quickActionsContainer.innerHTML = "";
+
+        const role = currentUser.role || "user"; // Valor por defecto si no hay rol
+
+        // Si el rol no existe en quickActions, usar 'user' como valor por defecto
+        const effectiveRole = quickActions[role] ? role : "user";
+
+        quickActions[effectiveRole].forEach((action) => {
+          const actionElement = document.createElement("a");
+          actionElement.href = action.link;
+          actionElement.className = "action-btn";
+          actionElement.innerHTML = `
+                    <i class="fas ${action.icon}"></i>
+                    <span class="action-label">${action.label}</span>
+                `;
+          quickActionsContainer.appendChild(actionElement);
+        });
+      }
+
+      // Función para cerrar sesión
+      function logout() {
+        if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+          // Usar el endpoint de logout que ya existe en tu servidor
+          fetch("/logout", {
+            method: "GET",
+            credentials: "same-origin",
+          })
+            .then((response) => {
+              if (response.redirected) {
+                window.location.href = response.url;
+              } else {
+                // Si no hay redirección, redirigir manualmente
+                window.location.href = "/index.html";
+              }
+            })
+            .catch((error) => {
+              console.error("Error al cerrar sesión:", error);
+              alert("Error al cerrar sesión. Por favor, intenta nuevamente.");
+            });
+        }
+      }
+
+      // Funciones existentes para interactividad
+      function toggleDropdown(id) {
+        event.preventDefault();
+        const dropdown = document.getElementById(id);
+        dropdown.classList.toggle("show");
+
+        document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+          if (menu.id !== id && menu.classList.contains("show")) {
+            menu.classList.remove("show");
+          }
+        });
+      }
+
+      function toggleSidebar() {
+        document.querySelector(".sidebar").classList.toggle("active");
+      }
+
+      document.addEventListener("click", function (event) {
+        if (
+          !event.target.matches(".nav-link") &&
+          !event.target.closest(".nav-link")
+        ) {
+          document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+            menu.classList.remove("show");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

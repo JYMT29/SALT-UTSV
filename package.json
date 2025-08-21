@@ -1,0 +1,36 @@
+{
+  "name": "salt-utsv",
+  "version": "1.0.0",
+  "description": "Proyecto SALT-UTSV migrado a Node.js con Express y MySQL",
+  "main": "src/js/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/js/server.js",
+    "dev": "nodemon src/js/server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bluebird": "^3.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.18.2",
+    "jquery": "^3.7.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.3",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "json-server": "^1.0.0-beta.1",
+    "nodemon": "^3.1.0"
+  },
+  "keywords": [
+    "express",
+    "mysql",
+    "nodejs",
+    "utsv",
+    "salt"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}

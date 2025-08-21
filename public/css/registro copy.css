@@ -1,0 +1,32 @@
+/* Estilos para la información del QR */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.shadow {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+  border-radius: 50%; /* Redondear la imagen */
+  border: 2px solid #ccc; /* Borde de la imagen */
+}
+
+.btn {
+  margin-top: 20px; /* Margen superior del botón */
+}
+
+.fw-bold {
+  font-weight: bold; /* Texto en negrita */
+}

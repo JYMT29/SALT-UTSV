@@ -1,0 +1,20 @@
+/* style.css */
+
+#qr-container {
+    width: 300px;
+    height: 300px;
+    border: 1px solid #ccc;
+  }
+  
+  #computer-info {
+    display: none;
+  }
+  
+  #computer-info h2 {
+    margin-top: 0;
+  }
+  
+  #computer-info p {
+    margin-bottom: 0;
+  }
+  

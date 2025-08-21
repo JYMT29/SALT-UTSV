@@ -1,0 +1,8 @@
+body {
+    background-image: url('/public/img/fondo3.jpg');
+    background-size: cover;
+  }
+
+  .col-sm-4 {
+    background-color: rgba(255, 255, 255, 0.9);    
+  }

@@ -1,0 +1,416 @@
+:root {
+    /*Paleta de colores*/
+
+    /*Variables CSS o custom properties*/
+    --blanco: #FFFFFF;
+    --oscuro: #212121;
+    --primario: #008000;
+    --secundario: #daf2da;
+    --gris: #757575;
+    --gris-claro: #DFE9F3;  
+}
+/*Globales*/
+
+html {
+    font-size: 62.5%;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {     /** SELECTOR UNIVERSAL */
+    box-sizing: inherit;
+}      
+
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif; /* Elige una tipografía legible */
+    margin: 0; /* Elimina márgenes predeterminados */
+    padding: 0; /* Elimina relleno predeterminado */
+  }
+
+
+.contenedor-titulo {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.titulo-principal {
+    font-family: 'Arial Black', sans-serif; /* Fuente decorativa */
+    font-size: 36px; /* Tamaño de letra grande */
+    margin-bottom: 10px; /* Margen inferior para separar del contenido */
+}
+
+  
+
+h2 {
+    font-size: 2.8rem;
+}
+
+h3 {
+    font-size: 1.8rem;
+}
+
+h1, h2, h3 {
+    text-align: center;
+}
+
+
+
+/* selector de id*/
+/* p#parrafo-id {
+}    color:orange;  /* formato de colores: RGB, HEXADECIMAL Y HSL*/
+
+
+/* selector de clase */
+
+/* p.parrafo-clase {
+    color:aqua;
+} */
+
+/* p {
+    color: brown !important; 
+} */
+
+/* p {
+    color:yellow;
+} */
+
+/* p {
+    color:purple;
+  }  /* background-color: var(--primario); */
+
+
+
+
+.contenedor {
+    max-width: cover;
+
+    /* margin-top: 0; */ /*margen superior*/
+    /* margin-right: auto;  /*margen derecho*/
+    /* margin-bottom: 0;  /*margen inferior*/
+    /* margin-left: auto; /*margen izquierdo*/
+
+    margin: 0 auto ; /* Asi se ve todo junto va en manesillas del reloj TOP,RIGHT,BOTTOM,LEFT*/ 
+
+   
+
+    /* border-width: 3px;
+    border-style: outset;
+    border-color: var(--blanco); */
+} 
+
+.sombra {
+    -webkit-box-shadow: 0px 5px 15px 0px rgba(112,112,112,1);
+    -moz-box-shadow: 0px 5px 15px 0px rgba(112,112,112,1);
+    box-shadow: 0px 5px 15px 0px rgba(112,112,112,1);
+
+    border-radius: 1rem;
+}
+
+.boton {
+    background-color: green;
+    color: var(--blanco);
+    padding: 1rem 3rem;
+    margin-top: 3rem;
+    font-size: 2rem;
+    text-decoration: none;
+    text-transform: uppercase; /*Para transformar el tipo de letra*/
+    font-weight: 700; /* bold es lo mismo a 700*/
+    border-radius: 0.5rem;
+    width: 90%;
+    text-align: center;
+
+}
+@media (min-width: 400px) {
+    .boton {
+        width: auto;
+    }
+}
+
+/* Navegación */
+
+/* Estilos para la barra de navegación */
+.nav-bg {
+  background-color: #2ECC71; /* Color de fondo de la barra de navegación */
+  padding: 10px 0; /* Espacio superior e inferior */
+  font-size: 20px;
+}
+
+.navegacion-principal {
+  max-width: 1000px; /* Ancho máximo de la barra de navegación */
+  margin: 0 auto; /* Centra la barra de navegación horizontalmente */
+  display: flex; /* Modo de visualización flexbox */
+  justify-content: space-around; /* Distribuye los elementos con espacio alrededor */
+  
+}
+
+.navegacion-principal a {
+  color: #fff; /* Color del texto de los enlaces */
+  text-decoration: none; /* Elimina la decoración subrallada */
+  font-weight: 700; /* Texto en negrita */
+  padding: 10px 15px; /* Espacio alrededor del texto */
+  
+}
+
+.navegacion-principal a:hover { /* Estilo al pasar el cursor */
+  background-color: black; /* Color de fondo al pasar el cursor */
+  color: #f0f0f0; /* Color del texto al pasar el cursor */
+}
+
+/* Estilos responsivos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .navegacion-principal {
+    flex-direction: column; /* Organiza los elementos en vertical */
+    align-items: center; /* Centra los elementos horizontalmente */
+  }
+
+  .navegacion-principal a {
+    padding: 15px; /* Aumenta el espacio entre los enlaces en pantallas pequeñas */
+  }
+}
+
+@media (min-width: 768px) {
+    .navegacion-principal {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+
+
+/* Hero */
+
+.hero {
+    background-image: url(../img/img1.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 600px;
+    padding: 20px;
+    position: relative; /* posición relativa en el elemento padre*/
+    margin-bottom: 2rem;
+
+    
+
+}
+
+.eslogan {
+  font-size: 3rem;
+  color: var(--blanco);
+  font-weight: 700;
+}
+
+.parrafo2{
+  font-size: 3rem;
+   color: var(--blanco);
+   font-weight: 700;
+}
+.contenido-hero {
+    position: absolute; /* posición absolute en el elemento hijo*/
+    /* background-color: rgba(0, 0, 0, 0.7); Se puede usar asi tambien */
+    background-color: rgb(0 0 0 / 70%);
+
+    /* width: 5rem;
+    height: 5rem; */
+
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.contenido-hero h2 {  /* SE PUEDE USAR ASI*/
+    color: var(--blanco);
+    font-size: 50px;
+}
+
+.contenido-hero .ubicacion {
+    display: flex;
+    align-items:center;
+}
+
+/* Servicios*/
+
+
+
+
+
+
+@media (min-width: 768px) {
+
+    .servicios {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 1rem;
+    }
+
+}
+
+.seccion-laboratorios {
+  padding: 20px;
+}
+
+.contenedor {
+  max-width: 50%; /* Permite que el contenedor se ajuste al ancho de la pantalla */
+  margin: 0 auto; /* Centra el contenedor horizontalmente */
+}
+
+.servicios {
+  display: flex; /* Coloca los servicios en fila */
+  flex-wrap: wrap; /* Permite que los servicios se envuelvan en varias filas si es necesario */
+  justify-content: space-between; /* Distribuye los servicios con espacio entre ellos */
+  margin-bottom: -20px; /* Elimina el margen inferior de la última fila de servicios */
+}
+
+.servicio {
+  flex: 1 0 300px; /* Ocupa el espacio disponible, con un ancho mínimo de 300px */
+  margin-bottom: 20px;
+}
+
+.contenedor-imagen-texto {
+  display: flex;
+}
+
+.imagen {
+  width: 50%; /* Ocupa el 50% del ancho del contenedor */
+  margin-right: 20px; /* Añade un margen derecho al lado de la imagen */
+}
+
+.texto {
+  flex: 1; /* Ocupa el espacio restante del contenedor */
+}
+
+.texto h3 {
+  margin-top: 0; /* Elimina el margen superior del título */
+}
+
+img {
+  width: 30%; /* Ajusta la imagen al ancho del contenedor */
+  height: auto; /* Mantiene la proporción de la imagen */
+  border-radius: 5px; /* Bordes redondeados para las imágenes */
+}
+
+@media (max-width: 768px) {
+  .servicio {
+      flex: 1 0 50%; /* Ocupa el 50% del ancho del contenedor en pantallas pequeñas */
+  }
+
+  .imagen {
+      width: 100%; /* La imagen ocupa todo el ancho del contenedor en pantallas pequeñas */
+      margin-right: 0; /* Elimina el margen derecho de la imagen en pantallas pequeñas */
+  }
+}
+
+  
+
+/* Contacto*/
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.contenedor-pie {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.redes-sociales {
+  display: flex;
+}
+
+.redes-sociales a {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.redes-sociales i {
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+  .contactos {
+      flex-direction: column; /* Coloca los enlaces de contacto en una columna en pantallas pequeñas */
+      align-items: center; /* Centra los enlaces de contacto verticalmente */
+  }
+
+
+}
+
+
+.servicios2 {
+  display: flex; /* Coloca los servicios en fila */
+  flex-wrap: wrap; /* Permite que los servicios se envuelvan en varias filas si es necesario */
+  justify-content: space-between; /* Distribuye los servicios con espacio entre ellos */
+  margin-bottom: -20px; /* Elimina el margen inferior de la última fila de servicios */
+}
+
+.servicio2 {
+  flex: 1 0 300px; /* Ocupa el espacio disponible, con un ancho mínimo de 300px */
+  margin-bottom: 20px;
+}
+.imagen2 {
+  width: 50%; /* Ocupa el 50% del ancho del contenedor */
+  margin-left: 20px; /* Añade un margen derecho al lado de la imagen */
+}
+
+
+
+.contenedor2 {
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: var(--secundario);
+}
+
+.titulo {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.beneficios {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.beneficio {
+  width: 45%;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.beneficio h3 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+
+
+
+
+ 
+  
+
+
+
+
+

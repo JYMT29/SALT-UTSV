@@ -1,0 +1,1216 @@
+{
+  "alumnos": [
+    {
+      "id": "05bd",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 34,
+      "fecha": "2024-08-14T16:12:19.569Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "7197",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 30,
+      "fecha": "2024-09-10T10:29:46.968Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "616a",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 2,
+      "fecha": "2024-09-10T10:35:31.435Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "9a23",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 33,
+      "fecha": "2024-09-10T10:35:49.727Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "a3f4",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 44,
+      "fecha": "2024-09-25T15:35:23.739Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "fa41",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 20,
+      "fecha": "2024-09-25T16:02:32.578Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "76eb",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 19,
+      "fecha": "2024-09-25T17:43:43.719Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "7043",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 38,
+      "fecha": "2024-09-25T17:44:24.386Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "f630",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 29,
+      "fecha": "2024-09-25T18:00:45.974Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "77dc",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 44,
+      "fecha": "2024-09-25T18:03:58.772Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "bfa4",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 8,
+      "fecha": "2024-09-25T18:06:18.585Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "c89c",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 28,
+      "fecha": "2024-09-25T18:22:24.345Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "2e38",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 1,
+      "fecha": "2024-09-25T18:31:21.590Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "488a",
+      "matricula": "23190341",
+      "nombre": "JOEL ABDI  SOTELO CARRASCO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 45,
+      "fecha": "2024-10-16T15:53:47.132Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "4c5b",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 45,
+      "fecha": "2024-10-17T19:07:12.762Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "b5c7",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 2,
+      "fecha": "2024-10-17T19:07:26.025Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "beb0",
+      "matricula": "23190165",
+      "nombre": "YARETZI GUADALUPE   PEREZ  HERNANDEZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 4,
+      "fecha": "2024-10-17T19:27:23.419Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "05b5",
+      "matricula": "23190165",
+      "nombre": "YARETZI GUADALUPE   PEREZ  HERNANDEZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 31,
+      "fecha": "2024-10-22T21:14:11.528Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "682c",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 7,
+      "fecha": "2024-10-28T16:40:39.934Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "ef2c",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 33,
+      "fecha": "2024-10-28T16:41:12.924Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "ae17",
+      "matricula": "23190165",
+      "nombre": "YARETZI GUADALUPE   PEREZ  HERNANDEZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 8,
+      "fecha": "2024-10-28T19:53:14.516Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "1542",
+      "matricula": "23190001",
+      "nombre": "JOSE ALBERTO CRUZ MARTINEZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 30,
+      "fecha": "2024-10-29T16:07:02.506Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "0690",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 40,
+      "fecha": "2024-11-06T15:42:07.483Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "350e",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 24,
+      "fecha": "2024-11-06T15:47:21.731Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "3377",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 11,
+      "fecha": "2024-11-06T15:48:03.729Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "2f24",
+      "matricula": "23190165",
+      "nombre": "YARETZI GUADALUPE   PEREZ  HERNANDEZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 36,
+      "fecha": "2024-11-07T18:24:57.719Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "3ffa",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 47,
+      "fecha": "2024-11-19T15:39:17.964Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "1653",
+      "matricula": "23190122",
+      "nombre": "JASSIEL MAURICIO   GONZALEZ AGUILAR",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 46,
+      "fecha": "2024-11-19T15:41:04.093Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "e28d",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 15,
+      "fecha": "2025-01-14T20:31:32.701Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "3923",
+      "matricula": "23190165",
+      "nombre": "YARETZI GUADALUPE   PEREZ  HERNANDEZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 4,
+      "fecha": "2025-01-17T16:06:30.830Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "eeb0",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 19,
+      "fecha": "2025-01-17T16:07:48.229Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "89d2",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 21,
+      "fecha": "2025-01-17T16:11:59.398Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "43ca",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 45,
+      "fecha": "2025-01-17T16:12:34.818Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "118f",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 45,
+      "fecha": "2025-01-17T16:32:40.971Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "af42",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 24,
+      "fecha": "2025-01-17T16:35:33.371Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "4afb",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 3,
+      "fecha": "2025-01-17T16:39:46.113Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "81f8",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 33,
+      "fecha": "2025-01-17T16:42:21.819Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "f5b0",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 14,
+      "fecha": "2025-01-17T16:48:24.943Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "e5ce",
+      "matricula": "23190091",
+      "nombre": "JORGE YAEL  MATEO  TADEO",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 26,
+      "fecha": "2025-01-17T16:51:02.670Z",
+      "nombreMaestro": "No asignado"
+    },
+    {
+      "id": "e3db",
+      "matricula": "23190102",
+      "nombre": "GLADYS GUADALUPE  LUIS  CRUZ",
+      "carrera": "TSU TECNOLOGIAS DE LA INFORMACION - DSM",
+      "PC": 31,
+      "fecha": "2025-01-17T17:01:34.539Z",
+      "nombreMaestro": "No asignado"
+    }
+  ],
+  "horarios": [
+    {
+      "0": [
+        {
+          "hora": "7:00-7:50"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "1": [
+        {
+          "hora": "7:50-8:40"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "2": [
+        {
+          "hora": "8:40-9:30"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "3": [
+        {
+          "hora": "9:30-10:20"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "4": [
+        {
+          "hora": "10:20-11:10"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "5": [
+        {
+          "hora": "11:10-12:00"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "6": [
+        {
+          "hora": "12:00-12:50"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "7": [
+        {
+          "hora": "12:50-1:40"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "8": [
+        {
+          "hora": "1:40-2:30"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "id": "0215"
+    },
+    {
+      "0": [
+        {
+          "hora": "7:00-7:50"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "1": [
+        {
+          "hora": "7:50-8:40"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "2": [
+        {
+          "hora": "8:40-9:30"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "3": [
+        {
+          "hora": "9:30-10:20"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "4": [
+        {
+          "hora": "10:20-11:10"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "5": [
+        {
+          "hora": "11:10-12:00"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "6": [
+        {
+          "hora": "12:00-12:50"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "7": [
+        {
+          "hora": "12:50-1:40"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "8": [
+        {
+          "hora": "1:40-2:30"
+        },
+        {
+          "dia": "lunes",
+          "materia": "POO"
+        },
+        {
+          "dia": "martes",
+          "materia": "BASE DE DATOS"
+        },
+        {
+          "dia": "miércoles",
+          "materia": "PROGRAMACION ORIENTADA A SERVICIOS"
+        },
+        {
+          "dia": "jueves",
+          "materia": "ESTRUCTURA DE DATOS"
+        },
+        {
+          "dia": "viernes",
+          "materia": "POO"
+        },
+        {
+          "dia": "sábado",
+          "materia": "BASE DE DATOS"
+        }
+      ],
+      "id": "223b"
+    },
+    {
+      "0": [
+        {
+          "hora": "7:00- 8:00"
+        },
+        {
+          "dia": "lunes",
+          "materia": "Bas de datos"
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "1": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "2": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "3": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "4": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "5": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "6": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "7": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "8": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "9": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "10": [
+        {
+          "hora": "Nueva Hora"
+        },
+        {
+          "dia": "lunes",
+          "materia": ""
+        },
+        {
+          "dia": "martes",
+          "materia": ""
+        },
+        {
+          "dia": "miércoles",
+          "materia": ""
+        },
+        {
+          "dia": "jueves",
+          "materia": ""
+        },
+        {
+          "dia": "viernes",
+          "materia": ""
+        },
+        {
+          "dia": "sábado",
+          "materia": ""
+        }
+      ],
+      "id": "d8d0"
+    }
+  ]
+}

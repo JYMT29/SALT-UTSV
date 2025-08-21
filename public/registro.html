@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Alumnos | Sistema UTSV</title>
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome para íconos -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Estilos personalizados -->
+    <style>
+      :root {
+        --utsv-primary: #006341;
+        --utsv-secondary: #8dc63f;
+        --utsv-light: #f1f8e9;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: url("/img/fondo3.jpg") no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        /* Aplicar blur directamente a la imagen de fondo */
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+
+      /* Eliminamos el pseudo-elemento ::before que agregaba el fondo blanco */
+
+      .card-registro {
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.95
+        ); /* Mantenemos las tarjetas con fondo semi-transparente */
+      }
+
+      .card-header {
+        background-color: var(--utsv-primary);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: none;
+      }
+
+      .card-header h4 {
+        font-weight: 700;
+      }
+
+      .card-body {
+        padding: 2rem;
+      }
+
+      .qr-container {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
+
+      .qr-logo {
+        max-width: 200px;
+        height: auto;
+        transition: all 0.3s;
+      }
+
+      .qr-logo:hover {
+        transform: scale(1.05);
+      }
+
+      .status-message {
+        background-color: var(--utsv-light);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1.5rem;
+      }
+
+      #scan-status {
+        margin: 0;
+        font-weight: 500;
+      }
+
+      .registros-table {
+        margin-top: 2rem;
+        display: none;
+      }
+
+      .registros-table.show {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .table thead {
+        background-color: var(--utsv-primary);
+        color: white;
+      }
+
+      .table tbody tr:nth-child(even) {
+        background-color: rgba(141, 198, 63, 0.1);
+      }
+
+      .badge-registrado {
+        background-color: var(--utsv-secondary);
+      }
+
+      .footer {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .admin-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background-color: var(--utsv-primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .admin-btn:hover {
+        background-color: var(--utsv-secondary);
+        transform: scale(1.1);
+      }
+
+      .scan-animation {
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 99, 65, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 15px rgba(0, 99, 65, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 99, 65, 0);
+        }
+      }
+
+      .last-registered {
+        background-color: rgba(141, 198, 63, 0.3) !important;
+        font-weight: bold;
+      }
+
+      .lab-seat.occupied {
+        background-color: #ffcdd2;
+        color: #c62828;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+          <div class="card card-registro">
+            <div class="card-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h4>
+                    <i class="fas fa-user-graduate me-2"></i> Registro de
+                    Alumnos
+                  </h4>
+                  <p class="mb-0">Sistema de Control de Acceso UTSV</p>
+                </div>
+                <div id="contador" class="badge bg-primary fs-5">
+                  0 registros
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="qr-container">
+                    <a id="btn-scan-qr" href="#" class="d-inline-block">
+                      <img
+                        src="img/logo ut-Photoroom.png"
+                        class="qr-logo"
+                        alt="Escáner QR UTSV"
+                        id="qr-logo"
+                      />
+                    </a>
+                    <input
+                      type="text"
+                      id="qr-reader-input"
+                      placeholder="Escanear QR"
+                      style="opacity: 0; position: absolute"
+                    />
+                  </div>
+
+                  <div class="status-message">
+                    <p id="scan-status">
+                      <i class="fas fa-info-circle me-2"></i> Esperando
+                      activación del escáner...
+                    </p>
+                    <div class="mt-2">
+                      <small class="text-muted"
+                        >Último registro:
+                        <span id="ultimo-registro">Ninguno aún</span></small
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="registro-activo bg-light p-3 rounded text-center">
+                    <h5 class="mb-3">
+                      <i class="fas fa-user-check me-2"></i>Registro actual
+                    </h5>
+                    <div id="current-register" class="bg-white p-3 rounded">
+                      <p class="text-muted mb-1">
+                        <small>Nombre completo</small>
+                      </p>
+                      <h4 id="current-name" class="mb-3">---</h4>
+
+                      <div class="row">
+                        <div class="col-6">
+                          <p class="text-muted mb-1">
+                            <small>Matrícula</small>
+                          </p>
+                          <h5 id="current-id">---</h5>
+                        </div>
+                        <div class="col-6">
+                          <p class="text-muted mb-1"><small>Carrera</small></p>
+                          <h5 id="current-career">---</h5>
+                        </div>
+                      </div>
+
+                      <div class="mt-3">
+                        <span id="current-time" class="badge bg-secondary"
+                          >--:--:--</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="registros-table mt-4" id="registros-table">
+                <h5 class="mb-3">
+                  <i class="fas fa-list me-2"></i>Registros recientes
+                </h5>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Matrícula</th>
+                        <th>Nombre</th>
+                        <th>Carrera</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="registros-body">
+                      <!-- Aquí se agregarán los registros dinámicamente -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer mt-4">
+            <p>
+              Sistema de Registro &copy; 2023 Universidad Tecnológica de la
+              Selva Veracruzana
+            </p>
+            <p class="text-muted">Versión 2.0.0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón flotante para administrador -->
+    <div class="admin-btn" id="admin-button" title="Configurar Laboratorio">
+      <i class="fas fa-cog"></i>
+    </div>
+
+    <!-- Efecto de sonido para escaneo -->
+    <audio id="audioScaner" src="assets/plugins/assets_sonido.mp3"></audio>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/plugins/qrCode.min.js"></script>
+    <script src="package/dist/sweetalert2.all.min.js"></script>
+    <script src="js/index.js"></script>
+  </body>
+</html>
