@@ -21,14 +21,6 @@ app.get("/api/hello", (req, res) => {
   res.json({ message: "Hola desde el backend 🚀" });
 });
 
-// Servir frontend estático
-app.use(express.static(path.join(__dirname, "../public")));
-
-// Redirigir todas las demás rutas al index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
-
 // Sirve los archivos estáticos de la carpeta "public"
 app.use(express.static(join(__dirname, "../../public")));
 
@@ -46,16 +38,15 @@ app.use(
 
 // Configuración de conexión a MySQL con pool de conexiones
 const pool = mysql.createPool({
-  host: "localhost",
+  host: "mainline.proxy.rlwy.net",
   user: "root",
-  password: "1234",
-  database: "sistema_alumnos",
-  port: 330, // Fixed: Changed from 330 to standard MySQL port 3306
+  password: "bIsttSqVwTLPINIpJSgwkLpEOEyfkBai",
+  database: "railway",
+  port: 34439,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
-
 // Verificar conexión a la base de datos
 pool.getConnection((err, connection) => {
   if (err) {
