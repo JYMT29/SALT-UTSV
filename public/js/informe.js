@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     horarioData = JSON.parse(savedHorario);
   } else {
     const laboratorio = obtenerLaboratorioDesdeUrl(); // Obtener el laboratorio desde la URL
-    fetch(`http://localhost:3001/horarios/${laboratorio}`) // Incluir el laboratorio en la URL
+    fetch(`https://salt-utsv-production.up.railway.app/horarios/${laboratorio}`) // Incluir el laboratorio en la URL
       .then((response) => response.json())
       .then((data) => {
         horarioData = data;
@@ -33,7 +33,7 @@ document.getElementById("load-data").addEventListener("click", function () {
   const fechaFiltro = document.getElementById("fecha").value;
   const laboratorio = obtenerLaboratorioDesdeUrl(); // Obtener el laboratorio
 
-  fetch("http://localhost:3001/alumnos")
+  fetch("https://salt-utsv-production.up.railway.app/alumnos")
     .then((response) => response.json())
     .then((data) => {
       const filteredData = filterAlumnos(data, fechaFiltro, laboratorio);

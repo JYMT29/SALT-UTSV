@@ -116,7 +116,7 @@
           rol: rol,
         };
 
-        fetch("http://localhost:3001/api/usuarios", {
+        fetch("https://salt-utsv-production.up.railway.app/api/usuarios", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -148,7 +148,7 @@
       }
 
       function loadUsers() {
-        fetch("http://localhost:3001/api/usuarios")
+        fetch("https://salt-utsv-production.up.railway.app/api/usuarios")
           .then((response) => {
             if (!response.ok) {
               throw new Error("Error al cargar los usuarios");

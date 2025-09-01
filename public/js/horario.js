@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         '<tr><td colspan="7" class="text-center">Cargando horarios...</td></tr>';
 
       const response = await fetch(
-        `http://localhost:3001/api/horarios?lab=${laboratorio}`
+        `https://salt-utsv-production.up.railway.app/api/horarios?lab=${laboratorio}`
       );
 
       if (!response.ok) {
@@ -222,7 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.requestListBody.innerHTML =
         '<tr><td colspan="5" class="text-center">Cargando solicitudes...</td></tr>';
 
-      const response = await fetch("http://localhost:3001/api/solicitudes");
+      const response = await fetch(
+        "https://salt-utsv-production.up.railway.app/api/solicitudes"
+      );
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -268,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
         select.addEventListener("change", async (e) => {
           try {
             const response = await fetch(
-              `http://localhost:3001/api/solicitudes/${e.target.dataset.id}`,
+              `https://salt-utsv-production.up.railway.app/api/solicitudes/${e.target.dataset.id}`,
               {
                 method: "PUT",
                 headers: {
@@ -389,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Enviando horarios al servidor:", horariosTransformados);
 
       const response = await fetch(
-        `http://localhost:3001/api/horarios?lab=${laboratorio}`,
+        `https://salt-utsv-production.up.railway.app/api/horarios?lab=${laboratorio}`,
         {
           method: "PUT",
           headers: {
@@ -486,13 +488,16 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Datos a enviar:", requestData);
 
     try {
-      const response = await fetch("http://localhost:3001/api/solicitudes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        "https://salt-utsv-production.up.railway.app/api/solicitudes",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       if (!response.ok) {
         const errorDetails = await response.json().catch(() => ({}));
@@ -519,18 +524,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // Función para notificar al administrador
   const notificarAdministrador = async (data) => {
     try {
-      const response = await fetch("http://localhost:3001/api/notificaciones", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          tipo: "solicitud_cambio",
-          mensaje: `Nueva solicitud de cambio en ${data.laboratorio}`,
-          datos: data,
-          leido: false,
-        }),
-      });
+      const response = await fetch(
+        "https://salt-utsv-production.up.railway.app/api/notificaciones",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tipo: "solicitud_cambio",
+            mensaje: `Nueva solicitud de cambio en ${data.laboratorio}`,
+            datos: data,
+            leido: false,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}`);
@@ -546,7 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cargarHorariosParaSolicitud = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/horarios?lab=${laboratorio}`
+        `https://salt-utsv-production.up.railway.app/api/horarios?lab=${laboratorio}`
       );
 
       if (!response.ok) {

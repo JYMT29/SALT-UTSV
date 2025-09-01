@@ -280,7 +280,7 @@
               '<tr><td colspan="7" class="text-center">Cargando horarios...</td></tr>';
 
             const response = await fetch(
-              `http://localhost:3001/api/horarios?lab=${laboratorio}`
+              `https://salt-utsv-production.up.railway.app/api/horarios?lab=${laboratorio}`
             );
 
             if (!response.ok) {
@@ -458,7 +458,7 @@
             );
 
             const response = await fetch(
-              `http://localhost:3001/api/horarios?lab=${laboratorio}`,
+              `https://salt-utsv-production.up.railway.app/api/horarios?lab=${laboratorio}`,
               {
                 method: "PUT",
                 headers: {

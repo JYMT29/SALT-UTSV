@@ -279,7 +279,9 @@ function obtenerLaboratorioDesdeUrl() {
 // Función para obtener la configuración del laboratorio desde la BD
 async function obtenerConfiguracionLab(lab) {
   try {
-    const response = await fetch(`http://localhost:3001/api/equipos/${lab}`);
+    const response = await fetch(
+      `https://salt-utsv-production.up.railway.app/api/equipos/${lab}`
+    );
     if (!response.ok) {
       throw new Error("No se pudo cargar la configuración de equipos");
     }
@@ -373,13 +375,16 @@ async function guardarConfiguracionDesdeEditor(laboratorio) {
   };
 
   try {
-    const response = await fetch("http://localhost:3001/api/lab-config", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ lab: laboratorio, config }),
-    });
+    const response = await fetch(
+      "https://salt-utsv-production.up.railway.app/api/lab-config",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ lab: laboratorio, config }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al guardar");
@@ -398,7 +403,7 @@ async function generarLayoutLab(laboratorio, isEditor = false) {
   try {
     // Verificar si estamos en horario de clase
     const horarioResponse = await fetch(
-      `http://localhost:3001/api/horario-actual?lab=${laboratorio}`
+      `https://salt-utsv-production.up.railway.app/api/horario-actual?lab=${laboratorio}`
     );
     const { horario } = await horarioResponse.json();
     const enHorarioClase = !!horario;
@@ -795,13 +800,16 @@ async function guardarConfiguracionDesdeEditor(laboratorio) {
   };
 
   try {
-    const response = await fetch("http://localhost:3001/api/equipos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "https://salt-utsv-production.up.railway.app/api/equipos",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al guardar");
@@ -825,7 +833,7 @@ const enviarDatos = async (datos) => {
     }
 
     const response = await fetch(
-      `http://localhost:3001/alumnos?lab=${laboratorio}`,
+      `https://salt-utsv-production.up.railway.app/alumnos?lab=${laboratorio}`,
       {
         method: "POST",
         headers: {
@@ -1003,16 +1011,19 @@ qrcode.callback = async function (respuesta) {
 
 // Funciones auxiliares mejoradas
 async function verificarAlumnoEnBackend(matricula, nombre) {
-  const response = await fetch(`http://localhost:3001/verificar-alumno`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      matricula: matricula.trim(),
-      nombre: nombre.trim(),
-    }),
-  });
+  const response = await fetch(
+    `https://salt-utsv-production.up.railway.app/verificar-alumno`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        matricula: matricula.trim(),
+        nombre: nombre.trim(),
+      }),
+    }
+  );
 
   const data = await response.json();
 
@@ -1025,7 +1036,7 @@ async function verificarAlumnoEnBackend(matricula, nombre) {
 
 async function verificarHorarioLaboratorio(laboratorio) {
   const response = await fetch(
-    `http://localhost:3001/api/horario-actual?lab=${laboratorio}`
+    `https://salt-utsv-production.up.railway.app/api/horario-actual?lab=${laboratorio}`
   );
   const { horario } = await response.json();
   return horario;
@@ -1036,7 +1047,7 @@ async function mostrarSeleccionAsientos(laboratorio) {
 
   // Obtener información de asientos ocupados
   const response = await fetch(
-    `http://localhost:3001/api/asientos-ocupados?lab=${laboratorio}`
+    `https://salt-utsv-production.up.railway.app/api/asientos-ocupados?lab=${laboratorio}`
   );
   const { asientos } = await response.json(); // Extraemos 'asientos' de la respuesta
 
@@ -1150,7 +1161,7 @@ async function registrarAsignacion(datos) {
   };
 
   const response = await fetch(
-    `http://localhost:3001/api/registrar-asignacion`,
+    `https://salt-utsv-production.up.railway.app/api/registrar-asignacion`,
     {
       method: "POST",
       headers: {
