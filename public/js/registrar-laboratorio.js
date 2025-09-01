@@ -5,11 +5,11 @@ app.use(express.json());
 
 // Configurar la conexión a la base de datos
 const db = mysql.createConnection({
-  host: "localhost",
+  host: "mainline.proxy.rlwy.net",
   user: "root",
-  password: "1234",
-  database: "sistema_alumnos",
-  port: 330, // Asegúrate de que el puerto es el correcto (3306 por defecto)
+  password: "bIsttSqVwTLPINIpJSgwkLpEOEyfkBai",
+  database: "railway",
+  port: 34439,
 });
 
 // Conectar a la base de datos
