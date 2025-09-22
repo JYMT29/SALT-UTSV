@@ -1036,7 +1036,7 @@ async function verificarAlumnoEnBackend(matricula, nombre) {
 
 async function verificarHorarioLaboratorio(laboratorio) {
   const response = await fetch(
-    `https://salt-utsv-production.up.railway.app/api/horario-actual?lab=${laboratorio}`
+    `https://salt-utsv-production.up.railway.app/api/horario-actual?lab=${laboratorio}&zonaHoraria=America/Mexico_City`
   );
   const { horario } = await response.json();
   return horario;
