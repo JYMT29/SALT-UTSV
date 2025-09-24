@@ -307,79 +307,6 @@ async function verificarHorario(lab) {
   });
 }
 
-// Actualizar grupo de estudiantes
-app.put("/api/estudiantes/grupo", async (req, res) => {
-  try {
-    const { grupo_anterior, grupo_nuevo } = req.body;
-
-    const [result] = await pool
-      .promise()
-      .query("UPDATE estudiantes SET grupo = ? WHERE grupo = ?", [
-        grupo_nuevo,
-        grupo_anterior,
-      ]);
-
-    res.json({
-      success: true,
-      message: `Grupo actualizado de ${grupo_anterior} a ${grupo_nuevo}`,
-      affected: result.affectedRows,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Filtrar estudiantes por grupo
-app.get("/api/estudiantes", async (req, res) => {
-  try {
-    const { grupo } = req.query;
-    let query = "SELECT * FROM estudiantes";
-    let params = [];
-
-    if (grupo) {
-      query += " WHERE grupo = ?";
-      params.push(grupo);
-    }
-
-    query += " ORDER BY matricula";
-
-    const [rows] = await pool.promise().query(query, params);
-
-    res.json({
-      success: true,
-      count: rows.length,
-      data: rows,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Actualizar estudiante individual
-app.put("/api/estudiantes/:matricula", async (req, res) => {
-  try {
-    const { matricula } = req.params;
-    const { grupo } = req.body;
-
-    const [result] = await pool
-      .promise()
-      .query("UPDATE estudiantes SET grupo = ? WHERE matricula = ?", [
-        grupo,
-        matricula,
-      ]);
-
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Estudiante no encontrado" });
-    }
-
-    res.json({ success: true, message: "Estudiante actualizado" });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
 // Ruta para obtener asientos ocupados
 app.get("/api/asientos-ocupados", (req, res) => {
   const { lab } = req.query;
@@ -1442,6 +1369,79 @@ app.put("/api/solicitudes/:id", async (req, res) => {
       error: "Error al actualizar solicitud",
       details: error.message,
     });
+  }
+});
+
+// Actualizar grupo de estudiantes
+app.put("/api/estudiantes/grupo", async (req, res) => {
+  try {
+    const { grupo_anterior, grupo_nuevo } = req.body;
+
+    const [result] = await pool
+      .promise()
+      .query("UPDATE estudiantes SET grupo = ? WHERE grupo = ?", [
+        grupo_nuevo,
+        grupo_anterior,
+      ]);
+
+    res.json({
+      success: true,
+      message: `Grupo actualizado de ${grupo_anterior} a ${grupo_nuevo}`,
+      affected: result.affectedRows,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Filtrar estudiantes por grupo
+app.get("/api/estudiantes", async (req, res) => {
+  try {
+    const { grupo } = req.query;
+    let query = "SELECT * FROM estudiantes";
+    let params = [];
+
+    if (grupo) {
+      query += " WHERE grupo = ?";
+      params.push(grupo);
+    }
+
+    query += " ORDER BY matricula";
+
+    const [rows] = await pool.promise().query(query, params);
+
+    res.json({
+      success: true,
+      count: rows.length,
+      data: rows,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Actualizar estudiante individual
+app.put("/api/estudiantes/:matricula", async (req, res) => {
+  try {
+    const { matricula } = req.params;
+    const { grupo } = req.body;
+
+    const [result] = await pool
+      .promise()
+      .query("UPDATE estudiantes SET grupo = ? WHERE matricula = ?", [
+        grupo,
+        matricula,
+      ]);
+
+    if (result.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Estudiante no encontrado" });
+    }
+
+    res.json({ success: true, message: "Estudiante actualizado" });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
