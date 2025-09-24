@@ -1400,6 +1400,7 @@ app.delete("/api/estudiantes/:matricula", async (req, res) => {
 
 // Actualización masiva de grupos (opcional)
 // Actualización masiva de grupos - VERSIÓN MEJORADA
+// Actualización masiva de grupos - VERSIÓN MEJORADA
 app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
   try {
     const { grupo_anterior, grupo_nuevo } = req.body;
@@ -1410,7 +1411,7 @@ app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
     });
 
     // Validaciones
-    if (!grupo_anterior || !grupo_nuevo) {
+    if (grupo_anterior === undefined || grupo_nuevo === undefined) {
       return res.status(400).json({
         success: false,
         error: "grupo_anterior y grupo_nuevo son requeridos",
@@ -1424,12 +1425,20 @@ app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
       });
     }
 
+    // Convertir "Sin grupo" a NULL en la base de datos
+    const grupoAnteriorDB =
+      grupo_anterior === "Sin grupo" ? null : grupo_anterior;
+    const grupoNuevoDB = grupo_nuevo === "Sin grupo" ? null : grupo_nuevo;
+
     // Verificar si hay estudiantes en el grupo anterior
-    const [studentsInOldGroup] = await pool
-      .promise()
-      .query("SELECT COUNT(*) as count FROM estudiantes WHERE grupo = ?", [
-        grupo_anterior,
-      ]);
+    const query =
+      grupoAnteriorDB === null
+        ? "SELECT COUNT(*) as count FROM estudiantes WHERE grupo IS NULL"
+        : "SELECT COUNT(*) as count FROM estudiantes WHERE grupo = ?";
+
+    const params = grupoAnteriorDB === null ? [] : [grupoAnteriorDB];
+
+    const [studentsInOldGroup] = await pool.promise().query(query, params);
 
     if (studentsInOldGroup[0].count === 0) {
       return res.status(404).json({
@@ -1439,26 +1448,22 @@ app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
     }
 
     // Realizar la actualización masiva
-    const [result] = await pool
-      .promise()
-      .query("UPDATE estudiantes SET grupo = ? WHERE grupo = ?", [
-        grupo_nuevo,
-        grupo_anterior,
-      ]);
+    const updateQuery =
+      grupoAnteriorDB === null
+        ? "UPDATE estudiantes SET grupo = ? WHERE grupo IS NULL"
+        : "UPDATE estudiantes SET grupo = ? WHERE grupo = ?";
 
-    // Obtener los estudiantes actualizados
-    const [updatedStudents] = await pool
-      .promise()
-      .query(
-        "SELECT matricula, nombre, grupo FROM estudiantes WHERE grupo = ?",
-        [grupo_nuevo]
-      );
+    const updateParams =
+      grupoAnteriorDB === null
+        ? [grupoNuevoDB]
+        : [grupoNuevoDB, grupoAnteriorDB];
+
+    const [result] = await pool.promise().query(updateQuery, updateParams);
 
     res.json({
       success: true,
-      message: `Grupo actualizado de ${grupo_anterior} a ${grupo_nuevo}`,
+      message: `Grupo actualizado de "${grupo_anterior}" a "${grupo_nuevo}"`,
       affected: result.affectedRows,
-      estudiantes_actualizados: updatedStudents,
     });
 
     console.log(
@@ -1474,15 +1479,20 @@ app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
   }
 });
 // Obtener estudiantes por grupo específico
+// Obtener estudiantes por grupo específico - VERSIÓN MEJORADA
 app.get("/api/estudiantes/grupo/:grupo", async (req, res) => {
   try {
     const { grupo } = req.params;
 
-    const [rows] = await pool
-      .promise()
-      .query("SELECT * FROM estudiantes WHERE grupo = ? ORDER BY nombre", [
-        grupo,
-      ]);
+    // Manejar "Sin grupo" (NULL en la base de datos)
+    const query =
+      grupo === "Sin grupo"
+        ? "SELECT * FROM estudiantes WHERE grupo IS NULL ORDER BY nombre"
+        : "SELECT * FROM estudiantes WHERE grupo = ? ORDER BY nombre";
+
+    const params = grupo === "Sin grupo" ? [] : [grupo];
+
+    const [rows] = await pool.promise().query(query, params);
 
     res.json({
       success: true,

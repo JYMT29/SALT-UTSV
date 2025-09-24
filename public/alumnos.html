@@ -455,6 +455,37 @@
         justify-content: flex-end;
         margin-top: 15px;
       }
+
+      /* Agrega estos estilos */
+      .group-btn-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+      }
+
+      .group-btn {
+        flex: 1;
+        text-align: left;
+      }
+
+      .delete-group-btn {
+        padding: 5px 8px;
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+      }
+
+      .delete-group-btn:hover {
+        background-color: #c0392b;
+      }
+
+      .cleanup-btn {
+        width: 100%;
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
@@ -676,18 +707,44 @@
         }
 
         // Renderizar botones de grupos
+        // Renderizar botones de grupos con opción de eliminar
         function renderGroupButtons() {
           groupButtonsContainer.innerHTML = "";
 
-          grupos.forEach((grupo) => {
+          // Ordenar grupos alfabéticamente
+          const gruposOrdenados = [...grupos].sort((a, b) =>
+            a.localeCompare(b)
+          );
+
+          gruposOrdenados.forEach((grupo) => {
+            const groupContainer = document.createElement("div");
+            groupContainer.style.cssText =
+              "display: flex; align-items: center; gap: 5px; margin-bottom: 5px;";
+
             const button = document.createElement("button");
             button.type = "button";
             button.className = `group-btn ${
               selectedGroup === grupo ? "active" : ""
             }`;
             button.textContent = grupo;
+            button.style.flex = "1";
             button.addEventListener("click", () => selectGroup(grupo));
-            groupButtonsContainer.appendChild(button);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+            deleteBtn.className = "btn btn-danger btn-sm";
+            deleteBtn.style.padding = "5px 8px";
+            deleteBtn.title = `Eliminar grupo ${grupo}`;
+            deleteBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              if (confirm(`¿Estás seguro de eliminar el grupo "${grupo}"?`)) {
+                deleteGroup(grupo);
+              }
+            });
+
+            groupContainer.appendChild(button);
+            groupContainer.appendChild(deleteBtn);
+            groupButtonsContainer.appendChild(groupContainer);
           });
         }
 
@@ -701,19 +758,222 @@
         }
 
         // Agregar nuevo grupo
+        // Agregar nuevo grupo - VERSIÓN MEJORADA CON VALIDACIÓN
         function addNewGroup() {
           const newGroup = customGroupInput.value.trim();
-          if (newGroup && !grupos.includes(newGroup)) {
-            grupos.push(newGroup);
-            saveGrupos();
-            renderGroupButtons();
-            customGroupInput.value = "";
-            showAlert(`Grupo ${newGroup} agregado`, "success");
-          } else if (grupos.includes(newGroup)) {
-            showAlert("Este grupo ya existe", "warning");
+
+          if (!newGroup) {
+            showAlert("Por favor ingresa un nombre para el grupo", "warning");
+            return;
           }
+
+          // Validar que no sea "Sin grupo" o vacío
+          if (newGroup.toLowerCase() === "sin grupo") {
+            showAlert('"Sin grupo" es un valor reservado', "warning");
+            return;
+          }
+
+          // Verificar si el grupo ya existe (case insensitive)
+          const grupoExistente = grupos.find(
+            (g) => g.toLowerCase() === newGroup.toLowerCase()
+          );
+
+          if (grupoExistente) {
+            // Si existe exactamente igual, mostrar advertencia
+            if (grupoExistente === newGroup) {
+              showAlert("Este grupo ya existe", "warning");
+              return;
+            }
+
+            // Si existe con diferente capitalización, preguntar si unificar
+            if (
+              confirm(
+                `El grupo "${grupoExistente}" ya existe. ¿Quieres unificar "${newGroup}" con "${grupoExistente}"?`
+              )
+            ) {
+              unificarGrupos(grupoExistente, newGroup);
+            }
+            return;
+          }
+          // Unificar dos grupos en uno
+          async function unificarGrupos(grupoMantener, grupoEliminar) {
+            try {
+              showAlert(
+                `Unificando grupos "${grupoEliminar}" en "${grupoMantener}"...`,
+                "warning"
+              );
+
+              // Actualizar estudiantes del grupo a eliminar
+              const response = await fetch(
+                `${API_BASE_URL}/estudiantes/grupo/masivo`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    grupo_anterior: grupoEliminar,
+                    grupo_nuevo: grupoMantener,
+                  }),
+                }
+              );
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Error al unificar grupos");
+              }
+
+              // Eliminar el grupo duplicado de la lista
+              const index = grupos.indexOf(grupoEliminar);
+              if (index !== -1) {
+                grupos.splice(index, 1);
+                saveGrupos();
+                renderGroupButtons();
+              }
+
+              // Si el grupo seleccionado era el que se eliminó, cambiar al grupo unificado
+              if (selectedGroup === grupoEliminar) {
+                selectedGroup = grupoMantener;
+                currentGroupSpan.textContent = grupoMantener;
+                grupoInput.value = grupoMantener;
+              }
+
+              const result = await response.json();
+              showAlert(
+                `Grupos unificados: ${result.affected || result.message}`,
+                "success"
+              );
+              loadStudents();
+            } catch (error) {
+              console.error("Error al unificar grupos:", error);
+              showAlert(`Error al unificar grupos: ${error.message}`, "danger");
+            }
+          }
+
+          // Eliminar un grupo
+          async function deleteGroup(groupToDelete) {
+            if (!groupToDelete) return;
+
+            // Verificar si hay estudiantes en el grupo
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/estudiantes/grupo/${groupToDelete}`
+              );
+              const data = await response.json();
+
+              let nuevoGrupo = "Sin grupo";
+
+              if (data.success && data.count > 0) {
+                // Preguntar qué hacer con los estudiantes
+                const opcion = prompt(
+                  `Hay ${data.count} estudiantes en el grupo "${groupToDelete}". ¿Qué deseas hacer?\n\n` +
+                    `1. Dejar como "Sin grupo"\n` +
+                    `2. Mover a otro grupo existente\n\n` +
+                    `Escribe "1" o "2", o el nombre del nuevo grupo:`,
+                  "1"
+                );
+
+                if (opcion === null) return; // Usuario canceló
+
+                if (opcion === "2") {
+                  const grupoDestino = prompt(
+                    "¿A qué grupo quieres mover los estudiantes?"
+                  );
+                  if (grupoDestino && grupoDestino.trim()) {
+                    nuevoGrupo = grupoDestino.trim();
+                  } else {
+                    showAlert("Operación cancelada", "warning");
+                    return;
+                  }
+                } else if (
+                  opcion &&
+                  opcion.trim() !== "1" &&
+                  opcion.trim() !== "2"
+                ) {
+                  // El usuario escribió directamente un grupo
+                  nuevoGrupo = opcion.trim();
+                }
+
+                // Mover estudiantes al nuevo grupo
+                await fetch(`${API_BASE_URL}/estudiantes/grupo/masivo`, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    grupo_anterior: groupToDelete,
+                    grupo_nuevo: nuevoGrupo,
+                  }),
+                });
+              }
+
+              // Eliminar el grupo de la lista
+              const index = grupos.indexOf(groupToDelete);
+              if (index !== -1) {
+                grupos.splice(index, 1);
+                saveGrupos();
+                renderGroupButtons();
+              }
+
+              // Si el grupo seleccionado era el que se eliminó, resetear selección
+              if (selectedGroup === groupToDelete) {
+                selectedGroup = "";
+                currentGroupSpan.textContent = "Ninguno";
+                grupoInput.value = "";
+              }
+
+              showAlert(
+                `Grupo "${groupToDelete}" eliminado. Estudiantes movidos a "${nuevoGrupo}"`,
+                "success"
+              );
+              loadStudents();
+            } catch (error) {
+              console.error("Error al eliminar grupo:", error);
+              showAlert(`Error al eliminar grupo: ${error.message}`, "danger");
+            }
+          }
+
+          // Agregar nuevo grupo
+          grupos.push(newGroup);
+          saveGrupos();
+          renderGroupButtons();
+          customGroupInput.value = "";
+          showAlert(`Grupo "${newGroup}" agregado`, "success");
         }
 
+        // Limpiar grupos duplicados (case insensitive)
+        function limpiarGruposDuplicados() {
+          const gruposUnicos = [];
+          const gruposLowerCase = new Set();
+          const duplicados = [];
+
+          // Identificar duplicados
+          grupos.forEach((grupo) => {
+            const lowerCase = grupo.toLowerCase();
+            if (gruposLowerCase.has(lowerCase)) {
+              duplicados.push(grupo);
+            } else {
+              gruposLowerCase.add(lowerCase);
+              gruposUnicos.push(grupo);
+            }
+          });
+
+          if (duplicados.length === 0) {
+            showAlert("No se encontraron grupos duplicados", "success");
+            return;
+          }
+
+          if (
+            confirm(
+              `Se encontraron ${duplicados.length} grupos duplicados. ¿Quieres limpiarlos automáticamente?`
+            )
+          ) {
+            grupos.length = 0; // Vaciar array
+            grupos.push(...gruposUnicos); // Agregar únicos
+            saveGrupos();
+            renderGroupButtons();
+            showAlert(
+              `Grupos limpiados: ${duplicados.length} duplicados eliminados`,
+              "success"
+            );
+          }
+        }
         // Editar grupo actual
         // Editar grupo actual - VERSIÓN MEJORADA
         // Editar grupo actual - VERSIÓN FINAL CON PREVISUALIZACIÓN
@@ -931,6 +1191,16 @@
           });
         }
 
+        // Agrega este código en la sección del group-selector, después del input de grupo personalizado
+        const cleanupButton = document.createElement("button");
+        cleanupButton.innerHTML =
+          '<i class="fas fa-broom"></i> Limpiar Duplicados';
+        cleanupButton.className = "btn btn-warning";
+        cleanupButton.style.marginTop = "10px";
+        cleanupButton.addEventListener("click", limpiarGruposDuplicados);
+
+        document.querySelector(".group-selector").appendChild(cleanupButton);
+
         // Cargar estudiantes desde el backend
         async function loadStudents() {
           try {
@@ -974,27 +1244,44 @@
         }
 
         // Añadir estudiante a la tabla
+        // Añadir estudiante a la tabla - VERSIÓN MEJORADA
         function addStudentToTable(student) {
           const row = document.createElement("tr");
           row.innerHTML = `
-      <td>${student.matricula}</td>
-      <td>${student.nombre}</td>
-      <td>${student.carrera || ""}</td>
-      <td>${student.grupo || "<span class='text-muted'>Sin grupo</span>"}</td>
-      <td>
-        <button class="btn btn-warning btn-sm" onclick="editStudent('${
-          student.matricula
-        }')">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
-          student.matricula
-        }')">
-          <i class="fas fa-trash"></i>
-        </button>
-      </td>
-    `;
+    <td>${student.matricula}</td>
+    <td>${student.nombre}</td>
+    <td>${student.carrera || ""}</td>
+    <td>${student.grupo || "<span style='color: #999;'>Sin grupo</span>"}</td>
+    <td>
+      <button class="btn btn-warning btn-sm" onclick="editStudent('${
+        student.matricula
+      }')">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
+        student.matricula
+      }')">
+        <i class="fas fa-trash"></i>
+      </button>
+    </td>
+  `;
           studentsTableBody.appendChild(row);
+        }
+
+        // Inicializar con "Sin grupo" en la lista de grupos
+        function initializeDefaultGroup() {
+          // No agregar "Sin grupo" como un grupo seleccionable, pero manejarlo como valor por defecto
+          if (!grupos.includes("Sin grupo")) {
+            // "Sin grupo" es un valor especial, no lo agregues a la lista de grupos seleccionables
+          }
+        }
+
+        // Modifica la función init para incluir la inicialización
+        function init() {
+          loadGrupos();
+          initializeDefaultGroup();
+          loadStudents();
+          setupEventListeners();
         }
 
         // Alternar filtro por grupo
