@@ -1399,10 +1399,46 @@ app.delete("/api/estudiantes/:matricula", async (req, res) => {
 });
 
 // Actualización masiva de grupos (opcional)
+// Actualización masiva de grupos - VERSIÓN MEJORADA
 app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
   try {
     const { grupo_anterior, grupo_nuevo } = req.body;
 
+    console.log("Actualización masiva solicitada:", {
+      grupo_anterior,
+      grupo_nuevo,
+    });
+
+    // Validaciones
+    if (!grupo_anterior || !grupo_nuevo) {
+      return res.status(400).json({
+        success: false,
+        error: "grupo_anterior y grupo_nuevo son requeridos",
+      });
+    }
+
+    if (grupo_anterior === grupo_nuevo) {
+      return res.status(400).json({
+        success: false,
+        error: "El nuevo grupo no puede ser igual al anterior",
+      });
+    }
+
+    // Verificar si hay estudiantes en el grupo anterior
+    const [studentsInOldGroup] = await pool
+      .promise()
+      .query("SELECT COUNT(*) as count FROM estudiantes WHERE grupo = ?", [
+        grupo_anterior,
+      ]);
+
+    if (studentsInOldGroup[0].count === 0) {
+      return res.status(404).json({
+        success: false,
+        error: `No hay estudiantes en el grupo ${grupo_anterior}`,
+      });
+    }
+
+    // Realizar la actualización masiva
     const [result] = await pool
       .promise()
       .query("UPDATE estudiantes SET grupo = ? WHERE grupo = ?", [
@@ -1410,17 +1446,58 @@ app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
         grupo_anterior,
       ]);
 
+    // Obtener los estudiantes actualizados
+    const [updatedStudents] = await pool
+      .promise()
+      .query(
+        "SELECT matricula, nombre, grupo FROM estudiantes WHERE grupo = ?",
+        [grupo_nuevo]
+      );
+
     res.json({
       success: true,
       message: `Grupo actualizado de ${grupo_anterior} a ${grupo_nuevo}`,
       affected: result.affectedRows,
+      estudiantes_actualizados: updatedStudents,
     });
+
+    console.log(
+      `Actualización completada: ${result.affectedRows} estudiantes actualizados`
+    );
   } catch (error) {
     console.error("Error en actualización masiva:", error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      error: "Error al actualizar grupos",
+      detalles: error.message,
+    });
   }
 });
+// Obtener estudiantes por grupo específico
+app.get("/api/estudiantes/grupo/:grupo", async (req, res) => {
+  try {
+    const { grupo } = req.params;
 
+    const [rows] = await pool
+      .promise()
+      .query("SELECT * FROM estudiantes WHERE grupo = ? ORDER BY nombre", [
+        grupo,
+      ]);
+
+    res.json({
+      success: true,
+      count: rows.length,
+      grupo: grupo,
+      data: rows,
+    });
+  } catch (error) {
+    console.error("Error al obtener estudiantes por grupo:", error);
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener estudiantes",
+    });
+  }
+});
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

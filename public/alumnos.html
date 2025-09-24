@@ -425,6 +425,36 @@
           box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
         }
       }
+      /* Agrega estos estilos al CSS existente */
+      .preview-modal {
+        background-color: white;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        max-width: 500px;
+        margin: 20px auto;
+        box-shadow: var(--box-shadow);
+      }
+
+      .student-list {
+        max-height: 200px;
+        overflow-y: auto;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: var(--border-radius);
+      }
+
+      .student-item {
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .confirmation-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 15px;
+      }
     </style>
   </head>
   <body>
@@ -685,30 +715,175 @@
         }
 
         // Editar grupo actual
-        function editCurrentGroup() {
+        // Editar grupo actual - VERSIÓN MEJORADA
+        // Editar grupo actual - VERSIÓN FINAL CON PREVISUALIZACIÓN
+        // Editar grupo actual - CON MODAL PERSONALIZADO
+        async function editCurrentGroup() {
           if (!selectedGroup) {
             showAlert("Primero selecciona un grupo", "warning");
             return;
           }
 
           const newGroupName = prompt("Nuevo nombre del grupo:", selectedGroup);
-          if (newGroupName && newGroupName.trim() !== "") {
-            const index = grupos.indexOf(selectedGroup);
-            if (index !== -1) {
-              grupos[index] = newGroupName.trim();
-              saveGrupos();
-              selectedGroup = newGroupName.trim();
-              currentGroupSpan.textContent = selectedGroup;
-              grupoInput.value = selectedGroup;
-              renderGroupButtons();
-              showAlert(`Grupo actualizado a ${selectedGroup}`, "success");
+          if (
+            newGroupName &&
+            newGroupName.trim() !== "" &&
+            newGroupName.trim() !== selectedGroup
+          ) {
+            const oldGroup = selectedGroup;
+            const newGroup = newGroupName.trim();
 
-              // Actualizar estudiantes con el grupo anterior
-              updateStudentsGroup(selectedGroup, newGroupName.trim());
+            // Obtener estudiantes afectados
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/estudiantes/grupo/${oldGroup}`
+              );
+              const data = await response.json();
+
+              if (data.success && data.count > 0) {
+                const studentList = data.data
+                  .map(
+                    (student) =>
+                      `<div class="student-item">${student.matricula} - ${student.nombre}</div>`
+                  )
+                  .join("");
+
+                const message = `
+          <p>Se actualizarán <strong>${data.count} estudiantes</strong> del grupo <strong>"${oldGroup}"</strong> a <strong>"${newGroup}"</strong>:</p>
+          <div class="student-list">${studentList}</div>
+        `;
+
+                showConfirmationModal(
+                  message,
+                  () => updateGroupForAllStudents(oldGroup, newGroup),
+                  () => showAlert("Actualización cancelada", "warning")
+                );
+              } else {
+                // No hay estudiantes en el grupo, solo cambiar el nombre
+                updateGroupNameOnly(oldGroup, newGroup);
+              }
+            } catch (error) {
+              console.error("Error al obtener estudiantes:", error);
+              // Continuar sin previsualización si hay error
+              if (confirm(`¿Actualizar grupo "${oldGroup}" a "${newGroup}"?`)) {
+                updateGroupForAllStudents(oldGroup, newGroup);
+              }
             }
+          } else if (newGroupName && newGroupName.trim() === selectedGroup) {
+            showAlert("El nuevo nombre es igual al actual", "warning");
           }
         }
 
+        // Actualizar solo el nombre del grupo (cuando no hay estudiantes)
+        function updateGroupNameOnly(oldGroup, newGroup) {
+          const index = grupos.indexOf(oldGroup);
+          if (index !== -1) {
+            grupos[index] = newGroup;
+            saveGrupos();
+            selectedGroup = newGroup;
+            currentGroupSpan.textContent = newGroup;
+            grupoInput.value = newGroup;
+            renderGroupButtons();
+            showAlert(
+              `Nombre del grupo actualizado a "${newGroup}"`,
+              "success"
+            );
+          }
+        }
+
+        // Mostrar modal de confirmación personalizado
+        function showConfirmationModal(message, onConfirm, onCancel) {
+          const modal = document.createElement("div");
+          modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
+
+          modal.innerHTML = `
+    <div class="preview-modal">
+      <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Actualización</h3>
+      <div class="student-list">${message}</div>
+      <div class="confirmation-buttons">
+        <button class="btn btn-secondary" id="cancel-btn">Cancelar</button>
+        <button class="btn btn-primary" id="confirm-btn">Confirmar</button>
+      </div>
+    </div>
+  `;
+
+          document.body.appendChild(modal);
+
+          document.getElementById("confirm-btn").onclick = () => {
+            document.body.removeChild(modal);
+            onConfirm();
+          };
+
+          document.getElementById("cancel-btn").onclick = () => {
+            document.body.removeChild(modal);
+            if (onCancel) onCancel();
+          };
+        }
+        // Actualizar grupo para todos los estudiantes
+        async function updateGroupForAllStudents(oldGroup, newGroup) {
+          try {
+            showAlert(
+              `Actualizando estudiantes del grupo ${oldGroup}...`,
+              "warning"
+            );
+
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/masivo`,
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  grupo_anterior: oldGroup,
+                  grupo_nuevo: newGroup,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Error al actualizar grupo");
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+              // Actualizar la interfaz
+              selectedGroup = newGroup;
+              currentGroupSpan.textContent = newGroup;
+              grupoInput.value = newGroup;
+
+              // Actualizar el grupo en la lista de grupos
+              const index = grupos.indexOf(oldGroup);
+              if (index !== -1) {
+                grupos[index] = newGroup;
+                saveGrupos();
+                renderGroupButtons();
+              }
+
+              showAlert(
+                `Grupo actualizado: ${result.affected || result.message}`,
+                "success"
+              );
+              loadStudents(); // Recargar la tabla
+            } else {
+              throw new Error(result.error || "Error al actualizar grupo");
+            }
+          } catch (error) {
+            console.error("Error al actualizar grupo:", error);
+            showAlert(`Error al actualizar grupo: ${error.message}`, "danger");
+          }
+        }
         // Actualizar grupo de estudiantes en la base de datos (actualización masiva)
         async function updateStudentsGroup(oldGroup, newGroup) {
           try {
@@ -1217,6 +1392,30 @@
             }
           }
         };
+
+        // Previsualizar qué estudiantes serán afectados
+        async function previewGroupUpdate(oldGroup, newGroup) {
+          try {
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/${oldGroup}`
+            );
+            const data = await response.json();
+
+            if (data.success && data.count > 0) {
+              const studentList = data.data
+                .map((student) => `• ${student.matricula} - ${student.nombre}`)
+                .join("\n");
+
+              return confirm(
+                `Se actualizarán ${data.count} estudiantes del grupo "${oldGroup}" a "${newGroup}":\n\n${studentList}\n\n¿Continuar?`
+              );
+            }
+            return true;
+          } catch (error) {
+            console.error("Error al previsualizar:", error);
+            return true; // Continuar sin previsualización si hay error
+          }
+        }
 
         // Inicializar la aplicación
         init();

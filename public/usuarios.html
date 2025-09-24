@@ -703,17 +703,14 @@
       }
 
       function deleteUser(userId) {
-        if (!confirm("¿Está seguro de que desea eliminar este usuario?")) {
-          return;
-        }
-
-        // Si estamos en modo demo
-        if (demoMode) {
-          users = users.filter((user) => user.idusuario !== userId);
-          renderUsers(users);
-          showAlert("Usuario eliminado correctamente (modo demo)", "success");
-          return;
-        }
+        if (!confirm("¿Está seguro de que desea eliminar este usuario?"))
+          if (demoMode) {
+            // Si estamos en modo demo
+            users = users.filter((user) => user.idusuario !== userId);
+            renderUsers(users);
+            showAlert("Usuario eliminado correctamente (modo demo)", "success");
+            return;
+          }
 
         // Conexión real a la API LOCAL
         fetch(
