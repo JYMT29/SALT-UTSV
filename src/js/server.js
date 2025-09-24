@@ -1371,9 +1371,133 @@ app.put("/api/solicitudes/:id", async (req, res) => {
     });
   }
 });
+// -------------------- ENDPOINTS PARA ESTUDIANTES CON GRUPOS --------------------
 
-// Actualizar grupo de estudiantes
-app.put("/api/estudiantes/grupo", async (req, res) => {
+// Obtener estudiantes (con filtro por grupo)
+app.get("/api/estudiantes", async (req, res) => {
+  try {
+    const { grupo } = req.query;
+    let query = "SELECT * FROM estudiantes";
+    let params = [];
+
+    if (grupo && grupo !== "todos") {
+      query += " WHERE grupo = ?";
+      params.push(grupo);
+    }
+
+    query += " ORDER BY matricula";
+
+    const [rows] = await pool.promise().query(query, params);
+
+    res.json({
+      success: true,
+      count: rows.length,
+      data: rows,
+    });
+  } catch (error) {
+    console.error("Error al obtener estudiantes:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Registrar nuevo estudiante
+app.post("/api/estudiantes", async (req, res) => {
+  try {
+    const { matricula, nombre, carrera, grupo } = req.body;
+
+    // Verificar si el estudiante ya existe
+    const [existing] = await pool
+      .promise()
+      .query("SELECT * FROM estudiantes WHERE matricula = ?", [matricula]);
+
+    if (existing.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: "La matrícula ya está registrada",
+      });
+    }
+
+    // Insertar nuevo estudiante
+    const [result] = await pool
+      .promise()
+      .query(
+        "INSERT INTO estudiantes (matricula, nombre, carrera, grupo) VALUES (?, ?, ?, ?)",
+        [matricula, nombre, carrera, grupo || null]
+      );
+
+    res.json({
+      success: true,
+      message: "Estudiante registrado correctamente",
+      id: result.insertId,
+    });
+  } catch (error) {
+    console.error("Error al registrar estudiante:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Actualizar grupo de un estudiante específico
+app.put("/api/estudiantes/:matricula", async (req, res) => {
+  try {
+    const { matricula } = req.params;
+    const { grupo } = req.body;
+
+    console.log("Actualizando estudiante:", matricula, "Nuevo grupo:", grupo);
+
+    const [result] = await pool
+      .promise()
+      .query("UPDATE estudiantes SET grupo = ? WHERE matricula = ?", [
+        grupo,
+        matricula,
+      ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        error: "Estudiante no encontrado",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Grupo del estudiante actualizado correctamente",
+    });
+  } catch (error) {
+    console.error("Error al actualizar estudiante:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Eliminar estudiante
+app.delete("/api/estudiantes/:matricula", async (req, res) => {
+  try {
+    const { matricula } = req.params;
+
+    console.log("Eliminando estudiante:", matricula);
+
+    const [result] = await pool
+      .promise()
+      .query("DELETE FROM estudiantes WHERE matricula = ?", [matricula]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        error: "Estudiante no encontrado",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Estudiante eliminado correctamente",
+    });
+  } catch (error) {
+    console.error("Error al eliminar estudiante:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Actualización masiva de grupos (opcional)
+app.put("/api/estudiantes/grupo/masivo", async (req, res) => {
   try {
     const { grupo_anterior, grupo_nuevo } = req.body;
 
@@ -1390,57 +1514,7 @@ app.put("/api/estudiantes/grupo", async (req, res) => {
       affected: result.affectedRows,
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Filtrar estudiantes por grupo
-app.get("/api/estudiantes", async (req, res) => {
-  try {
-    const { grupo } = req.query;
-    let query = "SELECT * FROM estudiantes";
-    let params = [];
-
-    if (grupo) {
-      query += " WHERE grupo = ?";
-      params.push(grupo);
-    }
-
-    query += " ORDER BY matricula";
-
-    const [rows] = await pool.promise().query(query, params);
-
-    res.json({
-      success: true,
-      count: rows.length,
-      data: rows,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Actualizar estudiante individual
-app.put("/api/estudiantes/:matricula", async (req, res) => {
-  try {
-    const { matricula } = req.params;
-    const { grupo } = req.body;
-
-    const [result] = await pool
-      .promise()
-      .query("UPDATE estudiantes SET grupo = ? WHERE matricula = ?", [
-        grupo,
-        matricula,
-      ]);
-
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Estudiante no encontrado" });
-    }
-
-    res.json({ success: true, message: "Estudiante actualizado" });
-  } catch (error) {
+    console.error("Error en actualización masiva:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

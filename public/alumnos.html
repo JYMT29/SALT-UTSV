@@ -709,23 +709,35 @@
           }
         }
 
-        // Actualizar grupo de estudiantes en la base de datos
+        // Actualizar grupo de estudiantes en la base de datos (actualización masiva)
         async function updateStudentsGroup(oldGroup, newGroup) {
           try {
-            const response = await fetch(`${API_BASE_URL}/estudiantes/grupo`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                grupo_anterior: oldGroup,
-                grupo_nuevo: newGroup,
-              }),
-            });
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/masivo`,
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  grupo_anterior: oldGroup,
+                  grupo_nuevo: newGroup,
+                }),
+              }
+            );
 
             if (response.ok) {
+              const result = await response.json();
+              showAlert(
+                `Grupo actualizado: ${result.affected} estudiantes modificados`,
+                "success"
+              );
               loadStudents(); // Recargar la tabla
+            } else {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Error al actualizar grupo");
             }
           } catch (error) {
             console.error("Error al actualizar grupo:", error);
+            showAlert(`Error al actualizar grupo: ${error.message}`, "danger");
           }
         }
 
@@ -747,15 +759,18 @@
         // Cargar estudiantes desde el backend
         async function loadStudents() {
           try {
-            const url = filteredGroup
-              ? `${API_BASE_URL}/estudiantes?grupo=${filteredGroup}`
-              : `${API_BASE_URL}/estudiantes`;
+            let url = `${API_BASE_URL}/estudiantes`;
+
+            // Si hay un filtro activo, agregarlo al query
+            if (filteredGroup && filteredGroup !== "todos") {
+              url += `?grupo=${encodeURIComponent(filteredGroup)}`;
+            }
 
             const response = await fetch(url);
             if (!response.ok) {
               const errorData = await response.json();
               throw new Error(
-                errorData.message || "Error al cargar estudiantes"
+                errorData.error || `Error HTTP! estado: ${response.status}`
               );
             }
 
@@ -764,10 +779,10 @@
 
             if (!data.success || data.count === 0) {
               studentsTableBody.innerHTML = `
-                <tr>
-                  <td colspan="5" class="text-center">No hay alumnos registrados</td>
-                </tr>
-              `;
+          <tr>
+            <td colspan="5" class="text-center">No hay alumnos registrados</td>
+          </tr>
+        `;
               return;
             }
 
@@ -787,23 +802,23 @@
         function addStudentToTable(student) {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${student.matricula}</td>
-            <td>${student.nombre}</td>
-            <td>${student.carrera || ""}</td>
-            <td>${student.grupo || "Sin grupo"}</td>
-            <td>
-              <button class="btn btn-warning btn-sm" onclick="editStudent('${
-                student.matricula
-              }')">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
-                student.matricula
-              }')">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          `;
+      <td>${student.matricula}</td>
+      <td>${student.nombre}</td>
+      <td>${student.carrera || ""}</td>
+      <td>${student.grupo || "Sin grupo"}</td>
+      <td>
+        <button class="btn btn-warning btn-sm" onclick="editStudent('${
+          student.matricula
+        }')">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
+          student.matricula
+        }')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    `;
           studentsTableBody.appendChild(row);
         }
 
@@ -813,13 +828,17 @@
             filteredGroup = "";
             filterGroupBtn.innerHTML =
               '<i class="fas fa-filter"></i> Filtrar por Grupo';
+            filterGroupBtn.classList.remove("btn-primary");
             loadStudents();
             showAlert("Filtro removido", "success");
           } else {
-            const groupToFilter = prompt("Ingresa el grupo a filtrar:");
+            const groupToFilter = prompt(
+              "Ingresa el grupo a filtrar (o 'todos' para ver todos):"
+            );
             if (groupToFilter) {
               filteredGroup = groupToFilter.trim();
               filterGroupBtn.innerHTML = `<i class="fas fa-filter"></i> Filtrando: ${filteredGroup}`;
+              filterGroupBtn.classList.add("btn-primary");
               loadStudents();
               showAlert(`Filtrando por grupo: ${filteredGroup}`, "success");
             }
@@ -841,10 +860,7 @@
           }
         }
 
-        // Las demás funciones permanecen igual (processQRCode, actualizarFormulario, etc.)
-        // ... [Aquí van todas las funciones existentes como processQRCode, handleQRInput, etc.]
-
-        // Función para procesar el código QR (mantener igual)
+        // Función para procesar el código QR
         function processQRCode(qrData) {
           try {
             console.log("Datos QR recibidos:", qrData);
@@ -1015,9 +1031,12 @@
         // Función para exportar a JSON
         async function exportToJSON() {
           try {
-            const url = filteredGroup
-              ? `${API_BASE_URL}/estudiantes?grupo=${filteredGroup}`
-              : `${API_BASE_URL}/estudiantes`;
+            let url = `${API_BASE_URL}/estudiantes`;
+
+            // Si hay un filtro activo, agregarlo al query
+            if (filteredGroup && filteredGroup !== "todos") {
+              url += `?grupo=${encodeURIComponent(filteredGroup)}`;
+            }
 
             const response = await fetch(url);
             const data = await response.json();
@@ -1121,12 +1140,25 @@
                 }
               );
 
-              if (response.ok) {
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Error al actualizar grupo");
+              }
+
+              const result = await response.json();
+
+              if (result.success) {
                 showAlert("Grupo actualizado correctamente", "success");
                 loadStudents();
+              } else {
+                throw new Error(result.error || "Error al actualizar grupo");
               }
             } catch (error) {
-              showAlert("Error al actualizar grupo", "danger");
+              console.error("Error al actualizar estudiante:", error);
+              showAlert(
+                `Error al actualizar grupo: ${error.message}`,
+                "danger"
+              );
             }
           }
         };
@@ -1141,12 +1173,27 @@
                 }
               );
 
-              if (response.ok) {
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(
+                  errorData.error || "Error al eliminar estudiante"
+                );
+              }
+
+              const result = await response.json();
+
+              if (result.success) {
                 showAlert("Estudiante eliminado correctamente", "success");
                 loadStudents();
+              } else {
+                throw new Error(result.error || "Error al eliminar estudiante");
               }
             } catch (error) {
-              showAlert("Error al eliminar estudiante", "danger");
+              console.error("Error al eliminar estudiante:", error);
+              showAlert(
+                `Error al eliminar estudiante: ${error.message}`,
+                "danger"
+              );
             }
           }
         };
