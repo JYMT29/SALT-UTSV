@@ -1,11 +1,11 @@
-ç<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro de Alumnos | Sistema Educativo</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -14,17 +14,20 @@
     />
     <style>
       :root {
-        --primary-color: #3498db;
-        --secondary-color: #2980b9;
-        --success-color: #2ecc71;
-        --danger-color: #e74c3c;
-        --warning-color: #f39c12;
-        --light-color: #ecf0f1;
-        --dark-color: #2c3e50;
-        --gray-color: #95a5a6;
+        --primary-color: #4361ee;
+        --secondary-color: #3a0ca3;
+        --success-color: #4cc9f0;
+        --info-color: #4895ef;
+        --warning-color: #f72585;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --gray-color: #6c757d;
         --border-radius: 12px;
-        --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        --transition: all 0.3s ease;
+        --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        --gradient-primary: linear-gradient(135deg, #4361ee, #3a0ca3);
+        --gradient-success: linear-gradient(135deg, #4cc9f0, #4895ef);
+        --gradient-warning: linear-gradient(135deg, #f72585, #b5179e);
       }
 
       * {
@@ -34,26 +37,39 @@
       }
 
       body {
-        font-family: "Roboto", sans-serif;
+        font-family: "Poppins", sans-serif;
         line-height: 1.6;
         color: #333;
         background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         min-height: 100vh;
+        padding: 20px;
       }
 
       .container {
         max-width: 1400px;
         margin: 0 auto;
-        padding: 20px;
       }
 
       header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--gradient-primary);
         box-shadow: var(--box-shadow);
         padding: 20px 0;
         margin-bottom: 30px;
         border-radius: var(--border-radius);
         color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
       }
 
       .header-content {
@@ -61,6 +77,8 @@
         justify-content: space-between;
         align-items: center;
         padding: 0 30px;
+        position: relative;
+        z-index: 1;
       }
 
       .logo {
@@ -71,13 +89,17 @@
 
       .logo i {
         color: #ffd700;
-        font-size: 28px;
+        font-size: 32px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px;
+        border-radius: 50%;
       }
 
       .logo h1 {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: 700;
         color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .user-info {
@@ -85,13 +107,15 @@
         align-items: center;
         gap: 12px;
         background: rgba(255, 255, 255, 0.2);
-        padding: 8px 15px;
-        border-radius: 25px;
+        padding: 10px 20px;
+        border-radius: 30px;
         backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
 
       .user-info i {
         color: #ffd700;
+        font-size: 20px;
       }
 
       .main-content {
@@ -106,8 +130,25 @@
         box-shadow: var(--box-shadow);
         padding: 25px;
         margin-bottom: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
+        transition: var(--transition);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--gradient-primary);
       }
 
       .card-header {
@@ -116,7 +157,7 @@
         align-items: center;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
       }
 
       .card-title {
@@ -128,19 +169,30 @@
         gap: 10px;
       }
 
+      .card-title i {
+        color: var(--primary-color);
+        font-size: 24px;
+      }
+
       .scanner-container {
         position: relative;
         width: 100%;
         margin-bottom: 20px;
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: var(--border-radius);
-        padding: 30px;
+        padding: 40px 30px;
         text-align: center;
         border: 2px dashed var(--primary-color);
+        transition: var(--transition);
+      }
+
+      .scanner-container:hover {
+        border-color: var(--secondary-color);
+        background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
       }
 
       .scanner-icon {
-        font-size: 60px;
+        font-size: 70px;
         color: var(--primary-color);
         margin-bottom: 15px;
         animation: float 3s ease-in-out infinite;
@@ -172,7 +224,7 @@
       .btn {
         padding: 12px 24px;
         border: none;
-        border-radius: 25px;
+        border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
         transition: var(--transition);
@@ -182,65 +234,96 @@
         font-size: 14px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+      }
+
+      .btn:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: scale(0, 0);
+          opacity: 1;
+        }
+        20% {
+          transform: scale(60, 60);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(100, 100);
+          opacity: 0;
+        }
       }
 
       .btn-primary {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
+        background: var(--gradient-primary);
         color: white;
-        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
       }
 
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
       }
 
       .btn-success {
-        background: linear-gradient(135deg, var(--success-color), #27ae60);
+        background: var(--gradient-success);
         color: white;
-        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        box-shadow: 0 4px 15px rgba(76, 201, 240, 0.3);
       }
 
       .btn-success:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        box-shadow: 0 6px 20px rgba(76, 201, 240, 0.4);
       }
 
       .btn-danger {
-        background: linear-gradient(135deg, var(--danger-color), #c0392b);
+        background: var(--gradient-warning);
         color: white;
-        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
       }
 
       .btn-danger:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
       }
 
       .btn-secondary {
-        background: linear-gradient(135deg, var(--gray-color), #7f8c8d);
+        background: linear-gradient(135deg, var(--gray-color), #5a6268);
         color: white;
-        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
       }
 
       .btn-secondary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
       }
 
       .btn-warning {
-        background: linear-gradient(135deg, var(--warning-color), #e67e22);
+        background: linear-gradient(135deg, #ff9a00, #ff6a00);
         color: white;
-        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        box-shadow: 0 4px 15px rgba(255, 154, 0, 0.3);
       }
 
       .btn-warning:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        box-shadow: 0 6px 20px rgba(255, 154, 0, 0.4);
       }
 
       .btn:disabled {
@@ -252,6 +335,7 @@
 
       .form-group {
         margin-bottom: 25px;
+        position: relative;
       }
 
       .form-label {
@@ -268,16 +352,17 @@
         width: 100%;
         padding: 15px 20px;
         border: 2px solid #e0e0e0;
-        border-radius: 12px;
+        border-radius: 8px;
         font-size: 16px;
         transition: var(--transition);
         background: #fafafa;
+        font-family: "Poppins", sans-serif;
       }
 
       .form-control:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
         background: white;
       }
 
@@ -294,6 +379,27 @@
         display: none;
         border-left: 5px solid;
         animation: slideIn 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .alert::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        z-index: 0;
+      }
+
+      .alert-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 15px;
       }
 
       @keyframes slideIn {
@@ -316,13 +422,13 @@
       .alert-danger {
         background-color: #f8d7da;
         color: #721c24;
-        border-left-color: var(--danger-color);
+        border-left-color: var(--warning-color);
       }
 
       .alert-warning {
         background-color: #fff3cd;
         color: #856404;
-        border-left-color: var(--warning-color);
+        border-left-color: #ffc107;
       }
 
       table {
@@ -332,7 +438,7 @@
         background: white;
         border-radius: var(--border-radius);
         overflow: hidden;
-        box-shadow: var(--box-shadow);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
       }
 
       th,
@@ -343,22 +449,23 @@
       }
 
       th {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
+        background: var(--gradient-primary);
         color: white;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-size: 14px;
+        position: sticky;
+        top: 0;
+      }
+
+      tr {
+        transition: var(--transition);
       }
 
       tr:hover {
         background-color: #f8f9fa;
         transform: scale(1.01);
-        transition: var(--transition);
       }
 
       .badge {
@@ -392,12 +499,12 @@
 
       /* ESTILOS MEJORADOS PARA GESTIÓN DE GRUPOS */
       .group-selector {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 20px;
+        background: var(--gradient-primary);
+        border-radius: var(--border-radius);
         padding: 30px;
         margin-bottom: 30px;
         color: white;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--box-shadow);
         position: relative;
         overflow: hidden;
       }
@@ -444,7 +551,7 @@
 
       .group-card {
         background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
+        border-radius: 12px;
         padding: 20px;
         color: #333;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -554,7 +661,7 @@
       /* Input personalizado mejorado */
       .custom-group-container {
         background: rgba(255, 255, 255, 0.15);
-        border-radius: 15px;
+        border-radius: 12px;
         padding: 20px;
         margin-top: 25px;
         backdrop-filter: blur(10px);
@@ -571,16 +678,17 @@
         flex: 1;
         background: rgba(255, 255, 255, 0.95);
         border: none;
-        border-radius: 25px;
+        border-radius: 8px;
         padding: 15px 25px;
         font-size: 16px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        font-family: "Poppins", sans-serif;
       }
 
       .custom-group-input button {
         background: linear-gradient(135deg, #ff6b6b, #ee5a24);
         border: none;
-        border-radius: 25px;
+        border-radius: 8px;
         padding: 15px 30px;
         color: white;
         font-weight: 600;
@@ -588,6 +696,7 @@
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         white-space: nowrap;
+        font-family: "Poppins", sans-serif;
       }
 
       .custom-group-input button:hover {
@@ -598,7 +707,7 @@
       /* Grupo actual seleccionado */
       .current-group-display {
         background: rgba(255, 255, 255, 0.2);
-        border-radius: 15px;
+        border-radius: 12px;
         padding: 20px;
         margin-top: 20px;
         display: flex;
@@ -645,7 +754,7 @@
       .manage-btn {
         background: linear-gradient(135deg, #ffa726, #fb8c00);
         border: none;
-        border-radius: 25px;
+        border-radius: 8px;
         padding: 12px 25px;
         color: white;
         cursor: pointer;
@@ -658,6 +767,7 @@
         flex: 1;
         min-width: 200px;
         justify-content: center;
+        font-family: "Poppins", sans-serif;
       }
 
       .cleanup-btn:hover,
@@ -702,12 +812,24 @@
 
       .modal-content {
         background: white;
-        border-radius: 25px;
+        border-radius: 20px;
         padding: 40px;
         max-width: 500px;
         width: 90%;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
         animation: modalAppear 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .modal-content::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--gradient-primary);
       }
 
       @keyframes modalAppear {
@@ -755,13 +877,14 @@
       .modal-btn {
         padding: 12px 30px;
         border: none;
-        border-radius: 25px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
         transition: all 0.3s ease;
         font-size: 14px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-family: "Poppins", sans-serif;
       }
 
       .modal-btn-cancel {
@@ -776,7 +899,7 @@
       }
 
       .modal-btn-confirm {
-        background: linear-gradient(135deg, #f44336, #d32f2f);
+        background: var(--gradient-warning);
         color: white;
         box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
       }
@@ -876,23 +999,65 @@
         font-size: 1.1rem;
         margin-bottom: 10px;
       }
+
+      /* Mejoras adicionales */
+      .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-active {
+        background-color: var(--success-color);
+      }
+
+      .status-inactive {
+        background-color: var(--gray-color);
+      }
+
+      .table-container {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: var(--border-radius);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb:hover {
+        background: var(--secondary-color);
+      }
     </style>
   </head>
   <body>
-    <header>
-      <div class="header-content">
-        <div class="logo">
-          <i class="fas fa-graduation-cap"></i>
-          <h1>Registro de Alumnos</h1>
-        </div>
-        <div class="user-info">
-          <i class="fas fa-user-circle"></i>
-          <span id="username">Administrador</span>
-        </div>
-      </div>
-    </header>
-
     <div class="container">
+      <header>
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>Registro de Alumnos</h1>
+          </div>
+          <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <span id="username">Administrador</span>
+          </div>
+        </div>
+      </header>
+
       <!-- Selector de Grupo Mejorado -->
       <div class="group-selector">
         <h3><i class="fas fa-users"></i> Gestión de Grupos</h3>
@@ -977,8 +1142,13 @@
             </div>
 
             <div id="qr-result" class="alert alert-success" role="alert">
-              <i class="fas fa-check-circle"></i> Código QR leído correctamente.
-              Verifica los datos antes de registrar.
+              <div class="alert-content">
+                <i class="fas fa-check-circle"></i>
+                <span
+                  >Código QR leído correctamente. Verifica los datos antes de
+                  registrar.</span
+                >
+              </div>
             </div>
           </div>
 
@@ -1038,7 +1208,7 @@
               </div>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-container">
               <table>
                 <thead>
                   <tr>
@@ -1133,11 +1303,11 @@
 
           if (gruposOrdenados.length === 0) {
             groupsGrid.innerHTML = `
-              <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: rgba(255,255,255,0.7);">
-                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                <p>No hay grupos creados</p>
-              </div>
-            `;
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: rgba(255,255,255,0.7);">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                            <p>No hay grupos creados</p>
+                        </div>
+                    `;
             return;
           }
 
@@ -1150,22 +1320,22 @@
             const stats = await getGroupStats(grupo);
 
             groupCard.innerHTML = `
-              <div class="group-card-header">
-                <span class="group-name">${grupo}</span>
-                <div class="group-actions">
-                  <button class="group-action-btn group-edit-btn" title="Editar grupo">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="group-action-btn group-delete-btn" title="Eliminar grupo">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="group-stats">
-                <span>${stats} estudiantes</span>
-                <span><i class="fas fa-users"></i></span>
-              </div>
-            `;
+                        <div class="group-card-header">
+                            <span class="group-name">${grupo}</span>
+                            <div class="group-actions">
+                                <button class="group-action-btn group-edit-btn" title="Editar grupo">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="group-action-btn group-delete-btn" title="Eliminar grupo">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="group-stats">
+                            <span>${stats} estudiantes</span>
+                            <span><i class="fas fa-users"></i></span>
+                        </div>
+                    `;
 
             groupCard.addEventListener("click", (e) => {
               if (!e.target.closest(".group-actions")) {
@@ -1324,21 +1494,21 @@
           const modal = document.createElement("div");
           modal.className = "confirmation-modal";
           modal.innerHTML = `
-            <div class="modal-content">
-              <div class="modal-header">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3 class="modal-title">Eliminar Grupo</h3>
-              </div>
-              <div class="modal-body">
-                <p>¿Estás seguro de que quieres eliminar el grupo <strong>"${grupo}"</strong>?</p>
-                <p><small>Esta acción afectará a los estudiantes asignados a este grupo.</small></p>
-              </div>
-              <div class="modal-actions">
-                <button class="modal-btn modal-btn-cancel" id="cancel-delete">Cancelar</button>
-                <button class="modal-btn modal-btn-confirm" id="confirm-delete">Eliminar</button>
-              </div>
-            </div>
-          `;
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3 class="modal-title">Eliminar Grupo</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Estás seguro de que quieres eliminar el grupo <strong>"${grupo}"</strong>?</p>
+                            <p><small>Esta acción afectará a los estudiantes asignados a este grupo.</small></p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="modal-btn modal-btn-cancel" id="cancel-delete">Cancelar</button>
+                            <button class="modal-btn modal-btn-confirm" id="confirm-delete">Eliminar</button>
+                        </div>
+                    </div>
+                `;
 
           document.body.appendChild(modal);
 
@@ -1490,26 +1660,28 @@
           const modal = document.createElement("div");
           modal.className = "confirmation-modal";
           modal.innerHTML = `
-            <div class="modal-content">
-              <div class="modal-header">
-                <i class="fas fa-broom"></i>
-                <h3 class="modal-title">Limpiar Grupos Duplicados</h3>
-              </div>
-              <div class="modal-body">
-                <p>Se encontraron <strong>${
-                  duplicados.length
-                }</strong> grupos duplicados:</p>
-                <div style="max-height: 150px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                  ${duplicados.map((grupo) => `<div>• ${grupo}</div>`).join("")}
-                </div>
-                <p>¿Quieres eliminarlos automáticamente?</p>
-              </div>
-              <div class="modal-actions">
-                <button class="modal-btn modal-btn-cancel" id="cancel-cleanup">Cancelar</button>
-                <button class="modal-btn modal-btn-confirm" id="confirm-cleanup">Limpiar</button>
-              </div>
-            </div>
-          `;
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <i class="fas fa-broom"></i>
+                            <h3 class="modal-title">Limpiar Grupos Duplicados</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>Se encontraron <strong>${
+                              duplicados.length
+                            }</strong> grupos duplicados:</p>
+                            <div style="max-height: 150px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                ${duplicados
+                                  .map((grupo) => `<div>• ${grupo}</div>`)
+                                  .join("")}
+                            </div>
+                            <p>¿Quieres eliminarlos automáticamente?</p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="modal-btn modal-btn-cancel" id="cancel-cleanup">Cancelar</button>
+                            <button class="modal-btn modal-btn-confirm" id="confirm-cleanup">Limpiar</button>
+                        </div>
+                    </div>
+                `;
 
           document.body.appendChild(modal);
 
@@ -1540,27 +1712,27 @@
           const modal = document.createElement("div");
           modal.className = "confirmation-modal";
           modal.innerHTML = `
-            <div class="modal-content">
-              <div class="modal-header">
-                <i class="fas fa-cog"></i>
-                <h3 class="modal-title">Gestión Avanzada de Grupos</h3>
-              </div>
-              <div class="modal-body">
-                <p>Opciones de gestión para todos los grupos:</p>
-                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
-                  <button class="modal-btn" style="background: #4CAF50; color: white;" id="merge-groups-btn">
-                    <i class="fas fa-object-group"></i> Unificar Grupos Similares
-                  </button>
-                  <button class="modal-btn" style="background: #FF9800; color: white;" id="export-groups-btn">
-                    <i class="fas fa-file-export"></i> Exportar Lista de Grupos
-                  </button>
-                </div>
-              </div>
-              <div class="modal-actions">
-                <button class="modal-btn modal-btn-cancel" id="close-management">Cerrar</button>
-              </div>
-            </div>
-          `;
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <i class="fas fa-cog"></i>
+                            <h3 class="modal-title">Gestión Avanzada de Grupos</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>Opciones de gestión para todos los grupos:</p>
+                            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                                <button class="modal-btn" style="background: #4CAF50; color: white;" id="merge-groups-btn">
+                                    <i class="fas fa-object-group"></i> Unificar Grupos Similares
+                                </button>
+                                <button class="modal-btn" style="background: #FF9800; color: white;" id="export-groups-btn">
+                                    <i class="fas fa-file-export"></i> Exportar Lista de Grupos
+                                </button>
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="modal-btn modal-btn-cancel" id="close-management">Cerrar</button>
+                        </div>
+                    </div>
+                `;
 
           document.body.appendChild(modal);
 
@@ -1623,25 +1795,26 @@
         function addStudentToTable(student) {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${student.matricula}</td>
-            <td>${student.nombre}</td>
-            <td>${student.carrera || ""}</td>
-            <td>${
-              student.grupo || "<span style='color: #999;'>Sin grupo</span>"
-            }</td>
-            <td>
-              <button class="btn btn-warning btn-sm" onclick="editStudent('${
-                student.matricula
-              }')">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
-                student.matricula
-              }')">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          `;
+                    <td>${student.matricula}</td>
+                    <td>${student.nombre}</td>
+                    <td>${student.carrera || ""}</td>
+                    <td>${
+                      student.grupo ||
+                      '<span style="color: #999;">Sin grupo</span>'
+                    }</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editStudent('${
+                          student.matricula
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
+                          student.matricula
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
           studentsTableBody.appendChild(row);
         }
 
@@ -1725,9 +1898,14 @@
 
         function showAlert(message, type) {
           qrResult.className = `alert alert-${type}`;
-          qrResult.innerHTML = `<i class="fas fa-${
-            type === "success" ? "check" : "exclamation"
-          }-circle"></i> ${message}`;
+          qrResult.innerHTML = `
+                    <div class="alert-content">
+                        <i class="fas fa-${
+                          type === "success" ? "check" : "exclamation"
+                        }-circle"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
           qrResult.style.display = "block";
           setTimeout(() => {
             qrResult.style.display = "none";
