@@ -3,13 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistema de Pase de Lista</title>
+    <title>Sistema de Pase de Lista - Conectado</title>
     <style>
       :root {
         --primary-color: #3498db;
         --secondary-color: #2980b9;
         --success-color: #2ecc71;
         --danger-color: #e74c3c;
+        --warning-color: #f39c12;
         --light-color: #f8f9fa;
         --dark-color: #343a40;
         --gray-color: #6c757d;
@@ -178,7 +179,7 @@
 
       .late {
         background-color: #fef9e7;
-        color: #f39c12;
+        color: var(--warning-color);
       }
 
       .action-btn {
@@ -188,6 +189,7 @@
         cursor: pointer;
         font-weight: 600;
         transition: all 0.3s ease;
+        margin: 2px;
       }
 
       .present-btn {
@@ -201,7 +203,7 @@
       }
 
       .late-btn {
-        background-color: #f39c12;
+        background-color: var(--warning-color);
         color: white;
       }
 
@@ -242,6 +244,30 @@
         transform: translateY(-2px);
       }
 
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: var(--gray-color);
+      }
+
+      .error {
+        background-color: #fdedec;
+        color: var(--danger-color);
+        padding: 15px;
+        border-radius: var(--border-radius);
+        margin: 10px 0;
+        text-align: center;
+      }
+
+      .success {
+        background-color: #e8f7ef;
+        color: var(--success-color);
+        padding: 15px;
+        border-radius: var(--border-radius);
+        margin: 10px 0;
+        text-align: center;
+      }
+
       @media (max-width: 768px) {
         .dashboard {
           grid-template-columns: 1fr;
@@ -269,24 +295,25 @@
     <div class="container">
       <header>
         <h1>Sistema de Pase de Lista</h1>
-        <p class="subtitle">Registro de asistencia en tiempo real</p>
+        <p class="subtitle">
+          Registro de asistencia en tiempo real - Conectado a BD
+        </p>
       </header>
 
       <div class="dashboard">
         <div class="filters">
           <h2>Filtros</h2>
           <div class="filter-group">
-            <label for="group-select">Grupo</label>
+            <label for="group-select">Laboratorio</label>
             <select id="group-select">
-              <option value="all">Todos los grupos</option>
-              <option value="group1">Grupo A</option>
-              <option value="group2">Grupo B</option>
-              <option value="group3">Grupo C</option>
+              <option value="all">Todos los laboratorios</option>
+              <option value="lab1">Laboratorio 1</option>
+              <option value="lab2">Laboratorio 2</option>
             </select>
           </div>
           <div class="filter-group">
             <label for="date-select">Fecha</label>
-            <input type="date" id="date-select" value="2023-10-25" />
+            <input type="date" id="date-select" />
           </div>
           <div class="filter-group">
             <label for="status-select">Estado</label>
@@ -297,107 +324,145 @@
               <option value="late">Tardanza</option>
             </select>
           </div>
+          <button class="btn btn-primary" id="refresh-btn">
+            Actualizar Lista
+          </button>
         </div>
 
         <div class="stats">
           <div class="stat-card">
-            <div class="stat-value" id="total-students">25</div>
+            <div class="stat-value" id="total-students">0</div>
             <div class="stat-label">Total de estudiantes</div>
           </div>
           <div class="stat-card">
-            <div class="stat-value" id="present-students">20</div>
+            <div class="stat-value" id="present-students">0</div>
             <div class="stat-label">Presentes</div>
           </div>
           <div class="stat-card">
-            <div class="stat-value" id="absent-students">3</div>
+            <div class="stat-value" id="absent-students">0</div>
             <div class="stat-label">Ausentes</div>
           </div>
         </div>
       </div>
 
+      <div id="message-container"></div>
+
       <div class="attendance-list">
         <div class="list-header">
           <div>ID</div>
           <div>Nombre</div>
-          <div>Grupo</div>
+          <div>Laboratorio</div>
           <div>Estado</div>
           <div>Acciones</div>
         </div>
 
         <div id="students-container">
-          <!-- Los estudiantes se cargarán aquí dinámicamente -->
+          <div class="loading">Cargando estudiantes...</div>
         </div>
 
         <div class="controls">
-          <button class="btn btn-secondary" id="reset-btn">Reiniciar</button>
+          <button class="btn btn-secondary" id="reset-btn">
+            Reiniciar Asistencia
+          </button>
           <button class="btn btn-primary" id="save-btn">Guardar cambios</button>
         </div>
       </div>
     </div>
 
     <script>
-      // Datos de ejemplo
-      const students = [
-        {
-          id: 1,
-          name: "Ana García López",
-          group: "Grupo A",
-          status: "present",
-        },
-        {
-          id: 2,
-          name: "Carlos Rodríguez Méndez",
-          group: "Grupo A",
-          status: "present",
-        },
-        {
-          id: 3,
-          name: "María Fernández Silva",
-          group: "Grupo A",
-          status: "absent",
-        },
-        {
-          id: 4,
-          name: "Javier Martínez Ruiz",
-          group: "Grupo B",
-          status: "present",
-        },
-        {
-          id: 5,
-          name: "Laura González Pérez",
-          group: "Grupo B",
-          status: "late",
-        },
-        {
-          id: 6,
-          name: "Diego Hernández Castro",
-          group: "Grupo B",
-          status: "present",
-        },
-        {
-          id: 7,
-          name: "Sofía López Díaz",
-          group: "Grupo C",
-          status: "present",
-        },
-        {
-          id: 8,
-          name: "Pablo Sánchez Martín",
-          group: "Grupo C",
-          status: "absent",
-        },
-        {
-          id: 9,
-          name: "Elena Ramírez Navarro",
-          group: "Grupo C",
-          status: "present",
-        },
-      ];
+      // Configuración de la API
+      const API_BASE_URL = "http://localhost:3001";
+
+      // Estado global de la aplicación
+      let students = [];
+      let currentFilter = {
+        lab: "all",
+        date: new Date().toISOString().split("T")[0],
+        status: "all",
+      };
+
+      // Elementos del DOM
+      const studentsContainer = document.getElementById("students-container");
+      const totalStudentsEl = document.getElementById("total-students");
+      const presentStudentsEl = document.getElementById("present-students");
+      const absentStudentsEl = document.getElementById("absent-students");
+      const messageContainer = document.getElementById("message-container");
+      const dateSelect = document.getElementById("date-select");
+
+      // Establecer fecha actual por defecto
+      dateSelect.value = currentFilter.date;
+
+      // Función para mostrar mensajes
+      function showMessage(message, type = "error") {
+        messageContainer.innerHTML = `<div class="${type}">${message}</div>`;
+        setTimeout(() => {
+          messageContainer.innerHTML = "";
+        }, 5000);
+      }
+
+      // Función para obtener estudiantes desde la API
+      async function fetchStudents() {
+        try {
+          studentsContainer.innerHTML =
+            '<div class="loading">Cargando estudiantes...</div>';
+
+          const response = await fetch(`${API_BASE_URL}/api/estudiantes`);
+          const result = await response.json();
+
+          if (result.success) {
+            // Transformar datos para nuestro sistema de asistencia
+            students = result.data.map((student) => ({
+              id: student.id || student.matricula,
+              matricula: student.matricula,
+              name: student.nombre,
+              group: student.carrera || "Sin grupo",
+              status: "absent", // Por defecto ausente hasta que se marque presente
+            }));
+
+            renderStudents();
+          } else {
+            throw new Error(result.error || "Error al cargar estudiantes");
+          }
+        } catch (error) {
+          console.error("Error al obtener estudiantes:", error);
+          studentsContainer.innerHTML = `<div class="error">Error al cargar estudiantes: ${error.message}</div>`;
+        }
+      }
+
+      // Función para obtener asistencia del día actual
+      async function fetchAttendance() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/alumnos`);
+          const attendanceData = await response.json();
+
+          // Procesar datos de asistencia para hoy
+          const today = currentFilter.date;
+          const todayAttendance = attendanceData.filter((record) => {
+            const recordDate = record.fecha ? record.fecha.split(" ")[0] : null;
+            return recordDate === today;
+          });
+
+          // Actualizar estados de estudiantes basado en la asistencia
+          todayAttendance.forEach((record) => {
+            const student = students.find(
+              (s) => s.matricula === record.matricula
+            );
+            if (student) {
+              // Si el estudiante tiene registro hoy, marcamos como presente
+              student.status = "present";
+            }
+          });
+
+          renderStudents();
+        } catch (error) {
+          console.error("Error al obtener asistencia:", error);
+          // Continuamos sin datos de asistencia
+        }
+      }
 
       // Función para renderizar la lista de estudiantes
       function renderStudents() {
-        const container = document.getElementById("students-container");
-        container.innerHTML = "";
+        studentsContainer.innerHTML = "";
 
         // Obtener valores de filtros
         const groupFilter = document.getElementById("group-select").value;
@@ -415,6 +480,12 @@
 
         // Actualizar estadísticas
         updateStats(filteredStudents);
+
+        if (filteredStudents.length === 0) {
+          studentsContainer.innerHTML =
+            '<div class="loading">No hay estudiantes que coincidan con los filtros</div>';
+          return;
+        }
 
         // Renderizar cada estudiante
         filteredStudents.forEach((student) => {
@@ -451,13 +522,13 @@
                     </div>
                 `;
 
-          container.appendChild(studentRow);
+          studentsContainer.appendChild(studentRow);
         });
 
         // Agregar event listeners a los botones
         document.querySelectorAll(".action-btn").forEach((button) => {
           button.addEventListener("click", function () {
-            const studentId = parseInt(this.getAttribute("data-id"));
+            const studentId = this.getAttribute("data-id");
             const newStatus = this.getAttribute("data-status");
             updateStudentStatus(studentId, newStatus);
           });
@@ -487,6 +558,72 @@
         document.getElementById("absent-students").textContent = absent;
       }
 
+      // Función para registrar asistencia en el sistema
+      async function registerAttendance() {
+        const today = currentFilter.date;
+        const presentStudents = students.filter(
+          (s) => s.status === "present" || s.status === "late"
+        );
+
+        if (presentStudents.length === 0) {
+          showMessage(
+            "No hay estudiantes marcados como presentes para registrar",
+            "error"
+          );
+          return;
+        }
+
+        try {
+          // Obtener información del horario actual
+          const labResponse = await fetch(
+            `${API_BASE_URL}/api/horario-actual?lab=lab1`
+          );
+          const labData = await labResponse.json();
+
+          const laboratorio = "lab1"; // Por defecto, se puede hacer seleccionable
+          const maestro = labData.horario
+            ? labData.horario.maestro
+            : "Sin maestro asignado";
+
+          // Registrar cada estudiante presente
+          const promises = presentStudents.map(async (student) => {
+            const attendanceData = {
+              matricula: student.matricula,
+              nombre: student.name,
+              carrera: student.group,
+              PC: "Sistema de Pase de Lista",
+              fecha: `${today} ${new Date().toTimeString().split(" ")[0]}`,
+              laboratorio: laboratorio,
+            };
+
+            const response = await fetch(
+              `${API_BASE_URL}/alumnos?lab=${laboratorio}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(attendanceData),
+              }
+            );
+
+            return response.json();
+          });
+
+          await Promise.all(promises);
+          showMessage(
+            `Asistencia registrada correctamente para ${presentStudents.length} estudiantes`,
+            "success"
+          );
+        } catch (error) {
+          console.error("Error al registrar asistencia:", error);
+          showMessage(
+            "Error al registrar la asistencia: " + error.message,
+            "error"
+          );
+        }
+      }
+
       // Función para reiniciar todos los estados a "ausente"
       function resetAllStatus() {
         if (
@@ -498,19 +635,20 @@
             student.status = "absent";
           });
           renderStudents();
+          showMessage(
+            'Todos los estados han sido reiniciados a "ausente"',
+            "success"
+          );
         }
-      }
-
-      // Función para guardar cambios (simulación)
-      function saveChanges() {
-        // En una aplicación real, aquí enviaríamos los datos al servidor
-        alert("Cambios guardados correctamente");
       }
 
       // Inicializar la aplicación
       document.addEventListener("DOMContentLoaded", function () {
-        // Renderizar estudiantes iniciales
-        renderStudents();
+        // Cargar estudiantes al iniciar
+        fetchStudents().then(() => {
+          // Una vez cargados los estudiantes, cargar la asistencia del día
+          fetchAttendance();
+        });
 
         // Agregar event listeners a los filtros
         document
@@ -519,14 +657,25 @@
         document
           .getElementById("status-select")
           .addEventListener("change", renderStudents);
+        document
+          .getElementById("date-select")
+          .addEventListener("change", function () {
+            currentFilter.date = this.value;
+            fetchAttendance();
+          });
 
         // Agregar event listeners a los botones de control
+        document
+          .getElementById("refresh-btn")
+          .addEventListener("click", function () {
+            fetchStudents().then(fetchAttendance);
+          });
         document
           .getElementById("reset-btn")
           .addEventListener("click", resetAllStatus);
         document
           .getElementById("save-btn")
-          .addEventListener("click", saveChanges);
+          .addEventListener("click", registerAttendance);
       });
     </script>
   </body>
