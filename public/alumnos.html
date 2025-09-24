@@ -18,6 +18,7 @@
         --secondary-color: #2980b9;
         --success-color: #2ecc71;
         --danger-color: #e74c3c;
+        --warning-color: #f39c12;
         --light-color: #ecf0f1;
         --dark-color: #2c3e50;
         --gray-color: #95a5a6;
@@ -191,6 +192,15 @@
         background-color: #7f8c8d;
       }
 
+      .btn-warning {
+        background-color: var(--warning-color);
+        color: white;
+      }
+
+      .btn-warning:hover {
+        background-color: #e67e22;
+      }
+
       .btn:disabled {
         background-color: #bdc3c7;
         cursor: not-allowed;
@@ -244,6 +254,12 @@
         background-color: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
       }
 
       table {
@@ -316,6 +332,57 @@
         text-align: center;
       }
 
+      .group-selector {
+        background-color: #e8f4fd;
+        border: 2px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .group-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .group-btn {
+        padding: 8px 16px;
+        border: 2px solid var(--primary-color);
+        background-color: white;
+        color: var(--primary-color);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .group-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .group-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .custom-group-input {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .edit-group-btn {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: var(--warning-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+      }
+
       @media (max-width: 768px) {
         .main-content {
           grid-template-columns: 1fr;
@@ -333,7 +400,12 @@
         .btn {
           flex: 1 1 100%;
         }
+
+        .group-buttons {
+          justify-content: center;
+        }
       }
+
       .btn-pulse {
         animation: pulse 1.5s infinite;
         box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
@@ -370,6 +442,47 @@
     </header>
 
     <div class="container">
+      <!-- Selector de Grupo -->
+      <div class="group-selector">
+        <h3><i class="fas fa-users"></i> Seleccionar Grupo</h3>
+        <p>
+          Selecciona el grupo al que pertenecerán los alumnos que registrarás:
+        </p>
+
+        <div class="group-buttons" id="group-buttons">
+          <!-- Los botones de grupos se generarán dinámicamente -->
+        </div>
+
+        <div class="custom-group-input">
+          <input
+            type="text"
+            id="custom-group"
+            class="form-control"
+            placeholder="Ej: 701, 702, 801..."
+            maxlength="10"
+          />
+          <button class="btn btn-primary" id="add-group-btn">
+            <i class="fas fa-plus"></i> Agregar Grupo
+          </button>
+        </div>
+
+        <div style="margin-top: 10px">
+          <strong>Grupo seleccionado:</strong>
+          <span
+            id="current-group"
+            style="color: var(--primary-color); font-weight: bold"
+            >Ninguno</span
+          >
+          <button
+            class="edit-group-btn"
+            id="edit-group-btn"
+            title="Editar grupo actual"
+          >
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+      </div>
+
       <div class="main-content">
         <div class="scanner-section">
           <div class="card">
@@ -425,6 +538,11 @@
               />
             </div>
 
+            <div class="form-group">
+              <label for="grupo" class="form-label">Grupo</label>
+              <input type="text" id="grupo" class="form-control" readonly />
+            </div>
+
             <button class="btn btn-success btn-block" id="registrar-btn">
               <i class="fas fa-save"></i> Registrar Alumno
             </button>
@@ -437,9 +555,14 @@
               <h2 class="card-title">
                 <i class="fas fa-users"></i> Alumnos Registrados
               </h2>
-              <button class="btn btn-secondary" id="export-btn">
-                <i class="fas fa-file-export"></i> Exportar
-              </button>
+              <div class="button-group">
+                <button class="btn btn-secondary" id="export-btn">
+                  <i class="fas fa-file-export"></i> Exportar
+                </button>
+                <button class="btn btn-warning" id="filter-group-btn">
+                  <i class="fas fa-filter"></i> Filtrar por Grupo
+                </button>
+              </div>
             </div>
 
             <div class="table-responsive">
@@ -449,13 +572,13 @@
                     <th>Matrícula</th>
                     <th>Nombre</th>
                     <th>Carrera</th>
-                    <th>Estado</th>
+                    <th>Grupo</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="students-table-body">
-                  <!-- Datos de alumnos se insertarán aquí -->
                   <tr>
-                    <td colspan="4" class="text-center">
+                    <td colspan="5" class="text-center">
                       No hay alumnos registrados
                     </td>
                   </tr>
@@ -469,7 +592,6 @@
 
     <script>
       // URL base de tu backend
-      // URL base de tu backend
       const API_BASE_URL = "https://salt-utsv-production.up.railway.app/api";
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -477,12 +599,19 @@
         const qrResult = document.getElementById("qr-result");
         const registrarBtn = document.getElementById("registrar-btn");
         const exportBtn = document.getElementById("export-btn");
+        const filterGroupBtn = document.getElementById("filter-group-btn");
         const matriculaInput = document.getElementById("matricula");
         const nombreInput = document.getElementById("nombre");
         const carreraNombreInput = document.getElementById("carrera-nombre");
+        const grupoInput = document.getElementById("grupo");
         const studentsTableBody = document.getElementById(
           "students-table-body"
         );
+        const groupButtonsContainer = document.getElementById("group-buttons");
+        const customGroupInput = document.getElementById("custom-group");
+        const addGroupBtn = document.getElementById("add-group-btn");
+        const currentGroupSpan = document.getElementById("current-group");
+        const editGroupBtn = document.getElementById("edit-group-btn");
 
         // Variables de estado
         let currentStudentData = null;
@@ -491,20 +620,138 @@
         let datosParciales = {};
         let timeoutRegistro = null;
         let escaneoActivo = false;
+        let selectedGroup = "";
+        let grupos = ["701", "702", "703", "801", "802", "803"]; // Grupos predefinidos
+        let filteredGroup = ""; // Grupo para filtrar
 
-        // Función para destacar el botón de registro
-        function destacarBotonRegistro() {
-          const btn = document.getElementById("registrar-btn");
-          if (btn) {
-            btn.classList.add("btn-pulse");
-            btn.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Inicializar la interfaz
+        function init() {
+          loadGrupos();
+          loadStudents();
+          setupEventListeners();
+        }
+
+        // Cargar grupos desde localStorage o usar predefinidos
+        function loadGrupos() {
+          const savedGrupos = localStorage.getItem("grupos");
+          if (savedGrupos) {
+            grupos = JSON.parse(savedGrupos);
           }
+          renderGroupButtons();
+        }
+
+        // Guardar grupos en localStorage
+        function saveGrupos() {
+          localStorage.setItem("grupos", JSON.stringify(grupos));
+        }
+
+        // Renderizar botones de grupos
+        function renderGroupButtons() {
+          groupButtonsContainer.innerHTML = "";
+
+          grupos.forEach((grupo) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `group-btn ${
+              selectedGroup === grupo ? "active" : ""
+            }`;
+            button.textContent = grupo;
+            button.addEventListener("click", () => selectGroup(grupo));
+            groupButtonsContainer.appendChild(button);
+          });
+        }
+
+        // Seleccionar grupo
+        function selectGroup(grupo) {
+          selectedGroup = grupo;
+          currentGroupSpan.textContent = grupo;
+          grupoInput.value = grupo;
+          renderGroupButtons();
+          showAlert(`Grupo ${grupo} seleccionado`, "success");
+        }
+
+        // Agregar nuevo grupo
+        function addNewGroup() {
+          const newGroup = customGroupInput.value.trim();
+          if (newGroup && !grupos.includes(newGroup)) {
+            grupos.push(newGroup);
+            saveGrupos();
+            renderGroupButtons();
+            customGroupInput.value = "";
+            showAlert(`Grupo ${newGroup} agregado`, "success");
+          } else if (grupos.includes(newGroup)) {
+            showAlert("Este grupo ya existe", "warning");
+          }
+        }
+
+        // Editar grupo actual
+        function editCurrentGroup() {
+          if (!selectedGroup) {
+            showAlert("Primero selecciona un grupo", "warning");
+            return;
+          }
+
+          const newGroupName = prompt("Nuevo nombre del grupo:", selectedGroup);
+          if (newGroupName && newGroupName.trim() !== "") {
+            const index = grupos.indexOf(selectedGroup);
+            if (index !== -1) {
+              grupos[index] = newGroupName.trim();
+              saveGrupos();
+              selectedGroup = newGroupName.trim();
+              currentGroupSpan.textContent = selectedGroup;
+              grupoInput.value = selectedGroup;
+              renderGroupButtons();
+              showAlert(`Grupo actualizado a ${selectedGroup}`, "success");
+
+              // Actualizar estudiantes con el grupo anterior
+              updateStudentsGroup(selectedGroup, newGroupName.trim());
+            }
+          }
+        }
+
+        // Actualizar grupo de estudiantes en la base de datos
+        async function updateStudentsGroup(oldGroup, newGroup) {
+          try {
+            const response = await fetch(`${API_BASE_URL}/estudiantes/grupo`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                grupo_anterior: oldGroup,
+                grupo_nuevo: newGroup,
+              }),
+            });
+
+            if (response.ok) {
+              loadStudents(); // Recargar la tabla
+            }
+          } catch (error) {
+            console.error("Error al actualizar grupo:", error);
+          }
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+          document.addEventListener("keypress", handleQRInput);
+          registrarBtn.addEventListener("click", registerCurrentStudent);
+          exportBtn.addEventListener("click", exportToJSON);
+          filterGroupBtn.addEventListener("click", toggleFilter);
+          addGroupBtn.addEventListener("click", addNewGroup);
+          editGroupBtn.addEventListener("click", editCurrentGroup);
+
+          // Enter en el input de grupo personalizado
+          customGroupInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") addNewGroup();
+          });
         }
 
         // Cargar estudiantes desde el backend
         async function loadStudents() {
           try {
-            const response = await fetch(`${API_BASE_URL}/estudiantes`);
+            const url = filteredGroup
+              ? `${API_BASE_URL}/estudiantes?grupo=${filteredGroup}`
+              : `${API_BASE_URL}/estudiantes`;
+
+            const response = await fetch(url);
             if (!response.ok) {
               const errorData = await response.json();
               throw new Error(
@@ -517,10 +764,10 @@
 
             if (!data.success || data.count === 0) {
               studentsTableBody.innerHTML = `
-          <tr>
-            <td colspan="4" class="text-center">No hay alumnos registrados</td>
-          </tr>
-        `;
+                <tr>
+                  <td colspan="5" class="text-center">No hay alumnos registrados</td>
+                </tr>
+              `;
               return;
             }
 
@@ -540,15 +787,64 @@
         function addStudentToTable(student) {
           const row = document.createElement("tr");
           row.innerHTML = `
-      <td>${student.matricula}</td>
-      <td>${student.nombre}</td>
-      <td>${student.carrera || ""}</td>
-      <td><span class="status-indicator status-active"></span>Activo</td>
-    `;
+            <td>${student.matricula}</td>
+            <td>${student.nombre}</td>
+            <td>${student.carrera || ""}</td>
+            <td>${student.grupo || "Sin grupo"}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="editStudent('${
+                student.matricula
+              }')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
+                student.matricula
+              }')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          `;
           studentsTableBody.appendChild(row);
         }
 
-        // Función para procesar el código QR
+        // Alternar filtro por grupo
+        function toggleFilter() {
+          if (filteredGroup) {
+            filteredGroup = "";
+            filterGroupBtn.innerHTML =
+              '<i class="fas fa-filter"></i> Filtrar por Grupo';
+            loadStudents();
+            showAlert("Filtro removido", "success");
+          } else {
+            const groupToFilter = prompt("Ingresa el grupo a filtrar:");
+            if (groupToFilter) {
+              filteredGroup = groupToFilter.trim();
+              filterGroupBtn.innerHTML = `<i class="fas fa-filter"></i> Filtrando: ${filteredGroup}`;
+              loadStudents();
+              showAlert(`Filtrando por grupo: ${filteredGroup}`, "success");
+            }
+          }
+        }
+
+        // Registrar estudiante actual
+        function registerCurrentStudent() {
+          if (!selectedGroup) {
+            showAlert("Por favor selecciona un grupo primero", "warning");
+            return;
+          }
+
+          if (currentStudentData) {
+            currentStudentData.grupo = selectedGroup;
+            registerStudent(currentStudentData);
+          } else {
+            showAlert("No hay datos para registrar.", "danger");
+          }
+        }
+
+        // Las demás funciones permanecen igual (processQRCode, actualizarFormulario, etc.)
+        // ... [Aquí van todas las funciones existentes como processQRCode, handleQRInput, etc.]
+
+        // Función para procesar el código QR (mantener igual)
         function processQRCode(qrData) {
           try {
             console.log("Datos QR recibidos:", qrData);
@@ -642,22 +938,7 @@
           if (nombreInput) nombreInput.value = datos.nombre || "";
           if (carreraNombreInput)
             carreraNombreInput.value = datos.carrera || "";
-        }
-
-        // Función para validar datos completos
-        function validarDatosCompletos(datos) {
-          const camposRequeridos = ["matricula", "nombre", "carrera"];
-          return camposRequeridos.every(
-            (campo) => datos[campo] && datos[campo].trim() !== ""
-          );
-        }
-
-        // Función para obtener campos faltantes
-        function obtenerCamposFaltantes(datos) {
-          const requeridos = ["matricula", "nombre", "carrera"];
-          return requeridos.filter(
-            (campo) => !datos[campo] || datos[campo].trim() === ""
-          );
+          if (grupoInput) grupoInput.value = selectedGroup || "";
         }
 
         // Función para registrar estudiante
@@ -671,6 +952,7 @@
               matricula: studentData.matricula,
               nombre: studentData.nombre,
               carrera: studentData.carrera || "",
+              grupo: studentData.grupo || selectedGroup || "",
             };
 
             const response = await fetch(`${API_BASE_URL}/estudiantes`, {
@@ -693,6 +975,9 @@
               showAlert("Estudiante registrado con éxito", "success");
               resetForm();
               datosParciales = {};
+              currentStudentData = null;
+              const btn = document.getElementById("registrar-btn");
+              if (btn) btn.classList.remove("btn-pulse");
             } else {
               showAlert(
                 result.error || "Error al registrar estudiante",
@@ -724,12 +1009,17 @@
           if (matriculaInput) matriculaInput.value = "";
           if (nombreInput) nombreInput.value = "";
           if (carreraNombreInput) carreraNombreInput.value = "";
+          // No resetear el grupo input para mantener la selección
         }
 
         // Función para exportar a JSON
         async function exportToJSON() {
           try {
-            const response = await fetch(`${API_BASE_URL}/estudiantes`);
+            const url = filteredGroup
+              ? `${API_BASE_URL}/estudiantes?grupo=${filteredGroup}`
+              : `${API_BASE_URL}/estudiantes`;
+
+            const response = await fetch(url);
             const data = await response.json();
 
             if (!data.success || data.count === 0) {
@@ -739,17 +1029,17 @@
 
             const jsonData = JSON.stringify(data.data, null, 2);
             const blob = new Blob([jsonData], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
+            const urlBlob = URL.createObjectURL(blob);
 
             const a = document.createElement("a");
-            a.href = url;
+            a.href = urlBlob;
             a.download = `estudiantes_${
               new Date().toISOString().split("T")[0]
             }.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            URL.revokeObjectURL(urlBlob);
 
             showAlert("Datos exportados correctamente", "success");
           } catch (error) {
@@ -777,20 +1067,16 @@
 
               actualizarFormulario(datosParciales);
 
-              if (validarDatosCompletos(datosParciales)) {
+              if (datosParciales.matricula && datosParciales.nombre) {
                 currentStudentData = { ...datosParciales };
                 showAlert(
                   "¡Estudiante completo! Revise los datos y haga clic en Registrar",
                   "success"
                 );
                 destacarBotonRegistro();
-                clearTimeout(timeoutRegistro);
               } else {
-                const faltantes = obtenerCamposFaltantes(datosParciales);
                 showAlert(
-                  `Faltan campos: ${faltantes.join(
-                    ", "
-                  )}. Escanee el siguiente QR`,
+                  "Datos parciales recibidos. Continue escaneando...",
                   "warning"
                 );
               }
@@ -812,25 +1098,61 @@
           }
         }
 
-        // Event listeners
-        // Event listeners
-        document.addEventListener("keypress", handleQRInput);
-        registrarBtn.addEventListener("click", () => {
-          if (currentStudentData) {
-            registerStudent(currentStudentData); // Solo se registra al hacer clic
-            currentStudentData = null; // Limpia los datos después del registro
-            datosParciales = {};
-            resetForm();
-            const btn = document.getElementById("registrar-btn");
-            if (btn) btn.classList.remove("btn-pulse");
-          } else {
-            showAlert("No hay datos para registrar.", "danger");
+        // Función para destacar el botón de registro
+        function destacarBotonRegistro() {
+          const btn = document.getElementById("registrar-btn");
+          if (btn) {
+            btn.classList.add("btn-pulse");
+            btn.scrollIntoView({ behavior: "smooth", block: "center" });
           }
-        });
-        exportBtn.addEventListener("click", exportToJSON);
+        }
 
-        // Cargar estudiantes al iniciar
-        loadStudents();
+        // Funciones globales para editar/eliminar
+        window.editStudent = async function (matricula) {
+          const nuevoGrupo = prompt("Nuevo grupo para el estudiante:");
+          if (nuevoGrupo) {
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/estudiantes/${matricula}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ grupo: nuevoGrupo.trim() }),
+                }
+              );
+
+              if (response.ok) {
+                showAlert("Grupo actualizado correctamente", "success");
+                loadStudents();
+              }
+            } catch (error) {
+              showAlert("Error al actualizar grupo", "danger");
+            }
+          }
+        };
+
+        window.deleteStudent = async function (matricula) {
+          if (confirm("¿Estás seguro de eliminar este estudiante?")) {
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/estudiantes/${matricula}`,
+                {
+                  method: "DELETE",
+                }
+              );
+
+              if (response.ok) {
+                showAlert("Estudiante eliminado correctamente", "success");
+                loadStudents();
+              }
+            } catch (error) {
+              showAlert("Error al eliminar estudiante", "danger");
+            }
+          }
+        };
+
+        // Inicializar la aplicación
+        init();
       });
     </script>
   </body>
