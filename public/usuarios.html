@@ -201,6 +201,11 @@
         color: #721c24;
       }
 
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+
       .icon-container {
         display: flex;
         justify-content: center;
@@ -278,9 +283,46 @@
         margin-bottom: 15px;
         color: #dee2e6;
       }
+
+      .connection-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: 600;
+        z-index: 1000;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .online {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .offline {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .demo-mode {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
     </style>
   </head>
   <body>
+    <div
+      id="connectionStatus"
+      class="connection-status demo-mode"
+      style="display: none"
+    >
+      <i class="fas fa-info-circle me-1"></i>Modo Demo Activado
+    </div>
+
     <div class="container">
       <div class="header">
         <h1><i class="fas fa-user-plus me-2"></i>Registro de Usuarios</h1>
@@ -391,11 +433,12 @@
                   <th><i class="fas fa-id-card me-1"></i>Matrícula</th>
                   <th><i class="fas fa-user me-1"></i>Nombre</th>
                   <th><i class="fas fa-user-tag me-1"></i>Rol</th>
+                  <th><i class="fas fa-cog me-1"></i>Acciones</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody">
                 <tr>
-                  <td colspan="4" class="text-center py-4">
+                  <td colspan="5" class="text-center py-4">
                     <i class="fas fa-spinner fa-spin me-2"></i>Cargando
                     usuarios...
                   </td>
@@ -408,8 +451,12 @@
     </div>
 
     <script>
+      // Variable para controlar si estamos en modo demo
+      let demoMode = false;
+      let users = []; // Almacenamiento local de usuarios
+
       document.addEventListener("DOMContentLoaded", function () {
-        // Cargar usuarios al iniciar
+        // Intentar cargar usuarios de la API
         loadUsers();
 
         // Manejar el envío del formulario
@@ -452,6 +499,38 @@
           '<i class="fas fa-spinner fa-spin me-2"></i>Registrando...';
         submitBtn.disabled = true;
 
+        // Si estamos en modo demo, usar almacenamiento local
+        if (demoMode) {
+          // Simular una llamada a la API con un retraso
+          setTimeout(() => {
+            // Crear un nuevo usuario con ID único
+            const newUser = {
+              idusuario:
+                users.length > 0
+                  ? Math.max(...users.map((u) => u.idusuario)) + 1
+                  : 1,
+              ...userData,
+            };
+
+            // Agregar a la lista local
+            users.push(newUser);
+
+            // Actualizar la interfaz
+            showAlert(
+              "Usuario registrado correctamente (modo demo)",
+              "success"
+            );
+            document.getElementById("userForm").reset();
+            renderUsers(users);
+
+            // Restaurar el botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          }, 1000);
+          return;
+        }
+
+        // Intentar conectar con la API real
         fetch("https://salt-utsv-production.up.railway.app/api/usuarios", {
           method: "POST",
           headers: {
@@ -461,6 +540,10 @@
         })
           .then((response) => {
             if (!response.ok) {
+              // Si falla, activar modo demo
+              if (response.status === 404) {
+                throw new Error("API no disponible. Activando modo demo.");
+              }
               return response.json().then((err) => {
                 throw new Error(
                   err.error || "Error en la respuesta del servidor"
@@ -476,10 +559,34 @@
           })
           .catch((error) => {
             console.error("Error:", error);
-            showAlert(
-              "Error al registrar el usuario: " + error.message,
-              "danger"
-            );
+
+            // Si es un error 404, activar modo demo
+            if (
+              error.message.includes("404") ||
+              error.message.includes("no disponible")
+            ) {
+              activateDemoMode();
+              showAlert(
+                "API no disponible. Se ha activado el modo demo. Los datos se almacenarán localmente.",
+                "warning"
+              );
+
+              // Registrar el usuario en modo demo
+              const newUser = {
+                idusuario:
+                  users.length > 0
+                    ? Math.max(...users.map((u) => u.idusuario)) + 1
+                    : 1,
+                ...userData,
+              };
+              users.push(newUser);
+              renderUsers(users);
+            } else {
+              showAlert(
+                "Error al registrar el usuario: " + error.message,
+                "danger"
+              );
+            }
           })
           .finally(() => {
             // Restaurar el botón
@@ -492,62 +599,125 @@
         // Mostrar indicador de carga en la tabla
         const tableBody = document.getElementById("usersTableBody");
         tableBody.innerHTML =
-          '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando usuarios...</td></tr>';
+          '<tr><td colspan="5" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando usuarios...</td></tr>';
 
+        // Primero intentar cargar desde la API
         fetch("https://salt-utsv-production.up.railway.app/api/usuarios")
           .then((response) => {
             if (!response.ok) {
+              if (response.status === 404) {
+                throw new Error("API no disponible");
+              }
               throw new Error("Error al cargar los usuarios");
             }
             return response.json();
           })
           .then((data) => {
-            tableBody.innerHTML = "";
+            // Ocultar el modo demo si estaba activo
+            document.getElementById("connectionStatus").style.display = "none";
+            demoMode = false;
 
-            // Asegúrate de que data.data es el array de usuarios (depende de tu estructura de respuesta)
-            const users = data.data || data;
-
-            if (users.length === 0) {
-              tableBody.innerHTML = `
-                            <tr>
-                                <td colspan="4" class="empty-state">
-                                    <i class="fas fa-users"></i>
-                                    <h4>No hay usuarios registrados</h4>
-                                    <p>Comienza agregando el primer usuario usando el formulario superior.</p>
-                                </td>
-                            </tr>`;
-              updateStats(users);
-              return;
-            }
-
-            users.forEach((user) => {
-              const row = document.createElement("tr");
-
-              row.innerHTML = `
-                            <td>${user.idusuario}</td>
-                            <td>${user.matricula || "N/A"}</td>
-                            <td>${user.nombre || "N/A"}</td>
-                            <td><span class="badge ${
-                              user.rol === "admin"
-                                ? "badge-admin"
-                                : "badge-user"
-                            }">${user.rol}</span></td>
-                        `;
-
-              tableBody.appendChild(row);
-            });
-
-            updateStats(users);
+            // Asegúrate de que data.data es el array de usuarios
+            const apiUsers = data.data || data;
+            renderUsers(apiUsers);
           })
           .catch((error) => {
-            console.error("Error:", error);
-            tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Error al cargar los usuarios
-                            </td>
-                        </tr>`;
+            console.error("Error cargando desde API:", error);
+
+            // Activar modo demo
+            activateDemoMode();
+
+            // Cargar datos de ejemplo para demostración
+            if (users.length === 0) {
+              users = [
+                {
+                  idusuario: 1,
+                  matricula: "2021001",
+                  nombre: "Juan Pérez",
+                  rol: "admin",
+                },
+                {
+                  idusuario: 2,
+                  matricula: "2021002",
+                  nombre: "María García",
+                  rol: "user",
+                },
+                {
+                  idusuario: 3,
+                  matricula: null,
+                  nombre: "Carlos López",
+                  rol: "user",
+                },
+              ];
+            }
+
+            renderUsers(users);
+            showAlert(
+              "No se pudo conectar con el servidor. Mostrando datos de ejemplo (modo demo).",
+              "warning"
+            );
           });
+      }
+
+      function renderUsers(userList) {
+        const tableBody = document.getElementById("usersTableBody");
+        tableBody.innerHTML = "";
+
+        if (userList.length === 0) {
+          tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h4>No hay usuarios registrados</h4>
+                            <p>Comienza agregando el primer usuario usando el formulario superior.</p>
+                        </td>
+                    </tr>`;
+          updateStats(userList);
+          return;
+        }
+
+        userList.forEach((user) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+                    <td>${user.idusuario}</td>
+                    <td>${user.matricula || "N/A"}</td>
+                    <td>${user.nombre || "N/A"}</td>
+                    <td><span class="badge ${
+                      user.rol === "admin" ? "badge-admin" : "badge-user"
+                    }">${user.rol}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${
+                          user.idusuario
+                        })" ${demoMode ? "" : "disabled"}>
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+          tableBody.appendChild(row);
+        });
+
+        updateStats(userList);
+      }
+
+      function activateDemoMode() {
+        demoMode = true;
+        const statusElement = document.getElementById("connectionStatus");
+        statusElement.className = "connection-status demo-mode";
+        statusElement.innerHTML =
+          '<i class="fas fa-info-circle me-1"></i>Modo Demo Activado';
+        statusElement.style.display = "block";
+      }
+
+      function deleteUser(userId) {
+        if (!demoMode) return;
+
+        if (confirm("¿Está seguro de que desea eliminar este usuario?")) {
+          users = users.filter((user) => user.idusuario !== userId);
+          renderUsers(users);
+          showAlert("Usuario eliminado correctamente (modo demo)", "success");
+        }
       }
 
       function updateStats(users) {
@@ -564,7 +734,11 @@
         const alertDiv = document.getElementById("alert");
         alertDiv.innerHTML = `
                 <i class="fas fa-${
-                  type === "success" ? "check-circle" : "exclamation-triangle"
+                  type === "success"
+                    ? "check-circle"
+                    : type === "warning"
+                    ? "exclamation-triangle"
+                    : "exclamation-circle"
                 } me-2"></i>
                 ${message}
             `;
