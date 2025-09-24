@@ -12,7 +12,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
+      /* Tus estilos CSS existentes se mantienen igual */
       :root {
         --university-blue: #0a2c5e;
         --university-gold: #c9a227;
@@ -164,6 +166,11 @@
         text-align: center;
         border: 2px dashed var(--university-blue);
         transition: var(--transition);
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
 
       .scanner-container:hover {
@@ -746,6 +753,34 @@
         border-radius: 4px;
       }
 
+      /* Estilos para el escáner QR */
+      #qr-reader {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      #qr-reader__dashboard_section {
+        padding: 15px;
+      }
+
+      #qr-reader__camera_selection {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .scanner-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        justify-content: center;
+      }
+
+      .scanner-active {
+        border-color: #28a745 !important;
+        background: #f8fff9 !important;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .main-content {
@@ -795,6 +830,11 @@
         }
 
         .card {
+          padding: 20px;
+        }
+
+        .scanner-container {
+          min-height: 250px;
           padding: 20px;
         }
       }
@@ -900,17 +940,31 @@
               <h2 class="card-title">
                 <i class="fas fa-qrcode"></i> Lector de Código QR
               </h2>
-              <span class="badge badge-primary">Activo</span>
+              <span class="badge badge-primary" id="scanner-status"
+                >Inactivo</span
+              >
             </div>
 
-            <div class="scanner-container">
-              <div class="scanner-icon">
-                <i class="fas fa-barcode"></i>
+            <div class="scanner-container" id="scanner-container">
+              <div id="qr-reader" style="display: none"></div>
+              <div id="scanner-placeholder">
+                <div class="scanner-icon">
+                  <i class="fas fa-barcode"></i>
+                </div>
+                <div class="scanner-instructions">
+                  Haz clic en "Iniciar Escáner" para comenzar a escanear códigos
+                  QR de alumnos.
+                </div>
               </div>
-              <div class="scanner-instructions">
-                Escanee el código QR del alumno con su lector físico. Los datos
-                se cargarán automáticamente.
-              </div>
+            </div>
+
+            <div class="scanner-controls">
+              <button class="btn btn-success" id="start-scanner-btn">
+                <i class="fas fa-play"></i> Iniciar Escáner
+              </button>
+              <button class="btn btn-danger" id="stop-scanner-btn" disabled>
+                <i class="fas fa-stop"></i> Detener Escáner
+              </button>
             </div>
 
             <div id="qr-result" class="alert alert-success" role="alert">
@@ -1027,12 +1081,22 @@
         const clearGroupBtn = document.getElementById("clear-group-btn");
         const cleanupBtn = document.getElementById("cleanup-btn");
         const manageGroupsBtn = document.getElementById("manage-groups-btn");
+        const startScannerBtn = document.getElementById("start-scanner-btn");
+        const stopScannerBtn = document.getElementById("stop-scanner-btn");
+        const scannerContainer = document.getElementById("scanner-container");
+        const scannerPlaceholder = document.getElementById(
+          "scanner-placeholder"
+        );
+        const scannerStatus = document.getElementById("scanner-status");
+        const qrReaderDiv = document.getElementById("qr-reader");
 
         // Variables de estado
         let currentStudentData = null;
         let selectedGroup = "";
         let grupos = ["701", "702", "703", "801", "802", "803"];
         let filteredGroup = "";
+        let html5QrcodeScanner = null;
+        let isScannerActive = false;
 
         // Inicializar la interfaz
         function init() {
@@ -1042,6 +1106,193 @@
           renderGroupCards();
           updateCurrentGroupDisplay();
         }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+          registrarBtn.addEventListener("click", registerCurrentStudent);
+          exportBtn.addEventListener("click", exportToJSON);
+          filterGroupBtn.addEventListener("click", toggleFilter);
+          addGroupBtn.addEventListener("click", addNewGroup);
+          editGroupBtn.addEventListener("click", () => {
+            if (!selectedGroup)
+              return showAlert("Primero selecciona un grupo", "warning");
+            editGroup(selectedGroup);
+          });
+          clearGroupBtn.addEventListener("click", clearGroupSelection);
+          cleanupBtn.addEventListener("click", limpiarGruposDuplicados);
+          manageGroupsBtn.addEventListener("click", showGroupsManagement);
+          startScannerBtn.addEventListener("click", startQRScanner);
+          stopScannerBtn.addEventListener("click", stopQRScanner);
+
+          customGroupInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") addNewGroup();
+          });
+        }
+
+        // Función para iniciar el escáner QR
+        function startQRScanner() {
+          if (isScannerActive) return;
+
+          try {
+            // Ocultar placeholder y mostrar el escáner
+            scannerPlaceholder.style.display = "none";
+            qrReaderDiv.style.display = "block";
+
+            // Inicializar el escáner
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+
+            const config = {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+              supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_QR_CODE],
+            };
+
+            html5QrcodeScanner
+              .start(
+                { facingMode: "environment" }, // Usar cámara trasera
+                config,
+                onQRCodeScanned,
+                onScannerError
+              )
+              .then(() => {
+                isScannerActive = true;
+                startScannerBtn.disabled = true;
+                stopScannerBtn.disabled = false;
+                scannerStatus.textContent = "Activo";
+                scannerStatus.className = "badge badge-success";
+                scannerContainer.classList.add("scanner-active");
+                showAlert(
+                  "Escáner activado. Apunta a un código QR.",
+                  "success"
+                );
+              })
+              .catch((err) => {
+                console.error("Error al iniciar escáner:", err);
+                showAlert(
+                  "Error al iniciar la cámara: " + err.message,
+                  "danger"
+                );
+                resetScannerUI();
+              });
+          } catch (error) {
+            console.error("Error al inicializar escáner:", error);
+            showAlert(
+              "Error al inicializar el escáner: " + error.message,
+              "danger"
+            );
+            resetScannerUI();
+          }
+        }
+
+        // Función para detener el escáner QR
+        function stopQRScanner() {
+          if (!isScannerActive || !html5QrcodeScanner) return;
+
+          html5QrcodeScanner
+            .stop()
+            .then(() => {
+              isScannerActive = false;
+              startScannerBtn.disabled = false;
+              stopScannerBtn.disabled = true;
+              scannerStatus.textContent = "Inactivo";
+              scannerStatus.className = "badge badge-primary";
+              scannerContainer.classList.remove("scanner-active");
+              showAlert("Escáner detenido.", "info");
+              resetScannerUI();
+            })
+            .catch((err) => {
+              console.error("Error al detener escáner:", err);
+              showAlert(
+                "Error al detener el escáner: " + err.message,
+                "danger"
+              );
+            });
+        }
+
+        // Función para resetear la UI del escáner
+        function resetScannerUI() {
+          scannerPlaceholder.style.display = "block";
+          qrReaderDiv.style.display = "none";
+          qrReaderDiv.innerHTML = ""; // Limpiar el contenido
+          html5QrcodeScanner = null;
+          isScannerActive = false;
+          startScannerBtn.disabled = false;
+          stopScannerBtn.disabled = true;
+        }
+
+        // Callback cuando se escanea un código QR
+        function onQRCodeScanned(decodedText, decodedResult) {
+          console.log("Código QR escaneado:", decodedText);
+
+          try {
+            // Intentar parsear el código QR como JSON
+            const qrData = JSON.parse(decodedText);
+
+            // Validar que tenga los campos mínimos requeridos
+            if (!qrData.matricula || !qrData.nombre) {
+              throw new Error("El código QR no contiene los datos necesarios");
+            }
+
+            // Llenar el formulario con los datos del QR
+            fillFormWithQRData(qrData);
+
+            // Mostrar mensaje de éxito
+            showAlert(
+              "Código QR leído correctamente. Verifica los datos.",
+              "success"
+            );
+
+            // Opcional: Detener el escáner después de leer un código
+            // stopQRScanner();
+          } catch (error) {
+            console.error("Error al procesar código QR:", error);
+
+            // Intentar formato alternativo (matricula|nombre|carrera)
+            const parts = decodedText.split("|");
+            if (parts.length >= 2) {
+              const qrData = {
+                matricula: parts[0].trim(),
+                nombre: parts[1].trim(),
+                carrera: parts[2] ? parts[2].trim() : "",
+              };
+              fillFormWithQRData(qrData);
+              showAlert("Código QR leído correctamente.", "success");
+            } else {
+              showAlert(
+                "Formato de código QR no reconocido: " + decodedText,
+                "danger"
+              );
+            }
+          }
+        }
+
+        // Función para llenar el formulario con datos del QR
+        function fillFormWithQRData(qrData) {
+          matriculaInput.value = qrData.matricula || "";
+          nombreInput.value = qrData.nombre || "";
+          carreraNombreInput.value = qrData.carrera || "";
+
+          // Si hay un grupo seleccionado, asignarlo
+          if (selectedGroup) {
+            grupoInput.value = selectedGroup;
+          }
+
+          // Habilitar el botón de registro
+          registrarBtn.disabled = false;
+          currentStudentData = qrData;
+
+          // Resaltar el botón de registro
+          registrarBtn.classList.add("btn-pulse");
+        }
+
+        // Callback para errores del escáner
+        function onScannerError(error) {
+          console.warn("Error del escáner:", error);
+          // No mostrar alerta para errores menores
+        }
+
+        // Las demás funciones se mantienen igual (loadGrupos, renderGroupCards, etc.)
+        // ... (todo el resto del código JavaScript se mantiene igual)
 
         // Cargar grupos desde localStorage
         function loadGrupos() {
@@ -1506,7 +1757,7 @@
           };
         }
 
-        // Función para exportar a JSON (corrección del error)
+        // Función para exportar a JSON
         function exportToJSON() {
           try {
             // Obtener datos de estudiantes
@@ -1549,26 +1800,6 @@
           } catch (error) {
             showAlert(`Error al exportar datos: ${error.message}`, "danger");
           }
-        }
-
-        // Configurar event listeners
-        function setupEventListeners() {
-          registrarBtn.addEventListener("click", registerCurrentStudent);
-          exportBtn.addEventListener("click", exportToJSON);
-          filterGroupBtn.addEventListener("click", toggleFilter);
-          addGroupBtn.addEventListener("click", addNewGroup);
-          editGroupBtn.addEventListener("click", () => {
-            if (!selectedGroup)
-              return showAlert("Primero selecciona un grupo", "warning");
-            editGroup(selectedGroup);
-          });
-          clearGroupBtn.addEventListener("click", clearGroupSelection);
-          cleanupBtn.addEventListener("click", limpiarGruposDuplicados);
-          manageGroupsBtn.addEventListener("click", showGroupsManagement);
-
-          customGroupInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") addNewGroup();
-          });
         }
 
         // Cargar estudiantes
@@ -1718,6 +1949,7 @@
           matriculaInput.value = "";
           nombreInput.value = "";
           carreraNombreInput.value = "";
+          registrarBtn.disabled = true;
         }
 
         // Funciones globales
