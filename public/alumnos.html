@@ -1506,6 +1506,51 @@
           };
         }
 
+        // Función para exportar a JSON (corrección del error)
+        function exportToJSON() {
+          try {
+            // Obtener datos de estudiantes
+            const rows = studentsTableBody.querySelectorAll("tr");
+            const students = [];
+
+            rows.forEach((row) => {
+              const cells = row.querySelectorAll("td");
+              if (cells.length >= 4) {
+                students.push({
+                  matricula: cells[0].textContent,
+                  nombre: cells[1].textContent,
+                  carrera: cells[2].textContent,
+                  grupo: cells[3].textContent,
+                });
+              }
+            });
+
+            if (students.length === 0) {
+              showAlert("No hay datos para exportar", "warning");
+              return;
+            }
+
+            // Crear y descargar archivo JSON
+            const dataStr = JSON.stringify(students, null, 2);
+            const dataUri =
+              "data:application/json;charset=utf-8," +
+              encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = `alumnos_${
+              new Date().toISOString().split("T")[0]
+            }.json`;
+
+            const linkElement = document.createElement("a");
+            linkElement.setAttribute("href", dataUri);
+            linkElement.setAttribute("download", exportFileDefaultName);
+            linkElement.click();
+
+            showAlert("Datos exportados correctamente", "success");
+          } catch (error) {
+            showAlert(`Error al exportar datos: ${error.message}`, "danger");
+          }
+        }
+
         // Configurar event listeners
         function setupEventListeners() {
           registrarBtn.addEventListener("click", registerCurrentStudent);
