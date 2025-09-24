@@ -84,6 +84,17 @@
         padding: 2px 8px;
         border-radius: 12px;
       }
+
+      /* Estilos para el mensaje de redirección */
+      .redirect-message {
+        background-color: #e3f2fd;
+        color: #1565c0;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px;
+        text-align: center;
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -91,6 +102,12 @@
     <div class="loading-overlay" id="loading-overlay">
       <div class="spinner"></div>
       <div class="loading-text">Cargando información del usuario...</div>
+    </div>
+
+    <!-- Mensaje de redirección -->
+    <div class="redirect-message" id="redirect-message">
+      <i class="fas fa-info-circle"></i>
+      <span id="redirect-text">Redirigiendo al login...</span>
     </div>
 
     <!-- Mensaje de error -->
@@ -304,64 +321,52 @@
         fetchUserData();
       });
 
+      // Función para redirigir al login
+      function redirectToLogin() {
+        showRedirectMessage("No hay sesión activa. Redirigiendo al login...");
+
+        // Esperar 2 segundos antes de redirigir para que el usuario vea el mensaje
+        setTimeout(() => {
+          window.location.href = "/index.html";
+        }, 2000);
+      }
+
       // Función para obtener datos del usuario desde el servidor
       async function fetchUserData() {
         try {
           showLoading(true);
           hideError();
+          hideRedirectMessage();
 
-          // Intentar diferentes endpoints posibles donde pueda estar la info del usuario
-          const endpoints = [
-            "/api/user-info",
-            "/api/user",
-            "/api/auth/user",
-            "/api/me",
-            "/user-info",
-          ];
+          console.log("Iniciando obtención de datos del usuario...");
 
-          let userData = null;
-          let lastError = null;
+          // Intentar obtener información del servidor
+          const response = await fetch("/api/user-info", {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
 
-          // Probar diferentes endpoints
-          for (const endpoint of endpoints) {
-            try {
-              const response = await fetch(endpoint, {
-                method: "GET",
-                credentials: "same-origin",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
+          console.log("Respuesta del servidor:", response.status);
 
-              if (response.status === 401) {
-                // No autenticado, redirigir al login
-                window.location.href = "/index.html";
-                return;
-              }
-
-              if (response.ok) {
-                userData = await response.json();
-                break; // Si encontramos un endpoint válido, salir del loop
-              }
-            } catch (error) {
-              lastError = error;
-              continue; // Continuar con el siguiente endpoint
-            }
+          if (response.status === 401) {
+            // No autenticado, redirigir al login
+            console.log("Usuario no autenticado, redirigiendo...");
+            localStorage.removeItem("currentUser"); // Limpiar storage
+            redirectToLogin();
+            return;
           }
 
-          if (!userData) {
-            // Si no se pudo obtener del servidor, intentar desde localStorage
-            const storedUser = localStorage.getItem("currentUser");
-            if (storedUser) {
-              userData = JSON.parse(storedUser);
-            } else {
-              throw new Error("No se pudo obtener información del usuario");
-            }
+          if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
           }
+
+          const userData = await response.json();
+          console.log("Datos del usuario obtenidos:", userData);
 
           currentUser = userData;
-
-          // Guardar en localStorage para futuras visitas
           localStorage.setItem("currentUser", JSON.stringify(userData));
 
           // Cargar la interfaz con los datos del usuario
@@ -370,19 +375,32 @@
           renderQuickActions();
         } catch (error) {
           console.error("Error al obtener datos del usuario:", error);
-          showError("Error al cargar los datos. Usando modo de demostración.");
 
-          // Usar datos de demostración como fallback
-          currentUser = {
-            username: "Usuario Demo",
-            name: "Usuario de Prueba",
-            role: "user",
-            email: "demo@utsv.edu.mx",
-          };
+          // Verificar si es un error de redirección (401)
+          if (
+            error.message.includes("401") ||
+            error.message.includes("No autenticado")
+          ) {
+            redirectToLogin();
+            return;
+          }
 
-          loadUserData();
-          renderNavigation();
-          renderQuickActions();
+          // Intentar cargar desde localStorage como fallback
+          const storedUser = localStorage.getItem("currentUser");
+          if (storedUser) {
+            console.log("Cargando usuario desde localStorage...");
+            currentUser = JSON.parse(storedUser);
+            loadUserData();
+            renderNavigation();
+            renderQuickActions();
+            showError("Conectado en modo offline (datos locales)");
+          } else {
+            // No hay datos locales ni servidor disponible
+            showError("Error de conexión. Redirigiendo al login...");
+            setTimeout(() => {
+              window.location.href = "/index.html";
+            }, 3000);
+          }
         } finally {
           showLoading(false);
         }
@@ -394,6 +412,30 @@
         overlay.style.display = show ? "flex" : "none";
       }
 
+      // Mostrar mensaje de redirección
+      function showRedirectMessage(message) {
+        const redirectElement = document.getElementById("redirect-message");
+        const redirectText = document.getElementById("redirect-text");
+
+        redirectText.textContent = message;
+        redirectElement.style.display = "block";
+        hideError();
+
+        // Ocultar el contenido principal
+        document.querySelector(".main-content").style.display = "none";
+        document.querySelector(".sidebar").style.display = "none";
+      }
+
+      // Ocultar mensaje de redirección
+      function hideRedirectMessage() {
+        const redirectElement = document.getElementById("redirect-message");
+        redirectElement.style.display = "none";
+
+        // Mostrar el contenido principal
+        document.querySelector(".main-content").style.display = "block";
+        document.querySelector(".sidebar").style.display = "block";
+      }
+
       // Mostrar mensaje de error
       function showError(message) {
         const errorElement = document.getElementById("error-message");
@@ -401,6 +443,7 @@
 
         errorText.textContent = message;
         errorElement.style.display = "block";
+        hideRedirectMessage();
       }
 
       // Ocultar mensaje de error
@@ -418,12 +461,9 @@
         const userName = document.getElementById("user-name");
         const userRole = document.getElementById("user-role");
 
-        // Usar el nombre completo si está disponible, sino el username
+        // Usar el nombre del usuario desde la sesión
         const displayName =
-          currentUser.name ||
-          currentUser.username ||
-          currentUser.nombre ||
-          "Usuario";
+          currentUser.username || currentUser.nombre || "Usuario";
         const userRoleText =
           currentUser.role === "admin"
             ? "Administrador"
@@ -440,11 +480,13 @@
         // Rol traducido al español
         userRole.textContent = userRoleText;
 
-        // Simular datos de estadísticas (en un caso real, vendrían del servidor)
+        // Simular datos de estadísticas
         document.getElementById("student-count").textContent =
           currentUser.role === "admin" ? "247" : "150";
         document.getElementById("teacher-count").textContent =
           currentUser.role === "admin" ? "36" : "50";
+
+        console.log("Interfaz cargada para usuario:", displayName);
       }
 
       // Renderizar la navegación según el rol
@@ -526,13 +568,13 @@
                 window.location.href = response.url;
               } else {
                 // Si no hay redirección, redirigir manualmente
-                window.location.href = "index.html";
+                window.location.href = "/index.html";
               }
             })
             .catch((error) => {
               console.error("Error al cerrar sesión:", error);
               // Redirigir de todas formas
-              window.location.href = "index.html";
+              window.location.href = "/index.html";
             });
         }
       }
