@@ -805,7 +805,7 @@
       <td>${student.matricula}</td>
       <td>${student.nombre}</td>
       <td>${student.carrera || ""}</td>
-      <td>${student.grupo || "Sin grupo"}</td>
+      <td>${student.grupo || "<span class='text-muted'>Sin grupo</span>"}</td>
       <td>
         <button class="btn btn-warning btn-sm" onclick="editStudent('${
           student.matricula
@@ -845,7 +845,7 @@
           }
         }
 
-        // Registrar estudiante actual
+        // Registrar estudiante actual - CORREGIDA
         function registerCurrentStudent() {
           if (!selectedGroup) {
             showAlert("Por favor selecciona un grupo primero", "warning");
@@ -853,10 +853,27 @@
           }
 
           if (currentStudentData) {
+            // CORRECCIÓN: Usar siempre el grupo seleccionado
             currentStudentData.grupo = selectedGroup;
             registerStudent(currentStudentData);
           } else {
-            showAlert("No hay datos para registrar.", "danger");
+            // Si no hay datos escaneados, intentar registrar con los datos del formulario
+            const formData = {
+              matricula: matriculaInput.value.trim(),
+              nombre: nombreInput.value.trim(),
+              carrera: carreraNombreInput.value.trim(),
+              grupo: selectedGroup, // Siempre usar el grupo seleccionado
+            };
+
+            if (!formData.matricula || !formData.nombre) {
+              showAlert(
+                "Complete matrícula y nombre antes de registrar",
+                "warning"
+              );
+              return;
+            }
+
+            registerStudent(formData);
           }
         }
 
@@ -957,19 +974,22 @@
           if (grupoInput) grupoInput.value = selectedGroup || "";
         }
 
-        // Función para registrar estudiante
+        // Función para registrar estudiante - CORREGIDA
         async function registerStudent(studentData) {
           try {
             if (!studentData.matricula || !studentData.nombre) {
               throw new Error("Datos incompletos para registrar");
             }
 
+            // CORRECCIÓN: Siempre usar el grupo seleccionado
             const payload = {
               matricula: studentData.matricula,
               nombre: studentData.nombre,
               carrera: studentData.carrera || "",
-              grupo: studentData.grupo || selectedGroup || "",
+              grupo: selectedGroup, // CORRECCIÓN CLAVE: Usar siempre selectedGroup
             };
+
+            console.log("Registrando estudiante:", payload);
 
             const response = await fetch(`${API_BASE_URL}/estudiantes`, {
               method: "POST",
@@ -987,7 +1007,7 @@
             const result = await response.json();
 
             if (result.success) {
-              addStudentToTable(payload);
+              loadStudents(); // Recargar desde servidor para ver datos reales
               showAlert("Estudiante registrado con éxito", "success");
               resetForm();
               datosParciales = {};
