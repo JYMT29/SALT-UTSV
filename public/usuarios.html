@@ -530,7 +530,7 @@
           return;
         }
 
-        // Intentar conectar con la API real
+        // Intentar conectar con la API real (LOCAL)
         fetch("https://salt-utsv-production.up.railway.app/api/usuarios", {
           method: "POST",
           headers: {
@@ -563,7 +563,8 @@
             // Si es un error 404, activar modo demo
             if (
               error.message.includes("404") ||
-              error.message.includes("no disponible")
+              error.message.includes("no disponible") ||
+              error.message.includes("Failed to fetch")
             ) {
               activateDemoMode();
               showAlert(
@@ -601,7 +602,7 @@
         tableBody.innerHTML =
           '<tr><td colspan="5" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Cargando usuarios...</td></tr>';
 
-        // Primero intentar cargar desde la API
+        // Primero intentar cargar desde la API LOCAL
         fetch("https://salt-utsv-production.up.railway.app/api/usuarios")
           .then((response) => {
             if (!response.ok) {
@@ -689,7 +690,7 @@
                     <td>
                         <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${
                           user.idusuario
-                        })" ${demoMode ? "" : "disabled"}>
+                        })">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -701,6 +702,57 @@
         updateStats(userList);
       }
 
+      function deleteUser(userId) {
+        if (!confirm("¿Está seguro de que desea eliminar este usuario?")) {
+          return;
+        }
+
+        // Si estamos en modo demo
+        if (demoMode) {
+          users = users.filter((user) => user.idusuario !== userId);
+          renderUsers(users);
+          showAlert("Usuario eliminado correctamente (modo demo)", "success");
+          return;
+        }
+
+        // Conexión real a la API LOCAL
+        fetch(
+          `https://salt-utsv-production.up.railway.app/api/usuarios/${userId}`,
+          {
+            method: "DELETE",
+          }
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Error al eliminar usuario");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            showAlert("Usuario eliminado correctamente", "success");
+            loadUsers(); // Recargar la lista
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+
+            // Si falla la API, activar modo demo
+            if (error.message.includes("Failed to fetch")) {
+              activateDemoMode();
+              showAlert(
+                "Error de conexión. Activando modo demo. Los cambios serán locales.",
+                "warning"
+              );
+              users = users.filter((user) => user.idusuario !== userId);
+              renderUsers(users);
+            } else {
+              showAlert(
+                "Error al eliminar el usuario: " + error.message,
+                "danger"
+              );
+            }
+          });
+      }
+
       function activateDemoMode() {
         demoMode = true;
         const statusElement = document.getElementById("connectionStatus");
@@ -708,16 +760,6 @@
         statusElement.innerHTML =
           '<i class="fas fa-info-circle me-1"></i>Modo Demo Activado';
         statusElement.style.display = "block";
-      }
-
-      function deleteUser(userId) {
-        if (!demoMode) return;
-
-        if (confirm("¿Está seguro de que desea eliminar este usuario?")) {
-          users = users.filter((user) => user.idusuario !== userId);
-          renderUsers(users);
-          showAlert("Usuario eliminado correctamente (modo demo)", "success");
-        }
       }
 
       function updateStats(users) {

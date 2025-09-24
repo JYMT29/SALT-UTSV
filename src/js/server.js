@@ -76,6 +76,117 @@ if (!fs.existsSync("lab-config.json")) {
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "views"));
 
+// -------------------- RUTAS PARA USUARIOS --------------------
+
+// Obtener todos los usuarios
+app.get("/api/usuarios", (req, res) => {
+  pool.query(
+    "SELECT idusuario, matricula, nombre, rol FROM usuarios ORDER BY idusuario",
+    (error, results) => {
+      if (error) {
+        console.error("Error al obtener usuarios:", error);
+        return res.status(500).json({
+          success: false,
+          error: "Error al obtener usuarios",
+        });
+      }
+      res.json({
+        success: true,
+        data: results,
+      });
+    }
+  );
+});
+
+// Crear nuevo usuario
+app.post("/api/usuarios", (req, res) => {
+  const { matricula, nombre, contrasena, rol } = req.body;
+
+  // Validaciones básicas
+  if (!nombre || !contrasena) {
+    return res.status(400).json({
+      success: false,
+      error: "Nombre y contraseña son campos requeridos",
+    });
+  }
+
+  const query =
+    "INSERT INTO usuarios (matricula, nombre, contrasena, rol) VALUES (?, ?, ?, ?)";
+
+  pool.query(
+    query,
+    [matricula || null, nombre, contrasena, rol || "user"],
+    (error, results) => {
+      if (error) {
+        console.error("Error al crear usuario:", error);
+
+        if (error.code === "ER_DUP_ENTRY") {
+          return res.status(400).json({
+            success: false,
+            error: "La matrícula ya existe",
+          });
+        }
+
+        return res.status(500).json({
+          success: false,
+          error: "Error al crear usuario",
+        });
+      }
+
+      // Devolver el usuario creado (sin contraseña)
+      pool.query(
+        "SELECT idusuario, matricula, nombre, rol FROM usuarios WHERE idusuario = ?",
+        [results.insertId],
+        (err, userResults) => {
+          if (err) {
+            return res.json({
+              success: true,
+              message: "Usuario creado exitosamente",
+              id: results.insertId,
+            });
+          }
+
+          res.json({
+            success: true,
+            message: "Usuario creado exitosamente",
+            data: userResults[0],
+          });
+        }
+      );
+    }
+  );
+});
+
+// Eliminar usuario
+app.delete("/api/usuarios/:id", (req, res) => {
+  const { id } = req.params;
+
+  pool.query(
+    "DELETE FROM usuarios WHERE idusuario = ?",
+    [id],
+    (error, results) => {
+      if (error) {
+        console.error("Error al eliminar usuario:", error);
+        return res.status(500).json({
+          success: false,
+          error: "Error al eliminar usuario",
+        });
+      }
+
+      if (results.affectedRows === 0) {
+        return res.status(404).json({
+          success: false,
+          error: "Usuario no encontrado",
+        });
+      }
+
+      res.json({
+        success: true,
+        message: "Usuario eliminado exitosamente",
+      });
+    }
+  );
+});
 // -------------------- LOGIN --------------------
 app.post("/login", async (req, res) => {
   const { matricula, contrasena } = req.body;
