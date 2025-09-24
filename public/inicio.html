@@ -63,6 +63,27 @@
         text-align: center;
         display: none;
       }
+
+      /* Estilos para mostrar información del usuario */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: 15px;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .user-role {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        background: var(--bg-secondary);
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
     </style>
   </head>
   <body>
@@ -98,7 +119,13 @@
         </button>
         <h1 class="page-title">Panel de Control</h1>
         <div class="user-menu">
-          <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-info" id="user-info">
+            <div class="user-avatar" id="user-avatar">U</div>
+            <div class="user-details">
+              <div class="user-name" id="user-name">Usuario</div>
+              <div class="user-role" id="user-role">Rol</div>
+            </div>
+          </div>
           <button type="button" class="btn-logout" onclick="logout()">
             <i class="fas fa-sign-out-alt"></i>
             <span>Cerrar sesión</span>
@@ -283,27 +310,59 @@
           showLoading(true);
           hideError();
 
-          // Usar el endpoint correcto que existe en tu servidor
-          const response = await fetch("/api/user-info", {
-            method: "GET",
-            credentials: "same-origin", // Incluye cookies de sesión
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          // Intentar diferentes endpoints posibles donde pueda estar la info del usuario
+          const endpoints = [
+            "/api/user-info",
+            "/api/user",
+            "/api/auth/user",
+            "/api/me",
+            "/user-info",
+          ];
 
-          if (response.status === 401) {
-            // No autenticado, redirigir al login
-            window.location.href = "/index.html";
-            return;
+          let userData = null;
+          let lastError = null;
+
+          // Probar diferentes endpoints
+          for (const endpoint of endpoints) {
+            try {
+              const response = await fetch(endpoint, {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+
+              if (response.status === 401) {
+                // No autenticado, redirigir al login
+                window.location.href = "/index.html";
+                return;
+              }
+
+              if (response.ok) {
+                userData = await response.json();
+                break; // Si encontramos un endpoint válido, salir del loop
+              }
+            } catch (error) {
+              lastError = error;
+              continue; // Continuar con el siguiente endpoint
+            }
           }
 
-          if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
+          if (!userData) {
+            // Si no se pudo obtener del servidor, intentar desde localStorage
+            const storedUser = localStorage.getItem("currentUser");
+            if (storedUser) {
+              userData = JSON.parse(storedUser);
+            } else {
+              throw new Error("No se pudo obtener información del usuario");
+            }
           }
 
-          const userData = await response.json();
           currentUser = userData;
+
+          // Guardar en localStorage para futuras visitas
+          localStorage.setItem("currentUser", JSON.stringify(userData));
 
           // Cargar la interfaz con los datos del usuario
           loadUserData();
@@ -316,7 +375,9 @@
           // Usar datos de demostración como fallback
           currentUser = {
             username: "Usuario Demo",
+            name: "Usuario de Prueba",
             role: "user",
+            email: "demo@utsv.edu.mx",
           };
 
           loadUserData();
@@ -352,8 +413,32 @@
       function loadUserData() {
         if (!currentUser) return;
 
-        document.getElementById("user-avatar").textContent =
-          currentUser.username.charAt(0).toUpperCase();
+        // Mostrar información del usuario
+        const userAvatar = document.getElementById("user-avatar");
+        const userName = document.getElementById("user-name");
+        const userRole = document.getElementById("user-role");
+
+        // Usar el nombre completo si está disponible, sino el username
+        const displayName =
+          currentUser.name ||
+          currentUser.username ||
+          currentUser.nombre ||
+          "Usuario";
+        const userRoleText =
+          currentUser.role === "admin"
+            ? "Administrador"
+            : currentUser.role === "user"
+            ? "Usuario"
+            : currentUser.role || "Usuario";
+
+        // Avatar con iniciales
+        userAvatar.textContent = displayName.charAt(0).toUpperCase();
+
+        // Nombre completo
+        userName.textContent = displayName;
+
+        // Rol traducido al español
+        userRole.textContent = userRoleText;
 
         // Simular datos de estadísticas (en un caso real, vendrían del servidor)
         document.getElementById("student-count").textContent =
@@ -369,7 +454,7 @@
         const navMenu = document.getElementById("nav-menu");
         navMenu.innerHTML = "";
 
-        const role = currentUser.role || "user"; // Valor por defecto si no hay rol
+        const role = currentUser.role || "user";
 
         // Si el rol no existe en menuItems, usar 'user' como valor por defecto
         const effectiveRole = menuItems[role] ? role : "user";
@@ -408,7 +493,7 @@
         const quickActionsContainer = document.getElementById("quick-actions");
         quickActionsContainer.innerHTML = "";
 
-        const role = currentUser.role || "user"; // Valor por defecto si no hay rol
+        const role = currentUser.role || "user";
 
         // Si el rol no existe en quickActions, usar 'user' como valor por defecto
         const effectiveRole = quickActions[role] ? role : "user";
@@ -428,7 +513,10 @@
       // Función para cerrar sesión
       function logout() {
         if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-          // Usar el endpoint de logout que ya existe en tu servidor
+          // Limpiar localStorage
+          localStorage.removeItem("currentUser");
+
+          // Usar el endpoint de logout
           fetch("/logout", {
             method: "GET",
             credentials: "same-origin",
@@ -443,7 +531,8 @@
             })
             .catch((error) => {
               console.error("Error al cerrar sesión:", error);
-              alert("Error al cerrar sesión. Por favor, intenta nuevamente.");
+              // Redirigir de todas formas
+              window.location.href = "index.html";
             });
         }
       }

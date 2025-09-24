@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     requestListBtn.style.display = "block";
     requestListBtn.addEventListener("click", () => {
       requestListModal.style.display = "block";
-      cargarSolicitudes(); // Ahora la función está definida
+      cargarSolicitudes();
     });
   }
 
@@ -104,17 +104,50 @@ document.addEventListener("DOMContentLoaded", () => {
     "sabado",
   ];
 
+  // Función para formatear el texto de la celda (materia,maestro,grupo)
+  const formatearTextoCelda = (materia, maestro, grupo) => {
+    const partes = [];
+    if (materia) partes.push(materia.trim());
+    if (maestro) partes.push(maestro.trim());
+    if (grupo) partes.push(`Grupo: ${grupo.trim()}`);
+    return partes.join(", ");
+  };
+
+  // Función para parsear el texto de la celda (materia,maestro,grupo)
+  const parsearTextoCelda = (texto) => {
+    const partes = texto.split(",").map((parte) => parte.trim());
+    let materia = "";
+    let maestro = "";
+    let grupo = "";
+
+    if (partes.length >= 1) materia = partes[0];
+    if (partes.length >= 2) maestro = partes[1];
+    if (partes.length >= 3) {
+      // Extraer grupo (puede venir como "Grupo: X" o simplemente "X")
+      const grupoParte = partes[2];
+      grupo = grupoParte.replace(/^grupo:\s*/i, "");
+    }
+
+    return { materia, maestro, grupo };
+  };
+
   // Función para transformar el formato al esperado por el backend
   const transformarHorarios = (horarios) => {
     return horarios.map((horario) => {
       const [hora_inicio, hora_fin] = horario.hora
         .split("-")
         .map((h) => h.trim());
+
+      const { materia, maestro, grupo } = parsearTextoCelda(
+        horario.contenido || ""
+      );
+
       return {
         hora_inicio: hora_inicio.length === 4 ? `0${hora_inicio}` : hora_inicio,
         hora_fin: hora_fin.length === 4 ? `0${hora_fin}` : hora_fin,
-        materia: horario.materia,
-        maestro: horario.maestro,
+        materia: materia || "",
+        maestro: maestro || "",
+        grupo: grupo || "",
         dia:
           horario.dia.charAt(0).toUpperCase() +
           horario.dia.slice(1).toLowerCase(),
@@ -169,11 +202,14 @@ document.addEventListener("DOMContentLoaded", () => {
           .replace("sábado", "sabado");
         const materia = item.materia || "";
         const maestro = item.maestro || "";
+        const grupo = item.grupo || "";
 
         if (DIAS_NORMALIZADOS.includes(dia) && horariosPorHora[hora]) {
-          horariosPorHora[hora][dia] = `${materia}${
-            maestro ? " / " + maestro : ""
-          }`;
+          horariosPorHora[hora][dia] = formatearTextoCelda(
+            materia,
+            maestro,
+            grupo
+          );
         }
       });
 
@@ -318,6 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.type = "text";
     input.value = currentText;
     input.className = "form-control rounded-0 h-100 border-0";
+    input.placeholder = "materia, maestro, grupo";
 
     cell.textContent = "";
     cell.appendChild(input);
@@ -328,11 +365,11 @@ document.addEventListener("DOMContentLoaded", () => {
       cell.textContent = nuevoValor;
       cell.classList.remove("editando", "p-0");
 
-      const [materia, maestro] = nuevoValor.split("/").map((s) => s.trim());
-      if (materia) {
-        cell.setAttribute("data-materia", materia);
-        cell.setAttribute("data-maestro", maestro || "");
-      }
+      // Guardar los datos parseados en atributos data
+      const { materia, maestro, grupo } = parsearTextoCelda(nuevoValor);
+      cell.setAttribute("data-materia", materia);
+      cell.setAttribute("data-maestro", maestro);
+      cell.setAttribute("data-grupo", grupo);
     };
 
     input.addEventListener("blur", finalizarEdicion);
@@ -368,14 +405,10 @@ document.addEventListener("DOMContentLoaded", () => {
           const dia = cell.getAttribute("data-dia");
           const contenido = cell.textContent.trim();
           if (contenido) {
-            const [materia, maestro] = contenido
-              .split("/")
-              .map((s) => s.trim());
             horarios.push({
               hora,
               dia,
-              materia: materia || "",
-              maestro: maestro || "",
+              contenido: contenido, // Guardamos el contenido completo para parsearlo después
             });
           }
         });
@@ -452,8 +485,6 @@ document.addEventListener("DOMContentLoaded", () => {
     horarioBody.appendChild(row);
   };
 
-  // ... (código anterior se mantiene igual hasta la función solicitarCambioHorario)
-
   // 5. Función para solicitar cambio de horario (para usuarios)
   const solicitarCambioHorario = async (event) => {
     event.preventDefault();
@@ -463,11 +494,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const horaActual = document
       .getElementById("currentSchedule")
       .value.split("-")[0]
-      .trim(); // Toma solo la hora de inicio
+      .trim();
     const horaNueva = document
       .getElementById("newSchedule")
       .value.split("-")[0]
-      .trim(); // Toma solo la hora de inicio
+      .trim();
     const motivo = document.getElementById("requestMessage").value.trim();
 
     if (!dia || !horaActual || !horaNueva || !motivo) {
@@ -479,8 +510,8 @@ document.addEventListener("DOMContentLoaded", () => {
       laboratorio,
       usuarioId: userId,
       dia,
-      hora_actual: horaActual, // Ahora en formato "HH:MM"
-      hora_nueva: horaNueva, // Ahora en formato "HH:MM"
+      hora_actual: horaActual,
+      hora_nueva: horaNueva,
       motivo,
       estado: "pendiente",
     };
@@ -519,34 +550,6 @@ document.addEventListener("DOMContentLoaded", () => {
         stack: error.stack,
       });
       alert(`Error al enviar: ${error.message}`);
-    }
-  };
-  // Función para notificar al administrador
-  const notificarAdministrador = async (data) => {
-    try {
-      const response = await fetch(
-        "https://salt-utsv-production.up.railway.app/api/notificaciones",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tipo: "solicitud_cambio",
-            mensaje: `Nueva solicitud de cambio en ${data.laboratorio}`,
-            datos: data,
-            leido: false,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error al notificar:", error);
-      // Puedes agregar aquí un fallback como enviar un email o registrar en un log
     }
   };
 
@@ -594,12 +597,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ).join("");
 
     // Actualizar horarios cuando se selecciona un día
-    // En la función que llena los selects de horarios:
     daySelect.addEventListener("change", async (e) => {
       const diaSeleccionado = e.target.value;
       const horasDia = horarios
         .filter((h) => h.dia.toLowerCase() === diaSeleccionado)
-        .map((h) => h.hora); // ["07:00-07:50", "08:00-08:50", ...]
+        .map((h) => h.hora);
 
       const currentScheduleSelect = document.getElementById("currentSchedule");
       currentScheduleSelect.innerHTML = horasDia
@@ -618,7 +620,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ... (el resto del código se mantiene igual)
   // Event listeners
   if (userRole !== "user") {
     saveButton.addEventListener("click", guardarHorario);
