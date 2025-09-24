@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ç<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -22,8 +22,8 @@
         --light-color: #ecf0f1;
         --dark-color: #2c3e50;
         --gray-color: #95a5a6;
-        --border-radius: 8px;
-        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
+        --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         --transition: all 0.3s ease;
       }
 
@@ -37,55 +37,61 @@
         font-family: "Roboto", sans-serif;
         line-height: 1.6;
         color: #333;
-        background-color: #f5f7fa;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 20px;
       }
 
       header {
-        background-color: white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         box-shadow: var(--box-shadow);
-        padding: 15px 0;
+        padding: 20px 0;
         margin-bottom: 30px;
         border-radius: var(--border-radius);
+        color: white;
       }
 
       .header-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 20px;
+        padding: 0 30px;
       }
 
       .logo {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
       }
 
       .logo i {
-        color: var(--primary-color);
-        font-size: 24px;
+        color: #ffd700;
+        font-size: 28px;
       }
 
       .logo h1 {
-        font-size: 22px;
+        font-size: 24px;
         font-weight: 700;
-        color: var(--dark-color);
+        color: white;
       }
 
       .user-info {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 15px;
+        border-radius: 25px;
+        backdrop-filter: blur(10px);
       }
 
       .user-info i {
-        color: var(--gray-color);
+        color: #ffd700;
       }
 
       .main-content {
@@ -95,11 +101,13 @@
       }
 
       .card {
-        background-color: white;
+        background: white;
         border-radius: var(--border-radius);
         box-shadow: var(--box-shadow);
         padding: 25px;
         margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
       }
 
       .card-header {
@@ -108,165 +116,220 @@
         align-items: center;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 2px solid #f0f0f0;
       }
 
       .card-title {
-        font-size: 18px;
-        font-weight: 500;
+        font-size: 20px;
+        font-weight: 600;
         color: var(--dark-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
 
       .scanner-container {
         position: relative;
         width: 100%;
         margin-bottom: 20px;
-        background-color: #f8f9fa;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: var(--border-radius);
-        padding: 20px;
+        padding: 30px;
         text-align: center;
+        border: 2px dashed var(--primary-color);
       }
 
       .scanner-icon {
-        font-size: 48px;
+        font-size: 60px;
         color: var(--primary-color);
         margin-bottom: 15px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
       }
 
       .scanner-instructions {
         color: var(--dark-color);
         margin-bottom: 15px;
+        font-size: 16px;
+        line-height: 1.5;
       }
 
       .button-group {
         display: flex;
-        gap: 10px;
-        margin-top: 15px;
+        gap: 12px;
+        margin-top: 20px;
       }
 
       .btn {
-        padding: 10px 20px;
+        padding: 12px 24px;
         border: none;
-        border-radius: var(--border-radius);
-        font-weight: 500;
+        border-radius: 25px;
+        font-weight: 600;
         cursor: pointer;
         transition: var(--transition);
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .btn-primary {
-        background-color: var(--primary-color);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
         color: white;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
       }
 
       .btn-primary:hover {
-        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
       }
 
       .btn-success {
-        background-color: var(--success-color);
+        background: linear-gradient(135deg, var(--success-color), #27ae60);
         color: white;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
       }
 
       .btn-success:hover {
-        background-color: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
       }
 
       .btn-danger {
-        background-color: var(--danger-color);
+        background: linear-gradient(135deg, var(--danger-color), #c0392b);
         color: white;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
       }
 
       .btn-danger:hover {
-        background-color: #c0392b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
       }
 
       .btn-secondary {
-        background-color: var(--gray-color);
+        background: linear-gradient(135deg, var(--gray-color), #7f8c8d);
         color: white;
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
       }
 
       .btn-secondary:hover {
-        background-color: #7f8c8d;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
       }
 
       .btn-warning {
-        background-color: var(--warning-color);
+        background: linear-gradient(135deg, var(--warning-color), #e67e22);
         color: white;
+        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
       }
 
       .btn-warning:hover {
-        background-color: #e67e22;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
       }
 
       .btn:disabled {
-        background-color: #bdc3c7;
+        background: #bdc3c7;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
 
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
       }
 
       .form-label {
         display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
+        margin-bottom: 10px;
+        font-weight: 600;
         color: var(--dark-color);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .form-control {
         width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        border-radius: var(--border-radius);
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
         font-size: 16px;
         transition: var(--transition);
+        background: #fafafa;
       }
 
       .form-control:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        background: white;
       }
 
       .form-control[readonly] {
-        background-color: #f9f9f9;
+        background: #f0f0f0;
         color: #666;
+        border-color: #ddd;
       }
 
       .alert {
-        padding: 15px;
+        padding: 20px;
         border-radius: var(--border-radius);
         margin-bottom: 20px;
         display: none;
+        border-left: 5px solid;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
       }
 
       .alert-success {
         background-color: #d4edda;
         color: #155724;
-        border: 1px solid #c3e6cb;
+        border-left-color: var(--success-color);
       }
 
       .alert-danger {
         background-color: #f8d7da;
         color: #721c24;
-        border: 1px solid #f5c6cb;
+        border-left-color: var(--danger-color);
       }
 
       .alert-warning {
         background-color: #fff3cd;
         color: #856404;
-        border: 1px solid #ffeaa7;
+        border-left-color: var(--warning-color);
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
-        background-color: white;
+        background: white;
         border-radius: var(--border-radius);
         overflow: hidden;
         box-shadow: var(--box-shadow);
@@ -274,57 +337,52 @@
 
       th,
       td {
-        padding: 12px 15px;
+        padding: 15px;
         text-align: left;
         border-bottom: 1px solid #eee;
       }
 
       th {
-        background-color: var(--primary-color);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
         color: white;
-        font-weight: 500;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 14px;
       }
 
       tr:hover {
-        background-color: #f5f5f5;
-      }
-
-      .status-indicator {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-right: 8px;
-      }
-
-      .status-active {
-        background-color: var(--success-color);
-      }
-
-      .status-inactive {
-        background-color: var(--danger-color);
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        transition: var(--transition);
       }
 
       .badge {
         display: inline-block;
-        padding: 3px 8px;
+        padding: 5px 12px;
         border-radius: 20px;
         font-size: 12px;
-        font-weight: 500;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .badge-primary {
-        background-color: var(--primary-color);
+        background: var(--primary-color);
         color: white;
       }
 
       .badge-success {
-        background-color: var(--success-color);
+        background: var(--success-color);
         color: white;
       }
 
       .badge-warning {
-        background-color: #f39c12;
+        background: var(--warning-color);
         color: white;
       }
 
@@ -332,78 +390,400 @@
         text-align: center;
       }
 
+      /* ESTILOS MEJORADOS PARA GESTIÓN DE GRUPOS */
       .group-selector {
-        background-color: #e8f4fd;
-        border: 2px solid var(--primary-color);
-        border-radius: var(--border-radius);
-        padding: 15px;
-        margin-bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
       }
 
-      .group-buttons {
+      .group-selector::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(30deg);
+      }
+
+      .group-selector h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
+        align-items: center;
+        gap: 15px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .group-selector h3 i {
+        color: #ffd700;
+        font-size: 2rem;
+      }
+
+      .group-selector p {
+        opacity: 0.9;
+        margin-bottom: 25px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      /* Contenedor de grupos con diseño de tarjetas */
+      .groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+      }
+
+      .group-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 20px;
+        color: #333;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .group-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+      }
+
+      .group-card.active {
+        border-color: #4caf50;
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+        animation: pulse 2s infinite;
+      }
+
+      .group-card.active::after {
+        content: "✓";
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .group-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .group-name {
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: inherit;
+      }
+
+      .group-actions {
+        display: flex;
+        gap: 8px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .group-card:hover .group-actions {
+        opacity: 1;
+      }
+
+      .group-action-btn {
+        background: none;
+        border: none;
+        padding: 8px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .group-edit-btn {
+        color: #2196f3;
+        background: rgba(33, 150, 243, 0.1);
+      }
+
+      .group-edit-btn:hover {
+        background: #2196f3;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .group-delete-btn {
+        color: #f44336;
+        background: rgba(244, 67, 54, 0.1);
+      }
+
+      .group-delete-btn:hover {
+        background: #f44336;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .group-stats {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-top: 10px;
       }
 
-      .group-btn {
-        padding: 8px 16px;
-        border: 2px solid var(--primary-color);
-        background-color: white;
-        color: var(--primary-color);
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        transition: var(--transition);
+      .group-stats i {
+        font-size: 1.2rem;
       }
 
-      .group-btn.active {
-        background-color: var(--primary-color);
-        color: white;
-      }
-
-      .group-btn:hover {
-        background-color: var(--primary-color);
-        color: white;
+      /* Input personalizado mejorado */
+      .custom-group-container {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
       .custom-group-input {
         display: flex;
-        gap: 10px;
-        margin-top: 10px;
+        gap: 15px;
+        align-items: center;
       }
 
-      .edit-group-btn {
-        margin-left: 10px;
-        padding: 5px 10px;
-        background-color: var(--warning-color);
-        color: white;
+      .custom-group-input input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
         border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
+        border-radius: 25px;
+        padding: 15px 25px;
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
 
-      @media (max-width: 768px) {
-        .main-content {
-          grid-template-columns: 1fr;
-        }
+      .custom-group-input button {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        border: none;
+        border-radius: 25px;
+        padding: 15px 30px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        white-space: nowrap;
+      }
 
-        .header-content {
-          flex-direction: column;
-          gap: 15px;
-        }
+      .custom-group-input button:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+      }
 
-        .button-group {
-          flex-wrap: wrap;
-        }
+      /* Grupo actual seleccionado */
+      .current-group-display {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
 
-        .btn {
-          flex: 1 1 100%;
-        }
+      .current-group-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-        .group-buttons {
-          justify-content: center;
+      .current-group-label {
+        font-size: 1rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .current-group-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #ffd700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .current-group-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      /* Botones de acción */
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .cleanup-btn,
+      .manage-btn {
+        background: linear-gradient(135deg, #ffa726, #fb8c00);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 25px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+        flex: 1;
+        min-width: 200px;
+        justify-content: center;
+      }
+
+      .cleanup-btn:hover,
+      .manage-btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(255, 167, 38, 0.4);
+      }
+
+      .manage-btn {
+        background: linear-gradient(135deg, #26c6da, #00acc1);
+        box-shadow: 0 4px 15px rgba(38, 198, 218, 0.3);
+      }
+
+      .manage-btn:hover {
+        box-shadow: 0 8px 25px rgba(38, 198, 218, 0.4);
+      }
+
+      /* Modal de confirmación mejorado */
+      .confirmation-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
         }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        animation: modalAppear 0.4s ease;
+      }
+
+      @keyframes modalAppear {
+        from {
+          opacity: 0;
+          transform: scale(0.8) translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .modal-header i {
+        font-size: 2.5rem;
+        color: #f44336;
+      }
+
+      .modal-title {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .modal-body {
+        margin-bottom: 30px;
+        line-height: 1.7;
+        color: #666;
+        font-size: 16px;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 20px;
+        justify-content: flex-end;
+      }
+
+      .modal-btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .modal-btn-cancel {
+        background: #f5f5f5;
+        color: #666;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-btn-cancel:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+      }
+
+      .modal-btn-confirm {
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        color: white;
+        box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+      }
+
+      .modal-btn-confirm:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
       }
 
       .btn-pulse {
@@ -418,73 +798,83 @@
         }
         70% {
           transform: scale(1.05);
-          box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+          box-shadow: 0 0 0 15px rgba(0, 123, 255, 0);
         }
         100% {
           transform: scale(1);
           box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
         }
       }
-      /* Agrega estos estilos al CSS existente */
-      .preview-modal {
-        background-color: white;
-        border-radius: var(--border-radius);
-        padding: 20px;
-        max-width: 500px;
-        margin: 20px auto;
-        box-shadow: var(--box-shadow);
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .header-content {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .groups-grid {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 15px;
+        }
+
+        .current-group-display {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .custom-group-input {
+          flex-direction: column;
+        }
+
+        .custom-group-input button {
+          width: 100%;
+        }
+
+        .button-group {
+          flex-direction: column;
+        }
+
+        .modal-actions {
+          flex-direction: column;
+        }
+
+        .container {
+          padding: 15px;
+        }
+
+        .card {
+          padding: 20px;
+        }
       }
 
-      .student-list {
-        max-height: 200px;
-        overflow-y: auto;
-        margin: 10px 0;
-        padding: 10px;
-        background-color: #f8f9fa;
-        border-radius: var(--border-radius);
+      /* Estados vacíos */
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
       }
 
-      .student-item {
-        padding: 5px 0;
-        border-bottom: 1px solid #eee;
+      .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
       }
 
-      .confirmation-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-top: 15px;
-      }
-
-      /* Agrega estos estilos */
-      .group-btn-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        margin-bottom: 5px;
-      }
-
-      .group-btn {
-        flex: 1;
-        text-align: left;
-      }
-
-      .delete-group-btn {
-        padding: 5px 8px;
-        background-color: var(--danger-color);
-        color: white;
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-      }
-
-      .delete-group-btn:hover {
-        background-color: #c0392b;
-      }
-
-      .cleanup-btn {
-        width: 100%;
-        margin-top: 10px;
+      .empty-state p {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
       }
     </style>
   </head>
@@ -503,43 +893,65 @@
     </header>
 
     <div class="container">
-      <!-- Selector de Grupo -->
+      <!-- Selector de Grupo Mejorado -->
       <div class="group-selector">
-        <h3><i class="fas fa-users"></i> Seleccionar Grupo</h3>
-        <p>
-          Selecciona el grupo al que pertenecerán los alumnos que registrarás:
-        </p>
+        <h3><i class="fas fa-users"></i> Gestión de Grupos</h3>
+        <p>Selecciona o gestiona los grupos de estudiantes</p>
 
-        <div class="group-buttons" id="group-buttons">
-          <!-- Los botones de grupos se generarán dinámicamente -->
+        <!-- Grid de grupos -->
+        <div class="groups-grid" id="groups-grid">
+          <!-- Los grupos se generarán dinámicamente -->
         </div>
 
-        <div class="custom-group-input">
-          <input
-            type="text"
-            id="custom-group"
-            class="form-control"
-            placeholder="Ej: 701, 702, 801..."
-            maxlength="10"
-          />
-          <button class="btn btn-primary" id="add-group-btn">
-            <i class="fas fa-plus"></i> Agregar Grupo
+        <!-- Input para nuevo grupo -->
+        <div class="custom-group-container">
+          <div class="custom-group-input">
+            <input
+              type="text"
+              id="custom-group"
+              class="form-control"
+              placeholder="Crear nuevo grupo (Ej: 701, 702...)"
+              maxlength="10"
+            />
+            <button class="btn btn-primary" id="add-group-btn">
+              <i class="fas fa-plus-circle"></i> Crear Grupo
+            </button>
+          </div>
+        </div>
+
+        <!-- Grupo actual seleccionado -->
+        <div class="current-group-display">
+          <div class="current-group-info">
+            <span class="current-group-label">Grupo seleccionado:</span>
+            <span class="current-group-value" id="current-group-value"
+              >Ninguno</span
+            >
+          </div>
+          <div class="current-group-actions">
+            <button
+              class="btn btn-warning"
+              id="edit-group-btn"
+              title="Editar grupo"
+            >
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button
+              class="btn btn-secondary"
+              id="clear-group-btn"
+              title="Deseleccionar"
+            >
+              <i class="fas fa-times"></i> Limpiar
+            </button>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button class="cleanup-btn" id="cleanup-btn">
+            <i class="fas fa-broom"></i> Limpiar Duplicados
           </button>
-        </div>
-
-        <div style="margin-top: 10px">
-          <strong>Grupo seleccionado:</strong>
-          <span
-            id="current-group"
-            style="color: var(--primary-color); font-weight: bold"
-            >Ninguno</span
-          >
-          <button
-            class="edit-group-btn"
-            id="edit-group-btn"
-            title="Editar grupo actual"
-          >
-            <i class="fas fa-edit"></i>
+          <button class="manage-btn" id="manage-groups-btn">
+            <i class="fas fa-cog"></i> Gestionar Grupos
           </button>
         </div>
       </div>
@@ -668,37 +1080,42 @@
         const studentsTableBody = document.getElementById(
           "students-table-body"
         );
-        const groupButtonsContainer = document.getElementById("group-buttons");
+        const groupsGrid = document.getElementById("groups-grid");
         const customGroupInput = document.getElementById("custom-group");
         const addGroupBtn = document.getElementById("add-group-btn");
-        const currentGroupSpan = document.getElementById("current-group");
+        const currentGroupValue = document.getElementById(
+          "current-group-value"
+        );
         const editGroupBtn = document.getElementById("edit-group-btn");
+        const clearGroupBtn = document.getElementById("clear-group-btn");
+        const cleanupBtn = document.getElementById("cleanup-btn");
+        const manageGroupsBtn = document.getElementById("manage-groups-btn");
 
         // Variables de estado
         let currentStudentData = null;
         let inputBuffer = "";
         let inputTimeout = null;
         let datosParciales = {};
-        let timeoutRegistro = null;
         let escaneoActivo = false;
         let selectedGroup = "";
-        let grupos = ["701", "702", "703", "801", "802", "803"]; // Grupos predefinidos
-        let filteredGroup = ""; // Grupo para filtrar
+        let grupos = ["701", "702", "703", "801", "802", "803"];
+        let filteredGroup = "";
 
         // Inicializar la interfaz
         function init() {
           loadGrupos();
           loadStudents();
           setupEventListeners();
+          renderGroupCards();
+          updateCurrentGroupDisplay();
         }
 
-        // Cargar grupos desde localStorage o usar predefinidos
+        // Cargar grupos desde localStorage
         function loadGrupos() {
           const savedGrupos = localStorage.getItem("grupos");
           if (savedGrupos) {
             grupos = JSON.parse(savedGrupos);
           }
-          renderGroupButtons();
         }
 
         // Guardar grupos en localStorage
@@ -706,59 +1123,109 @@
           localStorage.setItem("grupos", JSON.stringify(grupos));
         }
 
-        // Renderizar botones de grupos
-        // Renderizar botones de grupos con opción de eliminar
-        function renderGroupButtons() {
-          groupButtonsContainer.innerHTML = "";
+        // Renderizar grupos como tarjetas
+        function renderGroupCards() {
+          groupsGrid.innerHTML = "";
 
-          // Ordenar grupos alfabéticamente
           const gruposOrdenados = [...grupos].sort((a, b) =>
             a.localeCompare(b)
           );
 
-          gruposOrdenados.forEach((grupo) => {
-            const groupContainer = document.createElement("div");
-            groupContainer.style.cssText =
-              "display: flex; align-items: center; gap: 5px; margin-bottom: 5px;";
+          if (gruposOrdenados.length === 0) {
+            groupsGrid.innerHTML = `
+              <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: rgba(255,255,255,0.7);">
+                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                <p>No hay grupos creados</p>
+              </div>
+            `;
+            return;
+          }
 
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = `group-btn ${
+          gruposOrdenados.forEach(async (grupo) => {
+            const groupCard = document.createElement("div");
+            groupCard.className = `group-card ${
               selectedGroup === grupo ? "active" : ""
             }`;
-            button.textContent = grupo;
-            button.style.flex = "1";
-            button.addEventListener("click", () => selectGroup(grupo));
 
-            const deleteBtn = document.createElement("button");
-            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-            deleteBtn.className = "btn btn-danger btn-sm";
-            deleteBtn.style.padding = "5px 8px";
-            deleteBtn.title = `Eliminar grupo ${grupo}`;
-            deleteBtn.addEventListener("click", (e) => {
-              e.stopPropagation();
-              if (confirm(`¿Estás seguro de eliminar el grupo "${grupo}"?`)) {
-                deleteGroup(grupo);
+            const stats = await getGroupStats(grupo);
+
+            groupCard.innerHTML = `
+              <div class="group-card-header">
+                <span class="group-name">${grupo}</span>
+                <div class="group-actions">
+                  <button class="group-action-btn group-edit-btn" title="Editar grupo">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="group-action-btn group-delete-btn" title="Eliminar grupo">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="group-stats">
+                <span>${stats} estudiantes</span>
+                <span><i class="fas fa-users"></i></span>
+              </div>
+            `;
+
+            groupCard.addEventListener("click", (e) => {
+              if (!e.target.closest(".group-actions")) {
+                selectGroup(grupo);
               }
             });
 
-            groupContainer.appendChild(button);
-            groupContainer.appendChild(deleteBtn);
-            groupButtonsContainer.appendChild(groupContainer);
+            const editBtn = groupCard.querySelector(".group-edit-btn");
+            const deleteBtn = groupCard.querySelector(".group-delete-btn");
+
+            editBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              editGroup(grupo);
+            });
+
+            deleteBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              showDeleteConfirmation(grupo);
+            });
+
+            groupsGrid.appendChild(groupCard);
           });
+        }
+
+        // Obtener estadísticas de un grupo
+        async function getGroupStats(grupo) {
+          try {
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/${grupo}`
+            );
+            const data = await response.json();
+            return data.success ? data.count : 0;
+          } catch (error) {
+            return 0;
+          }
         }
 
         // Seleccionar grupo
         function selectGroup(grupo) {
           selectedGroup = grupo;
-          currentGroupSpan.textContent = grupo;
-          grupoInput.value = grupo;
-          renderGroupButtons();
-          showAlert(`Grupo ${grupo} seleccionado`, "success");
+          updateCurrentGroupDisplay();
+          renderGroupCards();
+          showAlert(`Grupo "${grupo}" seleccionado`, "success");
+        }
+
+        // Actualizar display del grupo actual
+        function updateCurrentGroupDisplay() {
+          currentGroupValue.textContent = selectedGroup || "Ninguno";
+          grupoInput.value = selectedGroup || "";
+        }
+
+        // Limpiar selección de grupo
+        function clearGroupSelection() {
+          selectedGroup = "";
+          updateCurrentGroupDisplay();
+          renderGroupCards();
+          showAlert("Selección de grupo limpiada", "info");
         }
 
         // Agregar nuevo grupo
-        // Agregar nuevo grupo - VERSIÓN MEJORADA CON VALIDACIÓN
         function addNewGroup() {
           const newGroup = customGroupInput.value.trim();
 
@@ -767,25 +1234,21 @@
             return;
           }
 
-          // Validar que no sea "Sin grupo" o vacío
           if (newGroup.toLowerCase() === "sin grupo") {
             showAlert('"Sin grupo" es un valor reservado', "warning");
             return;
           }
 
-          // Verificar si el grupo ya existe (case insensitive)
           const grupoExistente = grupos.find(
             (g) => g.toLowerCase() === newGroup.toLowerCase()
           );
 
           if (grupoExistente) {
-            // Si existe exactamente igual, mostrar advertencia
             if (grupoExistente === newGroup) {
               showAlert("Este grupo ya existe", "warning");
               return;
             }
 
-            // Si existe con diferente capitalización, preguntar si unificar
             if (
               confirm(
                 `El grupo "${grupoExistente}" ya existe. ¿Quieres unificar "${newGroup}" con "${grupoExistente}"?`
@@ -795,301 +1258,168 @@
             }
             return;
           }
-          // Unificar dos grupos en uno
-          async function unificarGrupos(grupoMantener, grupoEliminar) {
-            try {
-              showAlert(
-                `Unificando grupos "${grupoEliminar}" en "${grupoMantener}"...`,
-                "warning"
-              );
 
-              // Actualizar estudiantes del grupo a eliminar
-              const response = await fetch(
-                `${API_BASE_URL}/estudiantes/grupo/masivo`,
-                {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    grupo_anterior: grupoEliminar,
-                    grupo_nuevo: grupoMantener,
-                  }),
-                }
-              );
-
-              if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Error al unificar grupos");
-              }
-
-              // Eliminar el grupo duplicado de la lista
-              const index = grupos.indexOf(grupoEliminar);
-              if (index !== -1) {
-                grupos.splice(index, 1);
-                saveGrupos();
-                renderGroupButtons();
-              }
-
-              // Si el grupo seleccionado era el que se eliminó, cambiar al grupo unificado
-              if (selectedGroup === grupoEliminar) {
-                selectedGroup = grupoMantener;
-                currentGroupSpan.textContent = grupoMantener;
-                grupoInput.value = grupoMantener;
-              }
-
-              const result = await response.json();
-              showAlert(
-                `Grupos unificados: ${result.affected || result.message}`,
-                "success"
-              );
-              loadStudents();
-            } catch (error) {
-              console.error("Error al unificar grupos:", error);
-              showAlert(`Error al unificar grupos: ${error.message}`, "danger");
-            }
-          }
-
-          // Eliminar un grupo
-          async function deleteGroup(groupToDelete) {
-            if (!groupToDelete) return;
-
-            // Verificar si hay estudiantes en el grupo
-            try {
-              const response = await fetch(
-                `${API_BASE_URL}/estudiantes/grupo/${groupToDelete}`
-              );
-              const data = await response.json();
-
-              let nuevoGrupo = "Sin grupo";
-
-              if (data.success && data.count > 0) {
-                // Preguntar qué hacer con los estudiantes
-                const opcion = prompt(
-                  `Hay ${data.count} estudiantes en el grupo "${groupToDelete}". ¿Qué deseas hacer?\n\n` +
-                    `1. Dejar como "Sin grupo"\n` +
-                    `2. Mover a otro grupo existente\n\n` +
-                    `Escribe "1" o "2", o el nombre del nuevo grupo:`,
-                  "1"
-                );
-
-                if (opcion === null) return; // Usuario canceló
-
-                if (opcion === "2") {
-                  const grupoDestino = prompt(
-                    "¿A qué grupo quieres mover los estudiantes?"
-                  );
-                  if (grupoDestino && grupoDestino.trim()) {
-                    nuevoGrupo = grupoDestino.trim();
-                  } else {
-                    showAlert("Operación cancelada", "warning");
-                    return;
-                  }
-                } else if (
-                  opcion &&
-                  opcion.trim() !== "1" &&
-                  opcion.trim() !== "2"
-                ) {
-                  // El usuario escribió directamente un grupo
-                  nuevoGrupo = opcion.trim();
-                }
-
-                // Mover estudiantes al nuevo grupo
-                await fetch(`${API_BASE_URL}/estudiantes/grupo/masivo`, {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    grupo_anterior: groupToDelete,
-                    grupo_nuevo: nuevoGrupo,
-                  }),
-                });
-              }
-
-              // Eliminar el grupo de la lista
-              const index = grupos.indexOf(groupToDelete);
-              if (index !== -1) {
-                grupos.splice(index, 1);
-                saveGrupos();
-                renderGroupButtons();
-              }
-
-              // Si el grupo seleccionado era el que se eliminó, resetear selección
-              if (selectedGroup === groupToDelete) {
-                selectedGroup = "";
-                currentGroupSpan.textContent = "Ninguno";
-                grupoInput.value = "";
-              }
-
-              showAlert(
-                `Grupo "${groupToDelete}" eliminado. Estudiantes movidos a "${nuevoGrupo}"`,
-                "success"
-              );
-              loadStudents();
-            } catch (error) {
-              console.error("Error al eliminar grupo:", error);
-              showAlert(`Error al eliminar grupo: ${error.message}`, "danger");
-            }
-          }
-
-          // Agregar nuevo grupo
           grupos.push(newGroup);
           saveGrupos();
-          renderGroupButtons();
+          renderGroupCards();
           customGroupInput.value = "";
           showAlert(`Grupo "${newGroup}" agregado`, "success");
         }
 
-        // Limpiar grupos duplicados (case insensitive)
-        function limpiarGruposDuplicados() {
-          const gruposUnicos = [];
-          const gruposLowerCase = new Set();
-          const duplicados = [];
-
-          // Identificar duplicados
-          grupos.forEach((grupo) => {
-            const lowerCase = grupo.toLowerCase();
-            if (gruposLowerCase.has(lowerCase)) {
-              duplicados.push(grupo);
-            } else {
-              gruposLowerCase.add(lowerCase);
-              gruposUnicos.push(grupo);
-            }
-          });
-
-          if (duplicados.length === 0) {
-            showAlert("No se encontraron grupos duplicados", "success");
-            return;
-          }
-
-          if (
-            confirm(
-              `Se encontraron ${duplicados.length} grupos duplicados. ¿Quieres limpiarlos automáticamente?`
-            )
-          ) {
-            grupos.length = 0; // Vaciar array
-            grupos.push(...gruposUnicos); // Agregar únicos
-            saveGrupos();
-            renderGroupButtons();
+        // Unificar grupos
+        async function unificarGrupos(grupoMantener, grupoEliminar) {
+          try {
             showAlert(
-              `Grupos limpiados: ${duplicados.length} duplicados eliminados`,
-              "success"
+              `Unificando grupos "${grupoEliminar}" en "${grupoMantener}"...`,
+              "warning"
             );
+
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/masivo`,
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  grupo_anterior: grupoEliminar,
+                  grupo_nuevo: grupoMantener,
+                }),
+              }
+            );
+
+            if (!response.ok) throw new Error("Error al unificar grupos");
+
+            const index = grupos.indexOf(grupoEliminar);
+            if (index !== -1) {
+              grupos.splice(index, 1);
+              saveGrupos();
+              renderGroupCards();
+            }
+
+            if (selectedGroup === grupoEliminar) {
+              selectedGroup = grupoMantener;
+              updateCurrentGroupDisplay();
+            }
+
+            showAlert(`Grupos unificados correctamente`, "success");
+            loadStudents();
+          } catch (error) {
+            showAlert(`Error al unificar grupos: ${error.message}`, "danger");
           }
         }
-        // Editar grupo actual
-        // Editar grupo actual - VERSIÓN MEJORADA
-        // Editar grupo actual - VERSIÓN FINAL CON PREVISUALIZACIÓN
-        // Editar grupo actual - CON MODAL PERSONALIZADO
-        async function editCurrentGroup() {
-          if (!selectedGroup) {
-            showAlert("Primero selecciona un grupo", "warning");
-            return;
-          }
 
-          const newGroupName = prompt("Nuevo nombre del grupo:", selectedGroup);
+        // Editar grupo
+        function editGroup(grupo) {
+          const newGroupName = prompt("Nuevo nombre del grupo:", grupo);
           if (
             newGroupName &&
             newGroupName.trim() !== "" &&
-            newGroupName.trim() !== selectedGroup
+            newGroupName.trim() !== grupo
           ) {
-            const oldGroup = selectedGroup;
-            const newGroup = newGroupName.trim();
-
-            // Obtener estudiantes afectados
-            try {
-              const response = await fetch(
-                `${API_BASE_URL}/estudiantes/grupo/${oldGroup}`
-              );
-              const data = await response.json();
-
-              if (data.success && data.count > 0) {
-                const studentList = data.data
-                  .map(
-                    (student) =>
-                      `<div class="student-item">${student.matricula} - ${student.nombre}</div>`
-                  )
-                  .join("");
-
-                const message = `
-          <p>Se actualizarán <strong>${data.count} estudiantes</strong> del grupo <strong>"${oldGroup}"</strong> a <strong>"${newGroup}"</strong>:</p>
-          <div class="student-list">${studentList}</div>
-        `;
-
-                showConfirmationModal(
-                  message,
-                  () => updateGroupForAllStudents(oldGroup, newGroup),
-                  () => showAlert("Actualización cancelada", "warning")
-                );
-              } else {
-                // No hay estudiantes en el grupo, solo cambiar el nombre
-                updateGroupNameOnly(oldGroup, newGroup);
-              }
-            } catch (error) {
-              console.error("Error al obtener estudiantes:", error);
-              // Continuar sin previsualización si hay error
-              if (confirm(`¿Actualizar grupo "${oldGroup}" a "${newGroup}"?`)) {
-                updateGroupForAllStudents(oldGroup, newGroup);
-              }
-            }
-          } else if (newGroupName && newGroupName.trim() === selectedGroup) {
-            showAlert("El nuevo nombre es igual al actual", "warning");
+            updateGroupForAllStudents(grupo, newGroupName.trim());
           }
         }
 
-        // Actualizar solo el nombre del grupo (cuando no hay estudiantes)
-        function updateGroupNameOnly(oldGroup, newGroup) {
-          const index = grupos.indexOf(oldGroup);
-          if (index !== -1) {
-            grupos[index] = newGroup;
-            saveGrupos();
-            selectedGroup = newGroup;
-            currentGroupSpan.textContent = newGroup;
-            grupoInput.value = newGroup;
-            renderGroupButtons();
-            showAlert(
-              `Nombre del grupo actualizado a "${newGroup}"`,
-              "success"
-            );
-          }
-        }
-
-        // Mostrar modal de confirmación personalizado
-        function showConfirmationModal(message, onConfirm, onCancel) {
+        // Modal de confirmación para eliminar grupo
+        function showDeleteConfirmation(grupo) {
           const modal = document.createElement("div");
-          modal.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  `;
-
+          modal.className = "confirmation-modal";
           modal.innerHTML = `
-    <div class="preview-modal">
-      <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Actualización</h3>
-      <div class="student-list">${message}</div>
-      <div class="confirmation-buttons">
-        <button class="btn btn-secondary" id="cancel-btn">Cancelar</button>
-        <button class="btn btn-primary" id="confirm-btn">Confirmar</button>
-      </div>
-    </div>
-  `;
+            <div class="modal-content">
+              <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3 class="modal-title">Eliminar Grupo</h3>
+              </div>
+              <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar el grupo <strong>"${grupo}"</strong>?</p>
+                <p><small>Esta acción afectará a los estudiantes asignados a este grupo.</small></p>
+              </div>
+              <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="cancel-delete">Cancelar</button>
+                <button class="modal-btn modal-btn-confirm" id="confirm-delete">Eliminar</button>
+              </div>
+            </div>
+          `;
 
           document.body.appendChild(modal);
 
-          document.getElementById("confirm-btn").onclick = () => {
+          document.getElementById("cancel-delete").onclick = () => {
             document.body.removeChild(modal);
-            onConfirm();
           };
 
-          document.getElementById("cancel-btn").onclick = () => {
+          document.getElementById("confirm-delete").onclick = () => {
             document.body.removeChild(modal);
-            if (onCancel) onCancel();
+            deleteGroup(grupo);
+          };
+
+          modal.onclick = (e) => {
+            if (e.target === modal) document.body.removeChild(modal);
           };
         }
+
+        // Eliminar grupo
+        async function deleteGroup(groupToDelete) {
+          if (!groupToDelete) return;
+
+          try {
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/${groupToDelete}`
+            );
+            const data = await response.json();
+
+            let nuevoGrupo = "Sin grupo";
+
+            if (data.success && data.count > 0) {
+              const opcion = prompt(
+                `Hay ${data.count} estudiantes en el grupo "${groupToDelete}". ¿Qué deseas hacer?\n\n1. Dejar como "Sin grupo"\n2. Mover a otro grupo existente\n\nEscribe "1" o "2", o el nombre del nuevo grupo:`,
+                "1"
+              );
+
+              if (opcion === null) return;
+
+              if (opcion === "2") {
+                const grupoDestino = prompt(
+                  "¿A qué grupo quieres mover los estudiantes?"
+                );
+                if (grupoDestino && grupoDestino.trim())
+                  nuevoGrupo = grupoDestino.trim();
+                else return showAlert("Operación cancelada", "warning");
+              } else if (
+                opcion &&
+                opcion.trim() !== "1" &&
+                opcion.trim() !== "2"
+              ) {
+                nuevoGrupo = opcion.trim();
+              }
+
+              await fetch(`${API_BASE_URL}/estudiantes/grupo/masivo`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  grupo_anterior: groupToDelete,
+                  grupo_nuevo: nuevoGrupo,
+                }),
+              });
+            }
+
+            const index = grupos.indexOf(groupToDelete);
+            if (index !== -1) {
+              grupos.splice(index, 1);
+              saveGrupos();
+              renderGroupCards();
+            }
+
+            if (selectedGroup === groupToDelete) clearGroupSelection();
+
+            showAlert(
+              `Grupo "${groupToDelete}" eliminado. Estudiantes movidos a "${nuevoGrupo}"`,
+              "success"
+            );
+            loadStudents();
+          } catch (error) {
+            showAlert(`Error al eliminar grupo: ${error.message}`, "danger");
+          }
+        }
+
         // Actualizar grupo para todos los estudiantes
         async function updateGroupForAllStudents(oldGroup, newGroup) {
           try {
@@ -1110,70 +1440,135 @@
               }
             );
 
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || "Error al actualizar grupo");
-            }
+            if (!response.ok) throw new Error("Error al actualizar grupo");
 
             const result = await response.json();
 
             if (result.success) {
-              // Actualizar la interfaz
               selectedGroup = newGroup;
-              currentGroupSpan.textContent = newGroup;
-              grupoInput.value = newGroup;
+              updateCurrentGroupDisplay();
 
-              // Actualizar el grupo en la lista de grupos
               const index = grupos.indexOf(oldGroup);
               if (index !== -1) {
                 grupos[index] = newGroup;
                 saveGrupos();
-                renderGroupButtons();
+                renderGroupCards();
               }
 
               showAlert(
                 `Grupo actualizado: ${result.affected || result.message}`,
                 "success"
               );
-              loadStudents(); // Recargar la tabla
-            } else {
-              throw new Error(result.error || "Error al actualizar grupo");
+              loadStudents();
             }
           } catch (error) {
-            console.error("Error al actualizar grupo:", error);
             showAlert(`Error al actualizar grupo: ${error.message}`, "danger");
           }
         }
-        // Actualizar grupo de estudiantes en la base de datos (actualización masiva)
-        async function updateStudentsGroup(oldGroup, newGroup) {
-          try {
-            const response = await fetch(
-              `${API_BASE_URL}/estudiantes/grupo/masivo`,
-              {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  grupo_anterior: oldGroup,
-                  grupo_nuevo: newGroup,
-                }),
-              }
+
+        // Limpiar duplicados
+        function limpiarGruposDuplicados() {
+          const gruposUnicos = [];
+          const gruposLowerCase = new Set();
+          const duplicados = [];
+
+          grupos.forEach((grupo) => {
+            const lowerCase = grupo.toLowerCase();
+            if (gruposLowerCase.has(lowerCase)) duplicados.push(grupo);
+            else {
+              gruposLowerCase.add(lowerCase);
+              gruposUnicos.push(grupo);
+            }
+          });
+
+          if (duplicados.length === 0)
+            return showAlert(
+              "✅ No se encontraron grupos duplicados",
+              "success"
             );
 
-            if (response.ok) {
-              const result = await response.json();
-              showAlert(
-                `Grupo actualizado: ${result.affected} estudiantes modificados`,
-                "success"
-              );
-              loadStudents(); // Recargar la tabla
-            } else {
-              const errorData = await response.json();
-              throw new Error(errorData.error || "Error al actualizar grupo");
-            }
-          } catch (error) {
-            console.error("Error al actualizar grupo:", error);
-            showAlert(`Error al actualizar grupo: ${error.message}`, "danger");
-          }
+          const modal = document.createElement("div");
+          modal.className = "confirmation-modal";
+          modal.innerHTML = `
+            <div class="modal-content">
+              <div class="modal-header">
+                <i class="fas fa-broom"></i>
+                <h3 class="modal-title">Limpiar Grupos Duplicados</h3>
+              </div>
+              <div class="modal-body">
+                <p>Se encontraron <strong>${
+                  duplicados.length
+                }</strong> grupos duplicados:</p>
+                <div style="max-height: 150px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                  ${duplicados.map((grupo) => `<div>• ${grupo}</div>`).join("")}
+                </div>
+                <p>¿Quieres eliminarlos automáticamente?</p>
+              </div>
+              <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="cancel-cleanup">Cancelar</button>
+                <button class="modal-btn modal-btn-confirm" id="confirm-cleanup">Limpiar</button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+
+          document.getElementById("cancel-cleanup").onclick = () => {
+            document.body.removeChild(modal);
+            showAlert("Limpieza cancelada", "info");
+          };
+
+          document.getElementById("confirm-cleanup").onclick = () => {
+            document.body.removeChild(modal);
+            grupos.length = 0;
+            grupos.push(...gruposUnicos);
+            saveGrupos();
+            renderGroupCards();
+            showAlert(
+              `✅ Se eliminaron ${duplicados.length} grupos duplicados`,
+              "success"
+            );
+          };
+
+          modal.onclick = (e) => {
+            if (e.target === modal) document.body.removeChild(modal);
+          };
+        }
+
+        // Gestión de grupos
+        function showGroupsManagement() {
+          const modal = document.createElement("div");
+          modal.className = "confirmation-modal";
+          modal.innerHTML = `
+            <div class="modal-content">
+              <div class="modal-header">
+                <i class="fas fa-cog"></i>
+                <h3 class="modal-title">Gestión Avanzada de Grupos</h3>
+              </div>
+              <div class="modal-body">
+                <p>Opciones de gestión para todos los grupos:</p>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                  <button class="modal-btn" style="background: #4CAF50; color: white;" id="merge-groups-btn">
+                    <i class="fas fa-object-group"></i> Unificar Grupos Similares
+                  </button>
+                  <button class="modal-btn" style="background: #FF9800; color: white;" id="export-groups-btn">
+                    <i class="fas fa-file-export"></i> Exportar Lista de Grupos
+                  </button>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="close-management">Cerrar</button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+
+          document.getElementById("close-management").onclick = () =>
+            document.body.removeChild(modal);
+          modal.onclick = (e) => {
+            if (e.target === modal) document.body.removeChild(modal);
+          };
         }
 
         // Configurar event listeners
@@ -1183,59 +1578,41 @@
           exportBtn.addEventListener("click", exportToJSON);
           filterGroupBtn.addEventListener("click", toggleFilter);
           addGroupBtn.addEventListener("click", addNewGroup);
-          editGroupBtn.addEventListener("click", editCurrentGroup);
+          editGroupBtn.addEventListener("click", () => {
+            if (!selectedGroup)
+              return showAlert("Primero selecciona un grupo", "warning");
+            editGroup(selectedGroup);
+          });
+          clearGroupBtn.addEventListener("click", clearGroupSelection);
+          cleanupBtn.addEventListener("click", limpiarGruposDuplicados);
+          manageGroupsBtn.addEventListener("click", showGroupsManagement);
 
-          // Enter en el input de grupo personalizado
           customGroupInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") addNewGroup();
           });
         }
 
-        // Agrega este código en la sección del group-selector, después del input de grupo personalizado
-        const cleanupButton = document.createElement("button");
-        cleanupButton.innerHTML =
-          '<i class="fas fa-broom"></i> Limpiar Duplicados';
-        cleanupButton.className = "btn btn-warning";
-        cleanupButton.style.marginTop = "10px";
-        cleanupButton.addEventListener("click", limpiarGruposDuplicados);
-
-        document.querySelector(".group-selector").appendChild(cleanupButton);
-
-        // Cargar estudiantes desde el backend
+        // Resto de funciones existentes (loadStudents, addStudentToTable, etc.)
         async function loadStudents() {
           try {
             let url = `${API_BASE_URL}/estudiantes`;
-
-            // Si hay un filtro activo, agregarlo al query
-            if (filteredGroup && filteredGroup !== "todos") {
+            if (filteredGroup && filteredGroup !== "todos")
               url += `?grupo=${encodeURIComponent(filteredGroup)}`;
-            }
 
             const response = await fetch(url);
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(
-                errorData.error || `Error HTTP! estado: ${response.status}`
-              );
-            }
+            if (!response.ok)
+              throw new Error(`Error HTTP! estado: ${response.status}`);
 
             const data = await response.json();
             studentsTableBody.innerHTML = "";
 
             if (!data.success || data.count === 0) {
-              studentsTableBody.innerHTML = `
-          <tr>
-            <td colspan="5" class="text-center">No hay alumnos registrados</td>
-          </tr>
-        `;
+              studentsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No hay alumnos registrados</td></tr>`;
               return;
             }
 
-            data.data.forEach((student) => {
-              addStudentToTable(student);
-            });
+            data.data.forEach((student) => addStudentToTable(student));
           } catch (error) {
-            console.error("Error al cargar estudiantes:", error);
             showAlert(
               `Error al cargar estudiantes: ${error.message}`,
               "danger"
@@ -1243,48 +1620,31 @@
           }
         }
 
-        // Añadir estudiante a la tabla
-        // Añadir estudiante a la tabla - VERSIÓN MEJORADA
         function addStudentToTable(student) {
           const row = document.createElement("tr");
           row.innerHTML = `
-    <td>${student.matricula}</td>
-    <td>${student.nombre}</td>
-    <td>${student.carrera || ""}</td>
-    <td>${student.grupo || "<span style='color: #999;'>Sin grupo</span>"}</td>
-    <td>
-      <button class="btn btn-warning btn-sm" onclick="editStudent('${
-        student.matricula
-      }')">
-        <i class="fas fa-edit"></i>
-      </button>
-      <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
-        student.matricula
-      }')">
-        <i class="fas fa-trash"></i>
-      </button>
-    </td>
-  `;
+            <td>${student.matricula}</td>
+            <td>${student.nombre}</td>
+            <td>${student.carrera || ""}</td>
+            <td>${
+              student.grupo || "<span style='color: #999;'>Sin grupo</span>"
+            }</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="editStudent('${
+                student.matricula
+              }')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
+                student.matricula
+              }')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          `;
           studentsTableBody.appendChild(row);
         }
 
-        // Inicializar con "Sin grupo" en la lista de grupos
-        function initializeDefaultGroup() {
-          // No agregar "Sin grupo" como un grupo seleccionable, pero manejarlo como valor por defecto
-          if (!grupos.includes("Sin grupo")) {
-            // "Sin grupo" es un valor especial, no lo agregues a la lista de grupos seleccionables
-          }
-        }
-
-        // Modifica la función init para incluir la inicialización
-        function init() {
-          loadGrupos();
-          initializeDefaultGroup();
-          loadStudents();
-          setupEventListeners();
-        }
-
-        // Alternar filtro por grupo
         function toggleFilter() {
           if (filteredGroup) {
             filteredGroup = "";
@@ -1307,151 +1667,38 @@
           }
         }
 
-        // Registrar estudiante actual - CORREGIDA
         function registerCurrentStudent() {
-          if (!selectedGroup) {
-            showAlert("Por favor selecciona un grupo primero", "warning");
-            return;
-          }
+          if (!selectedGroup)
+            return showAlert(
+              "Por favor selecciona un grupo primero",
+              "warning"
+            );
 
-          if (currentStudentData) {
-            // CORRECCIÓN: Usar siempre el grupo seleccionado
-            currentStudentData.grupo = selectedGroup;
-            registerStudent(currentStudentData);
-          } else {
-            // Si no hay datos escaneados, intentar registrar con los datos del formulario
-            const formData = {
-              matricula: matriculaInput.value.trim(),
-              nombre: nombreInput.value.trim(),
-              carrera: carreraNombreInput.value.trim(),
-              grupo: selectedGroup, // Siempre usar el grupo seleccionado
-            };
+          const formData = {
+            matricula: matriculaInput.value.trim(),
+            nombre: nombreInput.value.trim(),
+            carrera: carreraNombreInput.value.trim(),
+            grupo: selectedGroup,
+          };
 
-            if (!formData.matricula || !formData.nombre) {
-              showAlert(
-                "Complete matrícula y nombre antes de registrar",
-                "warning"
-              );
-              return;
-            }
-
-            registerStudent(formData);
-          }
-        }
-
-        // Función para procesar el código QR
-        function processQRCode(qrData) {
-          try {
-            console.log("Datos QR recibidos:", qrData);
-
-            if (qrData.includes(" Ñ ") || qrData.includes("Ñ")) {
-              const separador = qrData.includes(" Ñ ") ? " Ñ " : "Ñ";
-              const partes = qrData.split(separador);
-
-              if (partes.length === 2) {
-                const campo = partes[0].trim();
-                const valor = partes[1].trim();
-
-                const camposEstandar = {
-                  Nombre: "nombre",
-                  Carrera: "carrera",
-                  "Tipo de Sangre": "tipoSangre",
-                  "Tel. Tutor": "telefonoTutor",
-                  Tutor: "tutor",
-                  Campus: "campus",
-                };
-
-                const campoEstandarizado =
-                  camposEstandar[campo] || campo.toLowerCase();
-                return { [campoEstandarizado]: valor };
-              }
-            }
-
-            if (/^\d{8,10}$/.test(qrData.trim())) {
-              return { matricula: qrData.trim() };
-            }
-
-            if (qrData.includes("NombreÑ") && qrData.includes("CarreraÑ")) {
-              const datos = {};
-              const partes = qrData.split("Ñ");
-
-              const matriculaMatch = qrData.match(/^(\d{8,10})/);
-              if (matriculaMatch) datos.matricula = matriculaMatch[1];
-
-              for (let i = 0; i < partes.length; i++) {
-                if (partes[i].includes("Nombre") && partes[i + 1]) {
-                  datos.nombre = partes[i + 1].trim();
-                }
-                if (partes[i].includes("Carrera") && partes[i + 1]) {
-                  datos.carrera = partes[i + 1].trim();
-                }
-                if (partes[i].includes("Campus") && partes[i + 1]) {
-                  datos.campus = partes[i + 1].trim();
-                }
-              }
-
-              if (!datos.matricula)
-                throw new Error("Falta matrícula en formato consolidado");
-              if (!datos.nombre)
-                throw new Error("Falta nombre en formato consolidado");
-
-              return datos;
-            }
-
-            const formatoLegacy = qrData
-              .replace(/TADEOTSU/g, "TADEO TSU")
-              .replace(/^(\d{8})/, "$1 ")
-              .replace(/\s+/g, " ")
-              .replace(/\s*'\s*/, "' ")
-              .trim();
-
-            const regexLegacy =
-              /^(\d{8})\s(.+?)(?:\s(TSU\sTECNOLOGIAS\sDE\sLA\sINFORMACION\s'?\sDSM))?$/i;
-            const matchLegacy = formatoLegacy.match(regexLegacy);
-
-            if (matchLegacy) {
-              return {
-                matricula: matchLegacy[1],
-                nombre: matchLegacy[2].trim(),
-                carrera:
-                  matchLegacy[3] || "TSU TECNOLOGIAS DE LA INFORMACION ' DSM",
-              };
-            }
-
-            throw new Error("Formato no reconocido");
-          } catch (error) {
-            console.error("Error procesando QR:", error);
-            throw new Error(
-              `Error: ${error.message}\n\nDatos recibidos: ${qrData}`
+          if (!formData.matricula || !formData.nombre) {
+            return showAlert(
+              "Complete matrícula y nombre antes de registrar",
+              "warning"
             );
           }
+
+          registerStudent(formData);
         }
 
-        // Función para actualizar el formulario
-        function actualizarFormulario(datos) {
-          if (matriculaInput) matriculaInput.value = datos.matricula || "";
-          if (nombreInput) nombreInput.value = datos.nombre || "";
-          if (carreraNombreInput)
-            carreraNombreInput.value = datos.carrera || "";
-          if (grupoInput) grupoInput.value = selectedGroup || "";
-        }
-
-        // Función para registrar estudiante - CORREGIDA
         async function registerStudent(studentData) {
           try {
-            if (!studentData.matricula || !studentData.nombre) {
-              throw new Error("Datos incompletos para registrar");
-            }
-
-            // CORRECCIÓN: Siempre usar el grupo seleccionado
             const payload = {
               matricula: studentData.matricula,
               nombre: studentData.nombre,
               carrera: studentData.carrera || "",
-              grupo: selectedGroup, // CORRECCIÓN CLAVE: Usar siempre selectedGroup
+              grupo: selectedGroup,
             };
-
-            console.log("Registrando estudiante:", payload);
 
             const response = await fetch(`${API_BASE_URL}/estudiantes`, {
               method: "POST",
@@ -1459,156 +1706,41 @@
               body: JSON.stringify(payload),
             });
 
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              throw new Error(
-                errorData.error || `Error HTTP! estado: ${response.status}`
-              );
-            }
+            if (!response.ok)
+              throw new Error(`Error HTTP! estado: ${response.status}`);
 
             const result = await response.json();
 
             if (result.success) {
-              loadStudents(); // Recargar desde servidor para ver datos reales
+              loadStudents();
               showAlert("Estudiante registrado con éxito", "success");
               resetForm();
-              datosParciales = {};
               currentStudentData = null;
-              const btn = document.getElementById("registrar-btn");
-              if (btn) btn.classList.remove("btn-pulse");
-            } else {
-              showAlert(
-                result.error || "Error al registrar estudiante",
-                "danger"
-              );
-            }
+              registrarBtn.classList.remove("btn-pulse");
+            } else throw new Error(result.error);
           } catch (error) {
-            console.error("Error al registrar:", error);
             showAlert(error.message, "danger");
           }
         }
 
-        // Mostrar alerta
         function showAlert(message, type) {
-          const alert = qrResult;
-          alert.className = `alert alert-${type}`;
-          alert.innerHTML = `<i class="fas fa-${
+          qrResult.className = `alert alert-${type}`;
+          qrResult.innerHTML = `<i class="fas fa-${
             type === "success" ? "check" : "exclamation"
           }-circle"></i> ${message}`;
-          alert.style.display = "block";
-
+          qrResult.style.display = "block";
           setTimeout(() => {
-            alert.style.display = "none";
+            qrResult.style.display = "none";
           }, 5000);
         }
 
-        // Resetear el formulario
         function resetForm() {
-          if (matriculaInput) matriculaInput.value = "";
-          if (nombreInput) nombreInput.value = "";
-          if (carreraNombreInput) carreraNombreInput.value = "";
-          // No resetear el grupo input para mantener la selección
+          matriculaInput.value = "";
+          nombreInput.value = "";
+          carreraNombreInput.value = "";
         }
 
-        // Función para exportar a JSON
-        async function exportToJSON() {
-          try {
-            let url = `${API_BASE_URL}/estudiantes`;
-
-            // Si hay un filtro activo, agregarlo al query
-            if (filteredGroup && filteredGroup !== "todos") {
-              url += `?grupo=${encodeURIComponent(filteredGroup)}`;
-            }
-
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (!data.success || data.count === 0) {
-              showAlert("No hay datos para exportar", "danger");
-              return;
-            }
-
-            const jsonData = JSON.stringify(data.data, null, 2);
-            const blob = new Blob([jsonData], { type: "application/json" });
-            const urlBlob = URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = urlBlob;
-            a.download = `estudiantes_${
-              new Date().toISOString().split("T")[0]
-            }.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(urlBlob);
-
-            showAlert("Datos exportados correctamente", "success");
-          } catch (error) {
-            console.error("Error al exportar datos:", error);
-            showAlert("Error al exportar datos", "danger");
-          }
-        }
-
-        // Manejar entrada del lector QR físico
-        function handleQRInput(event) {
-          if (escaneoActivo) return;
-          if (event.key.length > 1 && event.key !== "Enter") return;
-
-          if (event.key === "Enter") {
-            escaneoActivo = true;
-
-            try {
-              const datosQR = inputBuffer
-                .replace(/[¡¿]/g, "")
-                .replace(/([a-zA-Z])(Ñ)/g, "$1 $2")
-                .trim();
-
-              const datosProcesados = processQRCode(datosQR);
-              Object.assign(datosParciales, datosProcesados);
-
-              actualizarFormulario(datosParciales);
-
-              if (datosParciales.matricula && datosParciales.nombre) {
-                currentStudentData = { ...datosParciales };
-                showAlert(
-                  "¡Estudiante completo! Revise los datos y haga clic en Registrar",
-                  "success"
-                );
-                destacarBotonRegistro();
-              } else {
-                showAlert(
-                  "Datos parciales recibidos. Continue escaneando...",
-                  "warning"
-                );
-              }
-            } catch (error) {
-              console.error("Error:", error);
-              showAlert(error.message.split("\n")[0], "danger");
-            } finally {
-              inputBuffer = "";
-              escaneoActivo = false;
-              clearTimeout(inputTimeout);
-            }
-          } else {
-            inputBuffer += event.key;
-            clearTimeout(inputTimeout);
-            inputTimeout = setTimeout(() => {
-              inputBuffer = "";
-              escaneoActivo = false;
-            }, 200);
-          }
-        }
-
-        // Función para destacar el botón de registro
-        function destacarBotonRegistro() {
-          const btn = document.getElementById("registrar-btn");
-          if (btn) {
-            btn.classList.add("btn-pulse");
-            btn.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-        }
-
-        // Funciones globales para editar/eliminar
+        // Funciones globales
         window.editStudent = async function (matricula) {
           const nuevoGrupo = prompt("Nuevo grupo para el estudiante:");
           if (nuevoGrupo) {
@@ -1622,21 +1754,11 @@
                 }
               );
 
-              if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Error al actualizar grupo");
-              }
-
-              const result = await response.json();
-
-              if (result.success) {
+              if (response.ok) {
                 showAlert("Grupo actualizado correctamente", "success");
                 loadStudents();
-              } else {
-                throw new Error(result.error || "Error al actualizar grupo");
-              }
+              } else throw new Error("Error al actualizar grupo");
             } catch (error) {
-              console.error("Error al actualizar estudiante:", error);
               showAlert(
                 `Error al actualizar grupo: ${error.message}`,
                 "danger"
@@ -1650,28 +1772,13 @@
             try {
               const response = await fetch(
                 `${API_BASE_URL}/estudiantes/${matricula}`,
-                {
-                  method: "DELETE",
-                }
+                { method: "DELETE" }
               );
-
-              if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(
-                  errorData.error || "Error al eliminar estudiante"
-                );
-              }
-
-              const result = await response.json();
-
-              if (result.success) {
+              if (response.ok) {
                 showAlert("Estudiante eliminado correctamente", "success");
                 loadStudents();
-              } else {
-                throw new Error(result.error || "Error al eliminar estudiante");
-              }
+              } else throw new Error("Error al eliminar estudiante");
             } catch (error) {
-              console.error("Error al eliminar estudiante:", error);
               showAlert(
                 `Error al eliminar estudiante: ${error.message}`,
                 "danger"
@@ -1679,30 +1786,6 @@
             }
           }
         };
-
-        // Previsualizar qué estudiantes serán afectados
-        async function previewGroupUpdate(oldGroup, newGroup) {
-          try {
-            const response = await fetch(
-              `${API_BASE_URL}/estudiantes/grupo/${oldGroup}`
-            );
-            const data = await response.json();
-
-            if (data.success && data.count > 0) {
-              const studentList = data.data
-                .map((student) => `• ${student.matricula} - ${student.nombre}`)
-                .join("\n");
-
-              return confirm(
-                `Se actualizarán ${data.count} estudiantes del grupo "${oldGroup}" a "${newGroup}":\n\n${studentList}\n\n¿Continuar?`
-              );
-            }
-            return true;
-          } catch (error) {
-            console.error("Error al previsualizar:", error);
-            return true; // Continuar sin previsualización si hay error
-          }
-        }
 
         // Inicializar la aplicación
         init();
