@@ -233,12 +233,15 @@
         box-shadow: var(--box-shadow);
         overflow: hidden;
         margin-bottom: 30px;
+        max-width: 100%;
+        overflow-x: auto;
       }
 
       .horario-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
+        min-width: 800px;
       }
 
       .horario-table th {
@@ -255,6 +258,7 @@
         text-align: center;
         border: 1px solid #eaeaea;
         vertical-align: middle;
+        min-width: 150px;
       }
 
       .horario-table tr:nth-child(even) {
@@ -269,6 +273,7 @@
         font-weight: bold;
         background-color: #f8f9fa;
         color: var(--university-blue);
+        min-width: 120px;
       }
 
       .dia-cell {
@@ -456,6 +461,12 @@
         .button-group {
           flex-direction: column;
         }
+
+        .card-header {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
+        }
       }
 
       /* Grupo de botones */
@@ -464,6 +475,35 @@
         gap: 12px;
         margin-bottom: 20px;
         flex-wrap: wrap;
+      }
+
+      /* Tooltip para información completa */
+      .cell-content {
+        cursor: help;
+        position: relative;
+      }
+
+      .cell-tooltip {
+        visibility: hidden;
+        width: 200px;
+        background-color: var(--university-dark);
+        color: white;
+        text-align: center;
+        border-radius: var(--border-radius);
+        padding: 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+      }
+
+      .cell-content:hover .cell-tooltip {
+        visibility: visible;
+        opacity: 1;
       }
     </style>
   </head>
@@ -526,6 +566,14 @@
               Guardar Horario
             </button>
           </div>
+        </div>
+
+        <!-- Instrucciones para el formato -->
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i>
+          <strong>Formato de entrada:</strong> materia / maestro / grupo
+          <br />
+          <small>Ejemplo: Programación Web / Dr. Juan Pérez / 8A</small>
         </div>
 
         <!-- Tabla de horarios -->
@@ -631,6 +679,28 @@
           : "none";
       }
 
+      // Función para analizar el contenido de una celda en materia, maestro y grupo
+      function parseCellContent(content) {
+        const parts = content.split("/").map((part) => part.trim());
+
+        return {
+          materia: parts[0] || "",
+          maestro: parts[1] || "",
+          grupo: parts[2] || "",
+        };
+      }
+
+      // Función para formatear el contenido de la celda
+      function formatCellContent(materia, maestro, grupo) {
+        if (!materia) return "";
+
+        let result = materia;
+        if (maestro) result += ` / ${maestro}`;
+        if (grupo) result += ` / ${grupo}`;
+
+        return result;
+      }
+
       // Inicializar la página
       document.addEventListener("DOMContentLoaded", async function () {
         // Obtener información del usuario
@@ -717,25 +787,6 @@
           "sabado",
         ];
 
-        // Función para transformar el formato al esperado por el backend
-        const transformarHorarios = (horarios) => {
-          return horarios.map((horario) => {
-            const [hora_inicio, hora_fin] = horario.hora
-              .split("-")
-              .map((h) => h.trim());
-            return {
-              hora_inicio:
-                hora_inicio.length === 4 ? `0${hora_inicio}` : hora_inicio,
-              hora_fin: hora_fin.length === 4 ? `0${hora_fin}` : hora_fin,
-              materia: horario.materia,
-              maestro: horario.maestro,
-              dia:
-                horario.dia.charAt(0).toUpperCase() +
-                horario.dia.slice(1).toLowerCase(),
-            };
-          });
-        };
-
         // 1. Función mejorada para cargar horarios
         const cargarHorarios = async () => {
           try {
@@ -787,11 +838,14 @@
                 .replace("sábado", "sabado");
               const materia = item.materia || "";
               const maestro = item.maestro || "";
+              const grupo = item.grupo || "";
 
               if (DIAS_NORMALIZADOS.includes(dia) && horariosPorHora[hora]) {
-                horariosPorHora[hora][dia] = `${materia}${
-                  maestro ? " / " + maestro : ""
-                }`;
+                horariosPorHora[hora][dia] = formatCellContent(
+                  materia,
+                  maestro,
+                  grupo
+                );
               }
             });
 
@@ -815,8 +869,29 @@
               // Celdas para cada día en orden
               DIAS_NORMALIZADOS.forEach((dia) => {
                 const cell = document.createElement("td");
-                cell.textContent = horariosPorHora[hora][dia] || "";
+                const contenido = horariosPorHora[hora][dia] || "";
+                cell.textContent = contenido;
                 cell.className = "dia-cell align-middle";
+
+                // Agregar tooltip si hay contenido
+                if (contenido) {
+                  const parsed = parseCellContent(contenido);
+                  cell.innerHTML = `
+                    <div class="cell-content">
+                      ${contenido}
+                      <div class="cell-tooltip">
+                        <strong>Materia:</strong> ${parsed.materia}<br>
+                        <strong>Maestro:</strong> ${
+                          parsed.maestro || "No especificado"
+                        }<br>
+                        <strong>Grupo:</strong> ${
+                          parsed.grupo || "No especificado"
+                        }
+                      </div>
+                    </div>
+                  `;
+                }
+
                 if (userRole !== "user") {
                   cell.classList.add("editable");
                 }
@@ -853,6 +928,7 @@
           input.type = "text";
           input.value = currentText;
           input.className = "form-control";
+          input.placeholder = "materia / maestro / grupo";
 
           cell.textContent = "";
           cell.appendChild(input);
@@ -860,16 +936,39 @@
 
           const finalizarEdicion = () => {
             const nuevoValor = input.value.trim();
-            cell.textContent = nuevoValor;
+            const parsed = parseCellContent(nuevoValor);
+
+            // Formatear el contenido para mostrar
+            const contenidoFormateado = formatCellContent(
+              parsed.materia,
+              parsed.maestro,
+              parsed.grupo
+            );
+
+            // Actualizar la celda con el contenido formateado
+            if (contenidoFormateado) {
+              cell.innerHTML = `
+                <div class="cell-content">
+                  ${contenidoFormateado}
+                  <div class="cell-tooltip">
+                    <strong>Materia:</strong> ${parsed.materia}<br>
+                    <strong>Maestro:</strong> ${
+                      parsed.maestro || "No especificado"
+                    }<br>
+                    <strong>Grupo:</strong> ${parsed.grupo || "No especificado"}
+                  </div>
+                </div>
+              `;
+            } else {
+              cell.textContent = "";
+            }
+
             cell.classList.remove("editando");
 
-            const [materia, maestro] = nuevoValor
-              .split("/")
-              .map((s) => s.trim());
-            if (materia) {
-              cell.setAttribute("data-materia", materia);
-              cell.setAttribute("data-maestro", maestro || "");
-            }
+            // Guardar los datos individuales como atributos
+            cell.setAttribute("data-materia", parsed.materia);
+            cell.setAttribute("data-maestro", parsed.maestro);
+            cell.setAttribute("data-grupo", parsed.grupo);
           };
 
           input.addEventListener("blur", finalizarEdicion);
@@ -904,16 +1003,27 @@
               const diaCells = row.querySelectorAll("td[data-dia]");
               diaCells.forEach((cell) => {
                 const dia = cell.getAttribute("data-dia");
-                const contenido = cell.textContent.trim();
-                if (contenido) {
-                  const [materia, maestro] = contenido
-                    .split("/")
-                    .map((s) => s.trim());
+
+                // Obtener los datos de los atributos o analizar el contenido
+                let materia = cell.getAttribute("data-materia") || "";
+                let maestro = cell.getAttribute("data-maestro") || "";
+                let grupo = cell.getAttribute("data-grupo") || "";
+
+                // Si no hay atributos, analizar el contenido de la celda
+                if (!materia && cell.textContent.trim()) {
+                  const parsed = parseCellContent(cell.textContent.trim());
+                  materia = parsed.materia;
+                  maestro = parsed.maestro;
+                  grupo = parsed.grupo;
+                }
+
+                if (materia) {
                   horarios.push({
                     hora,
                     dia,
-                    materia: materia || "",
-                    maestro: maestro || "",
+                    materia,
+                    maestro,
+                    grupo,
                   });
                 }
               });
@@ -925,12 +1035,7 @@
               return;
             }
 
-            const horariosTransformados = transformarHorarios(horarios);
-
-            console.log(
-              "Enviando horarios al servidor:",
-              horariosTransformados
-            );
+            console.log("Enviando horarios al servidor:", horarios);
 
             const response = await fetch(
               `https://salt-utsv-production.up.railway.app/api/horarios?lab=${laboratorio}`,
@@ -941,7 +1046,7 @@
                 },
                 body: JSON.stringify({
                   laboratorio,
-                  horarios: horariosTransformados,
+                  horarios: horarios,
                 }),
               }
             );
