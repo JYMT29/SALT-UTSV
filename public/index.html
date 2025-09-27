@@ -141,67 +141,44 @@
         font-weight: 400;
       }
 
-      /* Sección del formulario con fondo médico */
+      /* Sección del formulario con fondo del jaguar */
       .form-section {
         flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 2rem;
-        background-color: var(--white);
         position: relative;
         overflow: hidden;
       }
 
-      /* Fondo con información médica */
-      .medical-background {
+      /* Fondo con imagen del jaguar */
+      .jaguar-background {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 24px,
-          rgba(26, 60, 110, 0.03) 24px,
-          rgba(26, 60, 110, 0.03) 25px
-        );
+        background: url("https://images.unsplash.com/photo-1561731216-c3a4d99437d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80")
+          center/cover no-repeat;
         z-index: 1;
-        opacity: 0.7;
+        opacity: 0.08;
+        filter: grayscale(100%) contrast(120%);
       }
 
-      .medical-info {
+      .jaguar-background::after {
+        content: "";
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-5deg);
-        font-family: "Courier New", monospace;
-        font-size: 1.2rem;
-        color: rgba(26, 60, 110, 0.15);
-        white-space: nowrap;
-        z-index: 1;
-        text-align: center;
-        line-height: 2;
-        pointer-events: none;
-        user-select: none;
-      }
-
-      .medical-info::before {
-        content: "Tipo Sangre: O- Alergias: NINGUNA";
-        display: block;
-        margin-bottom: 1rem;
-      }
-
-      .medical-info::after {
-        content: "Servicio médico: IMSS No. Afiliación: 5620056543 2";
-        display: block;
-        margin-bottom: 1rem;
-      }
-
-      .medical-info span {
-        display: block;
-        content: "Tel. Tutor: (922)593-5929 Tutor: AURELIA TADEO GIL";
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(245, 247, 250, 0.95) 100%
+        );
+        z-index: 2;
       }
 
       /* Formulario de login mejorado */
@@ -210,18 +187,17 @@
         max-width: 450px;
         padding: 2.5rem;
         background: var(--white);
-        border-radius: 12px;
+        border-radius: 16px;
         box-shadow: var(--shadow-strong);
         position: relative;
-        z-index: 2;
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(5px);
+        z-index: 3;
+        border: 1px solid rgba(255, 255, 255, 0.9);
         transition: var(--transition);
       }
 
       .login-form:hover {
-        box-shadow: var(--shadow-strong), 0 0 0 1px rgba(26, 60, 110, 0.1);
-        transform: translateY(-2px);
+        box-shadow: var(--shadow-strong), 0 0 0 2px rgba(26, 60, 110, 0.1);
+        transform: translateY(-3px);
       }
 
       .login-form::before {
@@ -236,48 +212,69 @@
           var(--primary-color) 0%,
           var(--secondary-color) 100%
         );
-        border-radius: 14px;
+        border-radius: 18px;
         z-index: -1;
-        opacity: 0.1;
+        opacity: 0.15;
       }
 
       .login-form h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
         font-weight: 700;
         color: var(--primary-color);
         margin-bottom: 0.5rem;
         text-align: center;
+        position: relative;
+      }
+
+      .login-form h1::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 2px;
       }
 
       .form-intro {
         text-align: center;
         margin-bottom: 2rem;
+        margin-top: 1.5rem;
         color: var(--dark-gray);
-        font-size: 0.95rem;
+        font-size: 1rem;
+        font-weight: 400;
       }
 
       .input-container {
         position: relative;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.8rem;
       }
 
       .icon {
         position: absolute;
-        left: 15px;
+        left: 18px;
         top: 50%;
         transform: translateY(-50%);
         color: var(--primary-color);
         z-index: 1;
+        font-size: 1.1rem;
       }
 
       .input-field {
         width: 100%;
-        padding: 15px 15px 15px 45px;
-        border: 1px solid var(--medium-gray);
-        border-radius: 8px;
+        padding: 16px 18px 16px 50px;
+        border: 1.5px solid var(--medium-gray);
+        border-radius: 10px;
         font-size: 1rem;
         transition: var(--transition);
-        background-color: var(--light-gray);
+        background-color: rgba(245, 247, 250, 0.7);
+        font-weight: 400;
       }
 
       .input-field:focus {
@@ -285,41 +282,47 @@
         border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(26, 60, 110, 0.1);
         background-color: var(--white);
+        transform: translateY(-1px);
       }
 
       .form-options {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
       }
 
       .remember-me {
         display: flex;
         align-items: center;
         cursor: pointer;
+        font-weight: 500;
       }
 
       .remember-me input {
-        margin-right: 8px;
+        margin-right: 10px;
         accent-color: var(--primary-color);
+        width: 18px;
+        height: 18px;
       }
 
       .forgot-password {
         color: var(--primary-color);
         text-decoration: none;
         transition: var(--transition);
+        font-weight: 500;
       }
 
       .forgot-password:hover {
         color: var(--primary-light);
         text-decoration: underline;
+        transform: translateX(2px);
       }
 
       .submit-btn {
         width: 100%;
-        padding: 15px;
+        padding: 16px;
         background: linear-gradient(
           135deg,
           var(--primary-color) 0%,
@@ -327,17 +330,18 @@
         );
         color: var(--white);
         border: none;
-        border-radius: 8px;
-        font-size: 1rem;
+        border-radius: 10px;
+        font-size: 1.1rem;
         font-weight: 600;
         cursor: pointer;
         transition: var(--transition);
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         position: relative;
         overflow: hidden;
+        letter-spacing: 0.5px;
       }
 
       .submit-btn::before {
@@ -350,7 +354,7 @@
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0.3),
           transparent
         );
         transition: 0.5s;
@@ -358,7 +362,7 @@
 
       .submit-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(26, 60, 110, 0.2);
+        box-shadow: 0 8px 20px rgba(26, 60, 110, 0.3);
       }
 
       .submit-btn:hover::before {
@@ -367,6 +371,25 @@
 
       .submit-btn:active {
         transform: translateY(0);
+      }
+
+      /* Efecto de sello universitario */
+      .university-seal {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 80px;
+        height: 80px;
+        background: var(--secondary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 4;
+        opacity: 0.9;
       }
 
       /* Responsive */
@@ -397,9 +420,12 @@
           margin-bottom: 0.5rem;
         }
 
-        .medical-info {
-          font-size: 1rem;
-          transform: translate(-50%, -50%) rotate(-3deg);
+        .university-seal {
+          top: -15px;
+          right: -15px;
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
         }
       }
 
@@ -407,6 +433,7 @@
         .login-form {
           padding: 2rem 1.5rem;
           max-width: 90%;
+          border-radius: 12px;
         }
 
         .form-options {
@@ -419,10 +446,12 @@
           min-width: 100%;
         }
 
-        .medical-info {
-          font-size: 0.8rem;
-          white-space: normal;
-          width: 90%;
+        .university-seal {
+          display: none;
+        }
+
+        .jaguar-background {
+          opacity: 0.05;
         }
       }
     </style>
@@ -456,10 +485,12 @@
 
       <!-- Sección del formulario -->
       <div class="form-section">
-        <!-- Fondo con información médica -->
-        <div class="medical-background"></div>
-        <div class="medical-info">
-          <span></span>
+        <!-- Fondo con imagen del jaguar -->
+        <div class="jaguar-background"></div>
+
+        <!-- Sello universitario decorativo -->
+        <div class="university-seal">
+          <i class="fas fa-graduation-cap"></i>
         </div>
 
         <form method="POST" action="/login" class="login-form">
