@@ -278,6 +278,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Cargar grupos desde localStorage
+  function loadGrupos() {
+    const savedGrupos = localStorage.getItem("grupos");
+    if (savedGrupos) {
+      grupos = JSON.parse(savedGrupos);
+    }
+  }
 
   // Cargar grupos desde los estudiantes existentes
   async function loadGrupos() {
@@ -334,9 +340,13 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Usando grupos de respaldo por error:", grupos);
     }
   }
+
   // Eliminar saveGrupos() ya que no podemos guardar grupos separadamente
 
   // Guardar grupos en localStorage
+  function saveGrupos() {
+    localStorage.setItem("grupos", JSON.stringify(grupos));
+  }
 
   // Renderizar grupos como tarjetas
   function renderGroupCards() {
