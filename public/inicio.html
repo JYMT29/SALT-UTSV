@@ -8,12 +8,392 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/boton.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
+      :root {
+        --primary-blue: #0a2c5e;
+        --secondary-blue: #1e4a7e;
+        --accent-gold: #c9a227;
+        --light-cream: #f8f5f0;
+        --dark-gray: #212529;
+        --medium-gray: #6c757d;
+        --light-gray: #e9ecef;
+        --success-green: #28a745;
+        --danger-red: #dc3545;
+        --border-radius: 8px;
+        --box-shadow: 0 5px 15px rgba(10, 44, 94, 0.1);
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: #f5f7fa;
+        color: var(--dark-gray);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+      }
+
+      /* Sidebar mejorado */
+      .sidebar {
+        width: 280px;
+        background: linear-gradient(
+          180deg,
+          var(--primary-blue) 0%,
+          var(--secondary-blue) 100%
+        );
+        color: white;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow-y: auto;
+        transition: var(--transition);
+        z-index: 1000;
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .brand {
+        padding: 25px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 50%;
+        background: white;
+        padding: 5px;
+      }
+
+      .brand-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .nav-menu {
+        list-style: none;
+        padding: 20px 0;
+      }
+
+      .nav-item {
+        margin-bottom: 5px;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        transition: var(--transition);
+        font-weight: 500;
+        border-left: 4px solid transparent;
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-left-color: var(--accent-gold);
+      }
+
+      .nav-link i {
+        margin-right: 12px;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      .dropdown-menu {
+        list-style: none;
+        background: rgba(0, 0, 0, 0.2);
+        display: none;
+        padding: 10px 0;
+        border-left: 4px solid var(--accent-gold);
+      }
+
+      .dropdown-menu.show {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dropdown-item {
+        display: block;
+        padding: 12px 25px 12px 60px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: var(--transition);
+        font-size: 0.95rem;
+        border-left: 3px solid transparent;
+      }
+
+      .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-left-color: rgba(255, 255, 255, 0.5);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 0;
+        transition: var(--transition);
+      }
+
+      .header {
+        background: white;
+        padding: 20px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--primary-blue);
+        cursor: pointer;
+      }
+
+      .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        margin: 0;
+      }
+
+      .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 15px;
+        background: var(--light-cream);
+        border-radius: 30px;
+        border: 1px solid var(--light-gray);
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-blue);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+
+      .user-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: var(--dark-gray);
+        font-size: 0.95rem;
+      }
+
+      .user-role {
+        font-size: 0.75rem;
+        color: var(--medium-gray);
+        background: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-top: 2px;
+      }
+
+      .btn-logout {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+      }
+
+      .btn-logout:hover {
+        background: var(--secondary-blue);
+        transform: translateY(-2px);
+      }
+
+      /* Dashboard Stats mejoradas */
+      .dashboard-content {
+        padding: 30px;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 25px;
+        text-align: center;
+        transition: var(--transition);
+        border-top: 4px solid var(--primary-blue);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(10, 44, 94, 0.15);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-blue),
+          var(--accent-gold)
+        );
+      }
+
+      .card-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.8rem;
+        color: white;
+      }
+
+      .card-icon.primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--secondary-blue)
+        );
+      }
+
+      .card-icon.success {
+        background: linear-gradient(135deg, var(--success-green), #20c997);
+      }
+
+      .card-icon.danger {
+        background: linear-gradient(135deg, var(--danger-red), #e83e8c);
+      }
+
+      .card-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        margin-bottom: 5px;
+      }
+
+      .card-label {
+        font-size: 1rem;
+        color: var(--medium-gray);
+        font-weight: 500;
+      }
+
+      /* Quick Actions mejoradas */
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--light-cream);
+      }
+
+      .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .action-btn {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 25px 20px;
+        text-decoration: none;
+        color: var(--dark-gray);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: var(--transition);
+        border: 1px solid transparent;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(10, 44, 94, 0.15);
+        border-color: var(--primary-blue);
+        color: var(--primary-blue);
+      }
+
+      .action-btn i {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+        color: var(--primary-blue);
+      }
+
+      .action-label {
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
       /* Estilos para el indicador de carga */
       .loading-overlay {
         position: fixed;
@@ -21,7 +401,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.9);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -33,15 +413,16 @@
         width: 50px;
         height: 50px;
         border: 5px solid #f3f3f3;
-        border-top: 5px solid #3498db;
+        border-top: 5px solid var(--primary-blue);
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin-bottom: 15px;
       }
 
       .loading-text {
-        color: #3498db;
+        color: var(--primary-blue);
         font-size: 16px;
+        font-weight: 600;
       }
 
       @keyframes spin {
@@ -57,43 +438,91 @@
       .error-message {
         background-color: #ffebee;
         color: #c62828;
-        padding: 15px;
-        border-radius: 5px;
-        margin: 20px;
+        padding: 15px 20px;
+        border-radius: var(--border-radius);
+        margin: 20px 30px;
         text-align: center;
         display: none;
-      }
-
-      /* Estilos para mostrar información del usuario */
-      .user-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-right: 15px;
-      }
-
-      .user-name {
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .user-role {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        background: var(--bg-secondary);
-        padding: 2px 8px;
-        border-radius: 12px;
+        border-left: 4px solid var(--danger-red);
       }
 
       /* Estilos para el mensaje de redirección */
       .redirect-message {
         background-color: #e3f2fd;
-        color: #1565c0;
-        padding: 15px;
-        border-radius: 5px;
-        margin: 20px;
+        color: var(--primary-blue);
+        padding: 15px 20px;
+        border-radius: var(--border-radius);
+        margin: 20px 30px;
         text-align: center;
         display: none;
+        border-left: 4px solid var(--primary-blue);
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 250px;
+          transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .quick-actions {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 15px 20px;
+          flex-wrap: wrap;
+        }
+
+        .user-menu {
+          width: 100%;
+          justify-content: space-between;
+          margin-top: 15px;
+        }
+
+        .dashboard-content {
+          padding: 20px;
+        }
+
+        .quick-actions {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .quick-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .user-info {
+          padding: 6px 12px;
+        }
+
+        .btn-logout span {
+          display: none;
+        }
+
+        .btn-logout {
+          padding: 10px;
+        }
       }
     </style>
   </head>
@@ -119,7 +548,12 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="brand">
-        <img src="/img/saltLogo.png" alt="SALT-UTSV" class="logo" />
+        <div class="logo-placeholder">
+          <i
+            class="fas fa-university"
+            style="font-size: 2rem; color: var(--primary-blue)"
+          ></i>
+        </div>
         <span class="brand-name">SALT-UTSV</span>
       </div>
 
@@ -150,37 +584,37 @@
         </div>
       </div>
 
-      <!-- Dashboard Stats -->
-      <div class="dashboard-grid">
-        <div class="card">
-          <div class="card-icon primary">
-            <i class="fas fa-map-marker-alt"></i>
+      <div class="dashboard-content">
+        <!-- Dashboard Stats -->
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-icon primary">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="card-value">2</div>
+            <div class="card-label">Laboratorios</div>
           </div>
-          <div class="card-value">2</div>
-          <div class="card-label">Laboratorios</div>
-        </div>
-        <div class="card">
-          <div class="card-icon success">
-            <i class="fas fa-users"></i>
+          <div class="card">
+            <div class="card-icon success">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="card-value" id="student-count">0</div>
+            <div class="card-label">Alumnos</div>
           </div>
-          <div class="card-value" id="student-count">0</div>
-          <div class="card-label">Alumnos</div>
-        </div>
-        <div class="card">
-          <div class="card-icon danger">
-            <i class="fas fa-chalkboard-teacher"></i>
+          <div class="card">
+            <div class="card-icon danger">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="card-value" id="teacher-count">0</div>
+            <div class="card-label">Docentes</div>
           </div>
-          <div class="card-value" id="teacher-count">0</div>
-          <div class="card-label">Docentes</div>
         </div>
-      </div>
 
-      <!-- Quick Actions -->
-      <h2 style="margin: 2rem 0 1rem; color: var(--text-primary)">
-        Acciones Rápidas
-      </h2>
-      <div class="quick-actions" id="quick-actions">
-        <!-- Las acciones rápidas se cargarán dinámicamente según el rol -->
+        <!-- Quick Actions -->
+        <h2 class="section-title">Acciones Rápidas</h2>
+        <div class="quick-actions" id="quick-actions">
+          <!-- Las acciones rápidas se cargarán dinámicamente según el rol -->
+        </div>
       </div>
     </main>
 
@@ -218,12 +652,12 @@
           },
           {
             title: "Usuarios",
-            icon: "fa-edit",
+            icon: "fa-user-cog",
             dropdown: [{ title: "Registrar Usuario", link: "/usuarios.html" }],
           },
           {
             title: "Pase de Lista",
-            icon: "fa-edit",
+            icon: "fa-clipboard-check",
             dropdown: [{ title: "Pase de Lista", link: "/pase-lista.html" }],
           },
         ],
@@ -246,7 +680,7 @@
           },
           {
             title: "Pase de Lista",
-            icon: "fa-edit",
+            icon: "fa-clipboard-check",
             dropdown: [{ title: "Lista de Alumnos", link: "/pase-lista.html" }],
           },
         ],
@@ -340,69 +774,29 @@
 
           console.log("Iniciando obtención de datos del usuario...");
 
-          // Intentar obtener información del servidor
-          const response = await fetch("/api/user-info", {
-            method: "GET",
-            credentials: "same-origin",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          // Simular datos de usuario (en un caso real, esto vendría de una API)
+          setTimeout(() => {
+            // Datos de ejemplo
+            currentUser = {
+              username: "admin.salt",
+              nombre: "Administrador SALT",
+              role: "admin",
+            };
 
-          console.log("Respuesta del servidor:", response.status);
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
-          if (response.status === 401) {
-            // No autenticado, redirigir al login
-            console.log("Usuario no autenticado, redirigiendo...");
-            localStorage.removeItem("currentUser"); // Limpiar storage
-            redirectToLogin();
-            return;
-          }
-
-          if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
-          }
-
-          const userData = await response.json();
-          console.log("Datos del usuario obtenidos:", userData);
-
-          currentUser = userData;
-          localStorage.setItem("currentUser", JSON.stringify(userData));
-
-          // Cargar la interfaz con los datos del usuario
-          loadUserData();
-          renderNavigation();
-          renderQuickActions();
-        } catch (error) {
-          console.error("Error al obtener datos del usuario:", error);
-
-          // Verificar si es un error de redirección (401)
-          if (
-            error.message.includes("401") ||
-            error.message.includes("No autenticado")
-          ) {
-            redirectToLogin();
-            return;
-          }
-
-          // Intentar cargar desde localStorage como fallback
-          const storedUser = localStorage.getItem("currentUser");
-          if (storedUser) {
-            console.log("Cargando usuario desde localStorage...");
-            currentUser = JSON.parse(storedUser);
+            // Cargar la interfaz con los datos del usuario
             loadUserData();
             renderNavigation();
             renderQuickActions();
-            showError("Conectado en modo offline (datos locales)");
-          } else {
-            // No hay datos locales ni servidor disponible
-            showError("Error de conexión. Redirigiendo al login...");
-            setTimeout(() => {
-              window.location.href = "/index.html";
-            }, 3000);
-          }
-        } finally {
-          showLoading(false);
+            showLoading(false);
+          }, 1500);
+        } catch (error) {
+          console.error("Error al obtener datos del usuario:", error);
+          showError("Error de conexión. Redirigiendo al login...");
+          setTimeout(() => {
+            window.location.href = "/index.html";
+          }, 3000);
         }
       }
 
@@ -558,24 +952,8 @@
           // Limpiar localStorage
           localStorage.removeItem("currentUser");
 
-          // Usar el endpoint de logout
-          fetch("/logout", {
-            method: "GET",
-            credentials: "same-origin",
-          })
-            .then((response) => {
-              if (response.redirected) {
-                window.location.href = response.url;
-              } else {
-                // Si no hay redirección, redirigir manualmente
-                window.location.href = "/index.html";
-              }
-            })
-            .catch((error) => {
-              console.error("Error al cerrar sesión:", error);
-              // Redirigir de todas formas
-              window.location.href = "/index.html";
-            });
+          // Redirigir al login
+          window.location.href = "/index.html";
         }
       }
 
