@@ -282,31 +282,58 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cargar grupos desde los estudiantes existentes
   async function loadGrupos() {
     try {
+      // 1. Primero intentar cargar grupos desde los estudiantes en la base de datos
       const response = await fetch(`${API_BASE_URL}/estudiantes`);
+
       if (response.ok) {
         const data = await response.json();
-        if (data.success && data.data) {
-          // Extraer grupos únicos de los estudiantes
-          const gruposUnicos = [
+
+        if (data.success && data.data && data.data.length > 0) {
+          // Extraer todos los grupos únicos de los estudiantes
+          const gruposDeEstudiantes = [
             ...new Set(
               data.data
                 .map((student) => student.grupo)
-                .filter((grupo) => grupo && grupo !== "Sin grupo")
+                .filter(
+                  (grupo) =>
+                    grupo && grupo.trim() !== "" && grupo !== "Sin grupo"
+                )
             ),
           ];
 
-          grupos =
-            gruposUnicos.length > 0
-              ? gruposUnicos
-              : ["701", "702", "703", "801", "802", "803"];
+          // 2. Si encontramos grupos en la base de datos, usarlos
+          if (gruposDeEstudiantes.length > 0) {
+            grupos = gruposDeEstudiantes.sort();
+            // Actualizar el localStorage con los grupos del servidor
+            localStorage.setItem("grupos", JSON.stringify(grupos));
+            console.log("Grupos cargados desde la base de datos:", grupos);
+            return;
+          }
         }
+      }
+
+      // 3. Si no hay grupos en la BD, usar localStorage como respaldo
+      const savedGrupos = localStorage.getItem("grupos");
+      if (savedGrupos) {
+        grupos = JSON.parse(savedGrupos);
+        console.log("Grupos cargados desde localStorage:", grupos);
+      } else {
+        // 4. Si no hay nada, usar grupos por defecto
+        grupos = ["701", "702", "703", "801", "802", "803"];
+        localStorage.setItem("grupos", JSON.stringify(grupos));
+        console.log("Grupos por defecto cargados:", grupos);
       }
     } catch (error) {
       console.error("Error cargando grupos:", error);
-      grupos = ["701", "702", "703", "801", "802", "803"];
+
+      // En caso de error, usar localStorage o grupos por defecto
+      const savedGrupos = localStorage.getItem("grupos");
+      grupos = savedGrupos
+        ? JSON.parse(savedGrupos)
+        : ["701", "702", "703", "801", "802", "803"];
+      console.log("Usando grupos de respaldo por error:", grupos);
     }
   }
-
   // Eliminar saveGrupos() ya que no podemos guardar grupos separadamente
 
   // Guardar grupos en localStorage
