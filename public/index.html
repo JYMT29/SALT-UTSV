@@ -297,7 +297,7 @@
         top: 50%;
         transform: translateY(-50%);
         color: var(--primary-color);
-        z-index: 1;
+        z-index: 2; /* Aumenté el z-index para que los iconos sean visibles */
         font-size: 1.1rem;
         text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
       }
@@ -434,8 +434,8 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
-      /* Elemento decorativo 3D */
-      .decorative-element {
+      /* Elemento decorativo 3D - Sombrerito universitario RESTAURADO */
+      .university-hat {
         position: absolute;
         top: -20px;
         right: -20px;
@@ -458,7 +458,7 @@
         transition: var(--transition);
       }
 
-      .login-form:hover .decorative-element {
+      .login-form:hover .university-hat {
         transform: rotate(25deg) scale(1.05);
       }
 
@@ -498,7 +498,7 @@
           transform: translateY(-5px);
         }
 
-        .decorative-element {
+        .university-hat {
           top: -15px;
           right: -15px;
           width: 60px;
@@ -524,7 +524,7 @@
           min-width: 100%;
         }
 
-        .decorative-element {
+        .university-hat {
           display: none;
         }
       }
@@ -560,8 +560,8 @@
       <!-- Sección del formulario -->
       <div class="form-section">
         <form method="POST" action="/login" class="login-form">
-          <!-- Elemento decorativo 3D -->
-          <div class="decorative-element">
+          <!-- Elemento decorativo 3D - Sombrerito universitario RESTAURADO -->
+          <div class="university-hat">
             <i class="fas fa-graduation-cap"></i>
           </div>
 
