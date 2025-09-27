@@ -824,11 +824,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Cargar estudiantes
+  // Cargar estudiantes
   async function loadStudents() {
     try {
       let url = `${API_BASE_URL}/estudiantes`;
-      if (filteredGroup && filteredGroup !== "todos")
-        url += `?grupo=${encodeURIComponent(filteredGroup)}`;
+
+      // Manejar diferentes tipos de filtro
+      if (filteredGroup && filteredGroup !== "todos") {
+        if (filteredGroup === "sin-grupo") {
+          // Filtrar estudiantes sin grupo
+          url += `?sin_grupo=true`;
+        } else {
+          // Filtrar por grupo específico
+          url += `?grupo=${encodeURIComponent(filteredGroup)}`;
+        }
+      }
 
       const response = await fetch(url);
       if (!response.ok)
@@ -838,16 +848,43 @@ document.addEventListener("DOMContentLoaded", () => {
       studentsTableBody.innerHTML = "";
 
       if (!data.success || data.count === 0) {
-        studentsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No hay alumnos registrados</td></tr>`;
+        let mensaje = "No hay alumnos registrados";
+        if (filteredGroup === "sin-grupo") {
+          mensaje = "No hay estudiantes sin grupo asignado";
+        } else if (filteredGroup && filteredGroup !== "todos") {
+          mensaje = `No hay estudiantes en el grupo "${filteredGroup}"`;
+        }
+
+        studentsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">${mensaje}</td></tr>`;
         return;
       }
 
       data.data.forEach((student) => addStudentToTable(student));
+
+      // Mostrar contador de resultados
+      showResultCount(data.count, filteredGroup);
     } catch (error) {
       showAlert(`Error al cargar estudiantes: ${error.message}`, "danger");
     }
   }
 
+  // Mostrar contador de resultados
+  function showResultCount(count, filtro) {
+    let mensaje = "";
+    switch (filtro) {
+      case "todos":
+        mensaje = `Mostrando todos los estudiantes (${count})`;
+        break;
+      case "sin-grupo":
+        mensaje = `Estudiantes sin grupo asignado (${count})`;
+        break;
+      default:
+        mensaje = `Estudiantes del grupo ${filtro} (${count})`;
+    }
+
+    // Puedes mostrar este mensaje en un elemento o en la consola
+    console.log(mensaje);
+  }
   function addStudentToTable(student) {
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -876,6 +913,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function toggleFilter() {
     if (filteredGroup) {
+      // Si ya hay un filtro activo, removerlo
       filteredGroup = "";
       filterGroupBtn.innerHTML =
         '<i class="fas fa-filter"></i> Filtrar por Grupo';
@@ -883,17 +921,118 @@ document.addEventListener("DOMContentLoaded", () => {
       loadStudents();
       showAlert("Filtro removido", "success");
     } else {
-      const groupToFilter = prompt(
-        "Ingresa el grupo a filtrar (o 'todos' para ver todos):"
-      );
-      if (groupToFilter) {
-        filteredGroup = groupToFilter.trim();
-        filterGroupBtn.innerHTML = `<i class="fas fa-filter"></i> Filtrando: ${filteredGroup}`;
-        filterGroupBtn.classList.add("btn-primary");
-        loadStudents();
-        showAlert(`Filtrando por grupo: ${filteredGroup}`, "success");
-      }
+      // Mostrar modal con opciones de grupos disponibles
+      showFilterModal();
     }
+  }
+
+  // Mostrar modal de filtro con grupos disponibles
+  function showFilterModal() {
+    const modal = document.createElement("div");
+    modal.className = "confirmation-modal";
+
+    // Crear opciones de grupos (incluyendo "Todos" y "Sin grupo")
+    const opcionesGrupos = [
+      {
+        valor: "todos",
+        texto: "📋 Todos los estudiantes",
+        icono: "fas fa-users",
+      },
+      {
+        valor: "sin-grupo",
+        texto: "❓ Sin grupo asignado",
+        icono: "fas fa-question",
+      },
+      ...grupos.map((grupo) => ({
+        valor: grupo,
+        texto: `👥 Grupo ${grupo}`,
+        icono: "fas fa-user-friends",
+      })),
+    ];
+
+    modal.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-filter"></i>
+        <h3 class="modal-title">Filtrar por Grupo</h3>
+      </div>
+      <div class="modal-body">
+        <p>Selecciona el grupo que deseas visualizar:</p>
+        <div class="filter-options" style="max-height: 300px; overflow-y: auto; margin: 15px 0;">
+          ${opcionesGrupos
+            .map(
+              (opcion) => `
+            <div class="filter-option" data-value="${opcion.valor}" 
+                 style="padding: 12px 15px; margin: 8px 0; border: 2px solid #e0e0e0; border-radius: var(--border-radius); 
+                        cursor: pointer; transition: all 0.3s ease; background: white;">
+              <i class="${opcion.icono}" style="margin-right: 10px; color: var(--university-blue);"></i>
+              <span style="font-weight: 500;">${opcion.texto}</span>
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+        <p><small>Se mostrarán solo los estudiantes del grupo seleccionado.</small></p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" id="cancel-filter">Cancelar</button>
+      </div>
+    </div>
+  `;
+
+    document.body.appendChild(modal);
+
+    // Agregar estilos para hover y selección
+    const options = modal.querySelectorAll(".filter-option");
+    options.forEach((option) => {
+      option.addEventListener("mouseenter", () => {
+        option.style.borderColor = "var(--university-blue)";
+        option.style.backgroundColor = "#f0f5ff";
+      });
+
+      option.addEventListener("mouseleave", () => {
+        option.style.borderColor = "#e0e0e0";
+        option.style.backgroundColor = "white";
+      });
+
+      option.addEventListener("click", () => {
+        const selectedValue = option.getAttribute("data-value");
+        applyFilter(selectedValue);
+        document.body.removeChild(modal);
+      });
+    });
+
+    document.getElementById("cancel-filter").onclick = () => {
+      document.body.removeChild(modal);
+    };
+
+    modal.onclick = (e) => {
+      if (e.target === modal) document.body.removeChild(modal);
+    };
+  }
+
+  // Aplicar el filtro seleccionado
+  function applyFilter(grupoFiltro) {
+    filteredGroup = grupoFiltro;
+
+    // Actualizar texto del botón según la selección
+    let textoBoton = "";
+    switch (grupoFiltro) {
+      case "todos":
+        textoBoton = "Todos los estudiantes";
+        break;
+      case "sin-grupo":
+        textoBoton = "Sin grupo";
+        break;
+      default:
+        textoBoton = `Grupo ${grupoFiltro}`;
+    }
+
+    filterGroupBtn.innerHTML = `<i class="fas fa-filter"></i> ${textoBoton}`;
+    filterGroupBtn.classList.add("btn-primary");
+
+    loadStudents();
+    showAlert(`Filtrando: ${textoBoton}`, "success");
   }
 
   // Función para registrar estudiante (MODIFICADA PARA INCLUIR GRUPO)

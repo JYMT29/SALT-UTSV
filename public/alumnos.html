@@ -820,6 +820,33 @@
         height: 1px;
         opacity: 0;
       }
+      /* Agregar estos estilos al final de tu CSS */
+      .filter-option:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(10, 44, 94, 0.1);
+      }
+
+      .filter-option:active {
+        transform: translateY(0);
+      }
+
+      .filter-options::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .filter-options::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .filter-options::-webkit-scrollbar-thumb {
+        background: var(--university-blue);
+        border-radius: 3px;
+      }
+
+      .filter-options::-webkit-scrollbar-thumb:hover {
+        background: var(--university-light-blue);
+      }
     </style>
   </head>
   <body>
