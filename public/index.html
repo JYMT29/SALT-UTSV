@@ -41,17 +41,19 @@
 
       body {
         font-family: "Lato", sans-serif;
+        background-color: var(--light-gray);
         color: var(--dark-gray);
         line-height: 1.6;
-        background-image: linear-gradient(
-            rgba(245, 247, 250, 0.6),
-            /* Sutil capa para mejorar la legibilidad */
-              rgba(245, 247, 250, 0.6)
+        background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(26, 60, 110, 0.03) 0%,
+            transparent 20%
           ),
-          url("/img/fondo5.jpg"); /* Ruta a tu imagen */
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+          radial-gradient(
+            circle at 85% 30%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 20%
+          );
       }
 
       .container {
@@ -160,9 +162,14 @@
         background-color: var(--white);
         position: relative;
         overflow: hidden;
+        /* Imagen de fondo agregada */
+        background-image: url("/img/fondo5.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
       }
 
-      /* Fondo con textura sutil */
+      /* Fondo con textura sutil - ajustada para permitir ver la imagen */
       .form-section::before {
         content: "";
         position: absolute;
@@ -186,14 +193,20 @@
           );
         background-size: 30px 30px;
         background-position: 0 0, 15px 15px;
-        opacity: 0.5;
+        /* Reducida la opacidad para permitir ver la imagen de fondo */
+        opacity: 0.2;
       }
 
       .login-form {
         width: 100%;
         max-width: 420px;
         padding: 2.8rem;
-        background: var(--white);
+        background: rgba(
+          255,
+          255,
+          255,
+          0.92
+        ); /* Fondo semi-transparente para mejor legibilidad */
         border-radius: 16px;
         box-shadow: var(--shadow-3d);
         position: relative;
@@ -202,6 +215,9 @@
         transform: perspective(1000px) rotateX(1deg) rotateY(-1deg);
         transition: var(--transition);
         overflow: hidden;
+        backdrop-filter: blur(
+          5px
+        ); /* Efecto de desenfoque para mejorar legibilidad */
       }
 
       /* Efecto de borde 3D */
@@ -295,7 +311,7 @@
         top: 50%;
         transform: translateY(-50%);
         color: var(--primary-color);
-        z-index: 2; /* Aumenté el z-index para que los iconos sean visibles */
+        z-index: 2;
         font-size: 1.1rem;
         text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
       }
