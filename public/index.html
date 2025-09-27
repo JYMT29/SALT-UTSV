@@ -41,19 +41,17 @@
 
       body {
         font-family: "Lato", sans-serif;
-        background-color: var(--light-gray);
         color: var(--dark-gray);
         line-height: 1.6;
-        background-image: radial-gradient(
-            circle at 15% 50%,
-            rgba(26, 60, 110, 0.03) 0%,
-            transparent 20%
+        background-image: linear-gradient(
+            rgba(245, 247, 250, 0.6),
+            /* Sutil capa para mejorar la legibilidad */
+              rgba(245, 247, 250, 0.6)
           ),
-          radial-gradient(
-            circle at 85% 30%,
-            rgba(212, 175, 55, 0.03) 0%,
-            transparent 20%
-          );
+          url("/public/img/fondo5.jpg"); /* Ruta a tu imagen */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
       }
 
       .container {
