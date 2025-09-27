@@ -94,9 +94,11 @@
         justify-content: center;
       }
 
-      .logo i {
-        font-size: 1.8rem;
-        color: var(--primary-color);
+      .logo img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
       }
 
       .brand-name {
@@ -269,6 +271,8 @@
         border-radius: 30px;
         border: 1px solid var(--medium-gray);
         transition: var(--transition);
+        cursor: pointer;
+        position: relative;
       }
 
       .user-info:hover {
@@ -287,6 +291,13 @@
         justify-content: center;
         font-weight: 700;
         font-size: 1.2rem;
+        overflow: hidden;
+      }
+
+      .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       .user-details {
@@ -308,6 +319,73 @@
         border-radius: 12px;
         margin-top: 2px;
         font-weight: 500;
+      }
+
+      .avatar-upload {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-3d);
+        padding: 15px;
+        width: 250px;
+        z-index: 10;
+        margin-top: 10px;
+      }
+
+      .avatar-upload.show {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-upload h3 {
+        margin-bottom: 10px;
+        color: var(--primary-color);
+        font-size: 1rem;
+      }
+
+      .avatar-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 10px auto;
+        overflow: hidden;
+        border: 2px solid var(--medium-gray);
+      }
+
+      .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-upload input {
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      .avatar-upload button {
+        width: 100%;
+        padding: 8px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px;
       }
 
       .btn-logout {
@@ -657,7 +735,7 @@
     <aside class="sidebar">
       <div class="brand">
         <div class="logo">
-          <i class="fas fa-university"></i>
+          <img src="/img/saltLogo.png" alt="Logo SALT-UTSV" />
         </div>
         <div>
           <div class="brand-name">SALT-UTSV</div>
@@ -678,11 +756,21 @@
         </button>
         <h1 class="page-title">Panel de Control</h1>
         <div class="user-menu">
-          <div class="user-info" id="user-info">
-            <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-info" id="user-info" onclick="toggleAvatarUpload()">
+            <div class="user-avatar" id="user-avatar">
+              <img id="user-avatar-img" src="" alt="Avatar del usuario" />
+            </div>
             <div class="user-details">
               <div class="user-name" id="user-name">Usuario</div>
               <div class="user-role" id="user-role">Rol</div>
+            </div>
+            <div class="avatar-upload" id="avatar-upload">
+              <h3>Cambiar avatar</h3>
+              <div class="avatar-preview">
+                <img id="avatar-preview-img" src="" alt="Vista previa" />
+              </div>
+              <input type="file" id="avatar-input" accept="image/*" />
+              <button onclick="saveAvatar()">Guardar avatar</button>
             </div>
           </div>
           <button type="button" class="btn-logout" onclick="logout()">
@@ -861,6 +949,20 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Obtener datos del usuario desde el servidor
         fetchUserData();
+
+        // Configurar el input de avatar
+        const avatarInput = document.getElementById("avatar-input");
+        avatarInput.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              document.getElementById("avatar-preview-img").src =
+                event.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
       });
 
       // Función para redirigir al login
@@ -884,11 +986,13 @@
 
           // Simular datos de usuario (en un caso real, esto vendría de una API)
           setTimeout(() => {
-            // Datos de ejemplo
+            // Datos de ejemplo con nombre real
             currentUser = {
               username: "admin.salt",
-              nombre: "Administrador SALT",
+              nombre: "Dr. Juan Carlos Martínez",
               role: "admin",
+              avatar:
+                localStorage.getItem("userAvatar") || "/img/default-avatar.png",
             };
 
             localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -959,13 +1063,13 @@
         if (!currentUser) return;
 
         // Mostrar información del usuario
-        const userAvatar = document.getElementById("user-avatar");
+        const userAvatar = document.getElementById("user-avatar-img");
         const userName = document.getElementById("user-name");
         const userRole = document.getElementById("user-role");
 
-        // Usar el nombre del usuario desde la sesión
+        // Usar el nombre real del usuario
         const displayName =
-          currentUser.username || currentUser.nombre || "Usuario";
+          currentUser.nombre || currentUser.username || "Usuario";
         const userRoleText =
           currentUser.role === "admin"
             ? "Administrador"
@@ -973,8 +1077,12 @@
             ? "Usuario"
             : currentUser.role || "Usuario";
 
-        // Avatar con iniciales
-        userAvatar.textContent = displayName.charAt(0).toUpperCase();
+        // Avatar
+        userAvatar.src = currentUser.avatar || "/img/default-avatar.png";
+        userAvatar.alt = `Avatar de ${displayName}`;
+        userAvatar.onerror = function () {
+          this.src = "/img/default-avatar.png";
+        };
 
         // Nombre completo
         userName.textContent = displayName;
@@ -1054,6 +1162,47 @@
         });
       }
 
+      // Función para mostrar/ocultar el panel de carga de avatar
+      function toggleAvatarUpload() {
+        const avatarUpload = document.getElementById("avatar-upload");
+        avatarUpload.classList.toggle("show");
+
+        // Cerrar otros menús abiertos
+        document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+          menu.classList.remove("show");
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            link.classList.remove("active");
+          });
+        });
+      }
+
+      // Función para guardar el avatar
+      function saveAvatar() {
+        const avatarInput = document.getElementById("avatar-input");
+        const file = avatarInput.files[0];
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            // Guardar en localStorage (en un caso real, se enviaría al servidor)
+            localStorage.setItem("userAvatar", event.target.result);
+
+            // Actualizar la imagen del avatar
+            document.getElementById("user-avatar-img").src =
+              event.target.result;
+
+            // Cerrar el panel de carga
+            document.getElementById("avatar-upload").classList.remove("show");
+
+            // Mostrar mensaje de éxito
+            alert("Avatar actualizado correctamente");
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert("Por favor, selecciona una imagen");
+        }
+      }
+
       // Función para cerrar sesión
       function logout() {
         if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
@@ -1089,6 +1238,9 @@
             }
           }
         });
+
+        // Cerrar el panel de avatar si está abierto
+        document.getElementById("avatar-upload").classList.remove("show");
       }
 
       function toggleSidebar() {
@@ -1098,7 +1250,9 @@
       document.addEventListener("click", function (event) {
         if (
           !event.target.matches(".nav-link") &&
-          !event.target.closest(".nav-link")
+          !event.target.closest(".nav-link") &&
+          !event.target.matches(".user-info") &&
+          !event.target.closest(".user-info")
         ) {
           document.querySelectorAll(".dropdown-menu").forEach((menu) => {
             menu.classList.remove("show");
@@ -1107,6 +1261,9 @@
               link.classList.remove("active");
             });
           });
+
+          // Cerrar el panel de avatar
+          document.getElementById("avatar-upload").classList.remove("show");
         }
       });
     </script>
