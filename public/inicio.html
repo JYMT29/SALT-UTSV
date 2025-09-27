@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SALT-UTSV | Panel de Control</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -14,17 +14,17 @@
     />
     <style>
       :root {
-        --primary-blue: #0a2c5e;
-        --secondary-blue: #1e4a7e;
-        --accent-gold: #c9a227;
-        --light-cream: #f8f5f0;
-        --dark-gray: #212529;
-        --medium-gray: #6c757d;
-        --light-gray: #e9ecef;
-        --success-green: #28a745;
-        --danger-red: #dc3545;
-        --border-radius: 8px;
-        --box-shadow: 0 5px 15px rgba(10, 44, 94, 0.1);
+        --primary-color: #1a3c6e;
+        --primary-light: #2a5ca0;
+        --secondary-color: #d4af37;
+        --accent-color: #e63946;
+        --light-gray: #f5f7fa;
+        --medium-gray: #e0e5ec;
+        --dark-gray: #4a5568;
+        --white: #ffffff;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-3d: 0 10px 30px rgba(0, 0, 0, 0.15),
+          0 1px 8px rgba(0, 0, 0, 0.1);
         --transition: all 0.3s ease;
       }
 
@@ -35,21 +35,31 @@
       }
 
       body {
-        font-family: "Plus Jakarta Sans", sans-serif;
-        background-color: #f5f7fa;
+        font-family: "Lato", sans-serif;
+        background-color: var(--light-gray);
         color: var(--dark-gray);
         line-height: 1.6;
         min-height: 100vh;
         display: flex;
+        background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(26, 60, 110, 0.03) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 85% 30%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 20%
+          );
       }
 
-      /* Sidebar mejorado */
+      /* Sidebar Universitario */
       .sidebar {
         width: 280px;
         background: linear-gradient(
           180deg,
-          var(--primary-blue) 0%,
-          var(--secondary-blue) 100%
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
         );
         color: white;
         height: 100vh;
@@ -60,6 +70,7 @@
         transition: var(--transition);
         z-index: 1000;
         box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .brand {
@@ -78,12 +89,26 @@
         border-radius: 50%;
         background: white;
         padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo i {
+        font-size: 1.8rem;
+        color: var(--primary-color);
       }
 
       .brand-name {
         font-size: 1.4rem;
         font-weight: 700;
         letter-spacing: 0.5px;
+      }
+
+      .brand-subtitle {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-top: 3px;
       }
 
       .nav-menu {
@@ -104,12 +129,19 @@
         transition: var(--transition);
         font-weight: 500;
         border-left: 4px solid transparent;
+        position: relative;
       }
 
       .nav-link:hover {
         background: rgba(255, 255, 255, 0.1);
         color: white;
-        border-left-color: var(--accent-gold);
+        border-left-color: var(--secondary-color);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.15);
+        border-left-color: var(--secondary-color);
+        color: white;
       }
 
       .nav-link i {
@@ -119,12 +151,22 @@
         text-align: center;
       }
 
+      .nav-link .chevron {
+        margin-left: auto;
+        font-size: 0.8rem;
+        transition: var(--transition);
+      }
+
+      .nav-link.active .chevron {
+        transform: rotate(180deg);
+      }
+
       .dropdown-menu {
         list-style: none;
         background: rgba(0, 0, 0, 0.2);
         display: none;
         padding: 10px 0;
-        border-left: 4px solid var(--accent-gold);
+        border-left: 4px solid var(--secondary-color);
       }
 
       .dropdown-menu.show {
@@ -168,13 +210,16 @@
       }
 
       .header {
-        background: white;
+        background: var(--white);
         padding: 20px 30px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-bottom: 1px solid var(--light-gray);
+        border-bottom: 1px solid var(--medium-gray);
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
       .menu-toggle {
@@ -182,15 +227,31 @@
         background: none;
         border: none;
         font-size: 1.5rem;
-        color: var(--primary-blue);
+        color: var(--primary-color);
         cursor: pointer;
       }
 
       .page-title {
         font-size: 1.8rem;
         font-weight: 700;
-        color: var(--primary-blue);
+        color: var(--primary-color);
         margin: 0;
+        position: relative;
+      }
+
+      .page-title::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 2px;
       }
 
       .user-menu {
@@ -204,16 +265,22 @@
         align-items: center;
         gap: 12px;
         padding: 8px 15px;
-        background: var(--light-cream);
+        background: var(--light-gray);
         border-radius: 30px;
-        border: 1px solid var(--light-gray);
+        border: 1px solid var(--medium-gray);
+        transition: var(--transition);
+      }
+
+      .user-info:hover {
+        box-shadow: var(--shadow);
+        transform: translateY(-2px);
       }
 
       .user-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: var(--primary-blue);
+        background: var(--primary-color);
         color: white;
         display: flex;
         align-items: center;
@@ -235,30 +302,36 @@
 
       .user-role {
         font-size: 0.75rem;
-        color: var(--medium-gray);
-        background: white;
+        color: var(--dark-gray);
+        background: var(--white);
         padding: 2px 8px;
         border-radius: 12px;
         margin-top: 2px;
+        font-weight: 500;
       }
 
       .btn-logout {
-        background: var(--primary-blue);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
         color: white;
         border: none;
         padding: 10px 20px;
-        border-radius: var(--border-radius);
+        border-radius: 10px;
         cursor: pointer;
         display: flex;
         align-items: center;
         gap: 8px;
         font-weight: 600;
         transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
       }
 
       .btn-logout:hover {
-        background: var(--secondary-blue);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
       }
 
       /* Dashboard Stats mejoradas */
@@ -274,20 +347,20 @@
       }
 
       .card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
         padding: 25px;
         text-align: center;
         transition: var(--transition);
-        border-top: 4px solid var(--primary-blue);
         position: relative;
         overflow: hidden;
+        border: 1px solid var(--medium-gray);
       }
 
       .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(10, 44, 94, 0.15);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       }
 
       .card::before {
@@ -299,8 +372,8 @@
         height: 4px;
         background: linear-gradient(
           90deg,
-          var(--primary-blue),
-          var(--accent-gold)
+          var(--primary-color),
+          var(--secondary-color)
         );
       }
 
@@ -314,34 +387,35 @@
         margin: 0 auto 15px;
         font-size: 1.8rem;
         color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
 
       .card-icon.primary {
         background: linear-gradient(
           135deg,
-          var(--primary-blue),
-          var(--secondary-blue)
+          var(--primary-color),
+          var(--primary-light)
         );
       }
 
-      .card-icon.success {
-        background: linear-gradient(135deg, var(--success-green), #20c997);
+      .card-icon.secondary {
+        background: linear-gradient(135deg, var(--secondary-color), #e6c64c);
       }
 
-      .card-icon.danger {
-        background: linear-gradient(135deg, var(--danger-red), #e83e8c);
+      .card-icon.accent {
+        background: linear-gradient(135deg, var(--accent-color), #f06d7d);
       }
 
       .card-value {
         font-size: 2.5rem;
         font-weight: 700;
-        color: var(--primary-blue);
+        color: var(--primary-color);
         margin-bottom: 5px;
       }
 
       .card-label {
         font-size: 1rem;
-        color: var(--medium-gray);
+        color: var(--dark-gray);
         font-weight: 500;
       }
 
@@ -349,10 +423,26 @@
       .section-title {
         font-size: 1.5rem;
         font-weight: 700;
-        color: var(--primary-blue);
+        color: var(--primary-color);
         margin-bottom: 20px;
         padding-bottom: 10px;
-        border-bottom: 2px solid var(--light-cream);
+        border-bottom: 2px solid var(--medium-gray);
+        position: relative;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 2px;
       }
 
       .quick-actions {
@@ -362,9 +452,9 @@
       }
 
       .action-btn {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
         padding: 25px 20px;
         text-decoration: none;
         color: var(--dark-gray);
@@ -373,20 +463,36 @@
         align-items: center;
         text-align: center;
         transition: var(--transition);
-        border: 1px solid transparent;
+        border: 1px solid var(--medium-gray);
+        position: relative;
+        overflow: hidden;
       }
 
       .action-btn:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(10, 44, 94, 0.15);
-        border-color: var(--primary-blue);
-        color: var(--primary-blue);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .action-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
       }
 
       .action-btn i {
         font-size: 2.2rem;
         margin-bottom: 15px;
-        color: var(--primary-blue);
+        color: var(--primary-color);
       }
 
       .action-label {
@@ -413,14 +519,14 @@
         width: 50px;
         height: 50px;
         border: 5px solid #f3f3f3;
-        border-top: 5px solid var(--primary-blue);
+        border-top: 5px solid var(--primary-color);
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin-bottom: 15px;
       }
 
       .loading-text {
-        color: var(--primary-blue);
+        color: var(--primary-color);
         font-size: 16px;
         font-weight: 600;
       }
@@ -439,23 +545,25 @@
         background-color: #ffebee;
         color: #c62828;
         padding: 15px 20px;
-        border-radius: var(--border-radius);
+        border-radius: 12px;
         margin: 20px 30px;
         text-align: center;
         display: none;
-        border-left: 4px solid var(--danger-red);
+        border-left: 4px solid var(--accent-color);
+        box-shadow: var(--shadow);
       }
 
       /* Estilos para el mensaje de redirección */
       .redirect-message {
         background-color: #e3f2fd;
-        color: var(--primary-blue);
+        color: var(--primary-color);
         padding: 15px 20px;
-        border-radius: var(--border-radius);
+        border-radius: 12px;
         margin: 20px 30px;
         text-align: center;
         display: none;
-        border-left: 4px solid var(--primary-blue);
+        border-left: 4px solid var(--primary-color);
+        box-shadow: var(--shadow);
       }
 
       /* Responsive */
@@ -548,13 +656,13 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="brand">
-        <div class="logo-placeholder">
-          <i
-            class="fas fa-university"
-            style="font-size: 2rem; color: var(--primary-blue)"
-          ></i>
+        <div class="logo">
+          <i class="fas fa-university"></i>
         </div>
-        <span class="brand-name">SALT-UTSV</span>
+        <div>
+          <div class="brand-name">SALT-UTSV</div>
+          <div class="brand-subtitle">Sistema Avanzado de Laboratorios</div>
+        </div>
       </div>
 
       <ul class="nav-menu" id="nav-menu">
@@ -589,24 +697,24 @@
         <div class="dashboard-grid">
           <div class="card">
             <div class="card-icon primary">
-              <i class="fas fa-map-marker-alt"></i>
+              <i class="fas fa-flask"></i>
             </div>
             <div class="card-value">2</div>
-            <div class="card-label">Laboratorios</div>
+            <div class="card-label">Laboratorios Activos</div>
           </div>
           <div class="card">
-            <div class="card-icon success">
+            <div class="card-icon secondary">
               <i class="fas fa-users"></i>
             </div>
             <div class="card-value" id="student-count">0</div>
-            <div class="card-label">Alumnos</div>
+            <div class="card-label">Alumnos Registrados</div>
           </div>
           <div class="card">
-            <div class="card-icon danger">
+            <div class="card-icon accent">
               <i class="fas fa-chalkboard-teacher"></i>
             </div>
             <div class="card-value" id="teacher-count">0</div>
-            <div class="card-label">Docentes</div>
+            <div class="card-label">Docentes Activos</div>
           </div>
         </div>
 
@@ -903,7 +1011,7 @@
                     <a href="#" class="nav-link" onclick="toggleDropdown('${item.title.toLowerCase()}')">
                         <i class="fas ${item.icon}"></i>
                         <span>${item.title}</span>
-                        <i class="fas fa-chevron-down ms-auto" style="font-size: 0.8rem"></i>
+                        <i class="fas fa-chevron-down chevron"></i>
                     </a>
                     <ul class="dropdown-menu" id="${item.title.toLowerCase()}">
                         ${item.dropdown
@@ -961,11 +1069,24 @@
       function toggleDropdown(id) {
         event.preventDefault();
         const dropdown = document.getElementById(id);
+        const navLink = event.currentTarget;
+
+        // Toggle active class
+        navLink.classList.toggle("active");
+
+        // Toggle dropdown
         dropdown.classList.toggle("show");
 
         document.querySelectorAll(".dropdown-menu").forEach((menu) => {
           if (menu.id !== id && menu.classList.contains("show")) {
             menu.classList.remove("show");
+            // Remove active class from other nav links
+            const otherNavLink = document.querySelector(
+              `.nav-link[onclick="toggleDropdown('${menu.id}')"]`
+            );
+            if (otherNavLink) {
+              otherNavLink.classList.remove("active");
+            }
           }
         });
       }
@@ -981,6 +1102,10 @@
         ) {
           document.querySelectorAll(".dropdown-menu").forEach((menu) => {
             menu.classList.remove("show");
+            // Remove active class from all nav links
+            document.querySelectorAll(".nav-link").forEach((link) => {
+              link.classList.remove("active");
+            });
           });
         }
       });
