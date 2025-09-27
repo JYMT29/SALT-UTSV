@@ -37,8 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let escaneoActivo = false;
 
   // Inicializar la interfaz
-  function init() {
-    loadGrupos();
+  async function init() {
+    // ← Agregar async aquí
+    await loadGrupos();
     loadStudents();
     setupEventListeners();
     renderGroupCards();
