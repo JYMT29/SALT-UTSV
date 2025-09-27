@@ -984,25 +984,40 @@
 
           console.log("Iniciando obtención de datos del usuario...");
 
-          // Simular datos de usuario (en un caso real, esto vendría de una API)
-          setTimeout(() => {
-            // Datos de ejemplo con nombre real
-            currentUser = {
-              username: "admin.salt",
-              nombre: "Dr. Juan Carlos Martínez",
-              role: "admin",
-              avatar:
-                localStorage.getItem("userAvatar") || "/img/default-avatar.png",
-            };
+          // Hacer petición al endpoint de información del usuario
+          const response = await fetch("/api/user-info", {
+            method: "GET",
+            credentials: "same-origin", // Incluir cookies de sesión
+          });
 
-            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          if (!response.ok) {
+            if (response.status === 401) {
+              // No autenticado, redirigir al login
+              redirectToLogin();
+              return;
+            }
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
 
-            // Cargar la interfaz con los datos del usuario
-            loadUserData();
-            renderNavigation();
-            renderQuickActions();
-            showLoading(false);
-          }, 1500);
+          const userData = await response.json();
+
+          // Usar los datos reales del usuario desde el backend
+          currentUser = {
+            id: userData.id,
+            username: userData.username,
+            nombre: userData.username, // El backend devuelve 'username' que es el nombre real
+            role: userData.role,
+            avatar:
+              localStorage.getItem("userAvatar") || "/img/default-avatar.png",
+          };
+
+          localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+          // Cargar la interfaz con los datos del usuario
+          loadUserData();
+          renderNavigation();
+          renderQuickActions();
+          showLoading(false);
         } catch (error) {
           console.error("Error al obtener datos del usuario:", error);
           showError("Error de conexión. Redirigiendo al login...");
@@ -1067,7 +1082,7 @@
         const userName = document.getElementById("user-name");
         const userRole = document.getElementById("user-role");
 
-        // Usar el nombre real del usuario
+        // Usar el nombre real del usuario desde el backend
         const displayName =
           currentUser.nombre || currentUser.username || "Usuario";
         const userRoleText =
@@ -1206,11 +1221,8 @@
       // Función para cerrar sesión
       function logout() {
         if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-          // Limpiar localStorage
-          localStorage.removeItem("currentUser");
-
-          // Redirigir al login
-          window.location.href = "/index.html";
+          // Redirigir al endpoint de logout del backend
+          window.location.href = "/logout";
         }
       }
 

@@ -3,16 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SALT-UTSV | Panel de Control</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SALT-UTSV - Inicio de Sesión</title>
+    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Font Awesome -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <style>
+      /* Variables de colores y estilos */
       :root {
         --primary-color: #1a3c6e;
         --primary-light: #2a5ca0;
@@ -28,10 +32,11 @@
         --transition: all 0.3s ease;
       }
 
+      /* Reset y estilos base */
       * {
-        box-sizing: border-box;
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
       }
 
       body {
@@ -39,8 +44,6 @@
         background-color: var(--light-gray);
         color: var(--dark-gray);
         line-height: 1.6;
-        min-height: 100vh;
-        display: flex;
         background-image: radial-gradient(
             circle at 15% 50%,
             rgba(26, 60, 110, 0.03) 0%,
@@ -53,199 +56,231 @@
           );
       }
 
-      /* Sidebar Universitario */
-      .sidebar {
-        width: 280px;
+      .container {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+      }
+
+      /* Sección de imagen y texto */
+      .image-section {
+        flex: 1;
         background: linear-gradient(
-          180deg,
+          135deg,
           var(--primary-color) 0%,
           var(--primary-light) 100%
         );
-        color: white;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        overflow-y: auto;
-        transition: var(--transition);
-        z-index: 1000;
-        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--white);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
       }
 
-      .brand {
-        padding: 25px 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        background: rgba(0, 0, 0, 0.1);
+      .image-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+        background-size: cover;
+      }
+
+      .logo-container {
+        text-align: center;
+        z-index: 1;
+        margin-bottom: 3rem;
       }
 
       .logo {
-        width: 50px;
-        height: 50px;
-        object-fit: contain;
-        border-radius: 50%;
-        background: white;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 120px;
+        height: auto;
+        margin-bottom: 1rem;
+        filter: brightness(0) invert(1);
       }
 
-      .logo img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-
-      .brand-name {
-        font-size: 1.4rem;
+      .logo-container h2 {
+        font-size: 2.2rem;
         font-weight: 700;
-        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
       }
 
-      .brand-subtitle {
-        font-size: 0.8rem;
-        opacity: 0.8;
-        margin-top: 3px;
-      }
-
-      .nav-menu {
-        list-style: none;
-        padding: 20px 0;
-      }
-
-      .nav-item {
-        margin-bottom: 5px;
-      }
-
-      .nav-link {
-        display: flex;
-        align-items: center;
-        padding: 15px 25px;
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-        transition: var(--transition);
-        font-weight: 500;
-        border-left: 4px solid transparent;
-        position: relative;
-      }
-
-      .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-left-color: var(--secondary-color);
-      }
-
-      .nav-link.active {
-        background: rgba(255, 255, 255, 0.15);
-        border-left-color: var(--secondary-color);
-        color: white;
-      }
-
-      .nav-link i {
-        margin-right: 12px;
+      .slogan {
         font-size: 1.1rem;
-        width: 20px;
-        text-align: center;
+        font-weight: 300;
+        opacity: 0.9;
+        max-width: 400px;
       }
 
-      .nav-link .chevron {
-        margin-left: auto;
-        font-size: 0.8rem;
-        transition: var(--transition);
+      .features {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        z-index: 1;
+        max-width: 400px;
       }
 
-      .nav-link.active .chevron {
-        transform: rotate(180deg);
-      }
-
-      .dropdown-menu {
-        list-style: none;
-        background: rgba(0, 0, 0, 0.2);
-        display: none;
-        padding: 10px 0;
-        border-left: 4px solid var(--secondary-color);
-      }
-
-      .dropdown-menu.show {
-        display: block;
-        animation: slideDown 0.3s ease;
-      }
-
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .dropdown-item {
-        display: block;
-        padding: 12px 25px 12px 60px;
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        transition: var(--transition);
-        font-size: 0.95rem;
-        border-left: 3px solid transparent;
-      }
-
-      .dropdown-item:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-left-color: rgba(255, 255, 255, 0.5);
-      }
-
-      /* Main Content */
-      .main-content {
-        flex: 1;
-        margin-left: 280px;
-        padding: 0;
-        transition: var(--transition);
-      }
-
-      .header {
-        background: var(--white);
-        padding: 20px 30px;
+      .feature-item {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-bottom: 1px solid var(--medium-gray);
-        position: sticky;
-        top: 0;
-        z-index: 100;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(5px);
+        transition: var(--transition);
       }
 
-      .menu-toggle {
-        display: none;
-        background: none;
-        border: none;
+      .feature-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .feature-item i {
         font-size: 1.5rem;
-        color: var(--primary-color);
-        cursor: pointer;
+        margin-right: 1rem;
+        color: var(--secondary-color);
       }
 
-      .page-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin: 0;
+      .feature-item span {
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      /* Sección del formulario con efecto 3D */
+      .form-section {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        background-color: var(--white);
         position: relative;
+        overflow: hidden;
+        /* Imagen de fondo agregada */
+        background-image: url("/img/fondo6.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
       }
 
-      .page-title::after {
+      /* Fondo con textura sutil - ajustada para permitir ver la imagen */
+      .form-section::before {
         content: "";
         position: absolute;
-        bottom: -5px;
+        top: 0;
         left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(
+            45deg,
+            rgba(0, 0, 0, 0.02) 25%,
+            transparent 25%,
+            transparent 75%,
+            rgba(0, 0, 0, 0.02) 75%
+          ),
+          linear-gradient(
+            45deg,
+            rgba(0, 0, 0, 0.02) 25%,
+            transparent 25%,
+            transparent 75%,
+            rgba(0, 0, 0, 0.02) 75%
+          );
+        background-size: 30px 30px;
+        background-position: 0 0, 15px 15px;
+        /* Reducida la opacidad para permitir ver la imagen de fondo */
+        opacity: 0.2;
+      }
+
+      .login-form {
+        width: 100%;
+        max-width: 420px;
+        padding: 2.8rem;
+        background: rgba(
+          255,
+          255,
+          255,
+          0.92
+        ); /* Fondo semi-transparente para mejor legibilidad */
+        border-radius: 16px;
+        box-shadow: var(--shadow-3d);
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        transform: perspective(1000px) rotateX(1deg) rotateY(-1deg);
+        transition: var(--transition);
+        overflow: hidden;
+        backdrop-filter: blur(
+          5px
+        ); /* Efecto de desenfoque para mejorar legibilidad */
+      }
+
+      /* Efecto de borde 3D */
+      .login-form::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 16px;
+        padding: 2px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.8) 0%,
+          rgba(230, 230, 230, 0.4) 50%,
+          rgba(200, 200, 200, 0.2) 100%
+        );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: -1;
+      }
+
+      /* Efecto de sombra interior */
+      .login-form::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 16px;
+        box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.8),
+          inset 0 -2px 10px rgba(0, 0, 0, 0.05);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .login-form:hover {
+        transform: perspective(1000px) rotateX(0.5deg) rotateY(-0.5deg)
+          translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2),
+          0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .login-form h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.8rem;
+        text-align: center;
+        position: relative;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .login-form h1::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
         width: 60px;
         height: 3px;
         background: linear-gradient(
@@ -256,1028 +291,291 @@
         border-radius: 2px;
       }
 
-      .user-menu {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-      }
-
-      .user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 8px 15px;
-        background: var(--light-gray);
-        border-radius: 30px;
-        border: 1px solid var(--medium-gray);
-        transition: var(--transition);
-        cursor: pointer;
-        position: relative;
-      }
-
-      .user-info:hover {
-        box-shadow: var(--shadow);
-        transform: translateY(-2px);
-      }
-
-      .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--primary-color);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.2rem;
-        overflow: hidden;
-      }
-
-      .user-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .user-details {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .user-name {
-        font-weight: 600;
+      .form-intro {
+        text-align: center;
+        margin-bottom: 2.2rem;
+        margin-top: 1.8rem;
         color: var(--dark-gray);
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      .input-container {
+        position: relative;
+        margin-bottom: 1.8rem;
+      }
+
+      .icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        z-index: 2;
+        font-size: 1.1rem;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 16px 18px 16px 50px;
+        border: 1.5px solid var(--medium-gray);
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: var(--transition);
+        background-color: rgba(245, 247, 250, 0.8);
+        font-weight: 400;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        position: relative;
+        z-index: 1;
+      }
+
+      .input-field:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(26, 60, 110, 0.1),
+          inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        background-color: var(--white);
+        transform: translateY(-1px);
+      }
+
+      .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.2rem;
         font-size: 0.95rem;
       }
 
-      .user-role {
-        font-size: 0.75rem;
-        color: var(--dark-gray);
-        background: var(--white);
-        padding: 2px 8px;
-        border-radius: 12px;
-        margin-top: 2px;
+      .remember-me {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
         font-weight: 500;
       }
 
-      .avatar-upload {
-        display: none;
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        border-radius: 10px;
-        box-shadow: var(--shadow-3d);
-        padding: 15px;
-        width: 250px;
-        z-index: 10;
-        margin-top: 10px;
+      .remember-me input {
+        margin-right: 10px;
+        accent-color: var(--primary-color);
+        width: 18px;
+        height: 18px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
 
-      .avatar-upload.show {
-        display: block;
-        animation: fadeIn 0.3s ease;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .avatar-upload h3 {
-        margin-bottom: 10px;
+      .forgot-password {
         color: var(--primary-color);
-        font-size: 1rem;
-      }
-
-      .avatar-preview {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin: 10px auto;
-        overflow: hidden;
-        border: 2px solid var(--medium-gray);
-      }
-
-      .avatar-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .avatar-upload input {
-        width: 100%;
-        margin: 10px 0;
-      }
-
-      .avatar-upload button {
-        width: 100%;
-        padding: 8px;
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 5px;
-      }
-
-      .btn-logout {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color) 0%,
-          var(--primary-light) 100%
-        );
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 10px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 600;
+        text-decoration: none;
         transition: var(--transition);
-        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
-      }
-
-      .btn-logout:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
-      }
-
-      /* Dashboard Stats mejoradas */
-      .dashboard-content {
-        padding: 30px;
-      }
-
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
-        margin-bottom: 40px;
-      }
-
-      .card {
-        background: var(--white);
-        border-radius: 12px;
-        box-shadow: var(--shadow);
-        padding: 25px;
-        text-align: center;
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-        border: 1px solid var(--medium-gray);
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-      }
-
-      .card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(
-          90deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
-      }
-
-      .card-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px;
-        font-size: 1.8rem;
-        color: white;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .card-icon.primary {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--primary-light)
-        );
-      }
-
-      .card-icon.secondary {
-        background: linear-gradient(135deg, var(--secondary-color), #e6c64c);
-      }
-
-      .card-icon.accent {
-        background: linear-gradient(135deg, var(--accent-color), #f06d7d);
-      }
-
-      .card-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-bottom: 5px;
-      }
-
-      .card-label {
-        font-size: 1rem;
-        color: var(--dark-gray);
         font-weight: 500;
-      }
-
-      /* Quick Actions mejoradas */
-      .section-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--medium-gray);
         position: relative;
       }
 
-      .section-title::after {
+      .forgot-password::after {
         content: "";
         position: absolute;
         bottom: -2px;
         left: 0;
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(
-          90deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
-        border-radius: 2px;
-      }
-
-      .quick-actions {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-      }
-
-      .action-btn {
-        background: var(--white);
-        border-radius: 12px;
-        box-shadow: var(--shadow);
-        padding: 25px 20px;
-        text-decoration: none;
-        color: var(--dark-gray);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        width: 0;
+        height: 1px;
+        background: var(--primary-color);
         transition: var(--transition);
-        border: 1px solid var(--medium-gray);
-        position: relative;
-        overflow: hidden;
       }
 
-      .action-btn:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
+      .forgot-password:hover {
+        color: var(--primary-light);
       }
 
-      .action-btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
+      .forgot-password:hover::after {
         width: 100%;
-        height: 4px;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 16px;
         background: linear-gradient(
-          90deg,
-          var(--primary-color),
-          var(--secondary-color)
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
         );
-      }
-
-      .action-btn i {
-        font-size: 2.2rem;
-        margin-bottom: 15px;
-        color: var(--primary-color);
-      }
-
-      .action-label {
+        color: var(--white);
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
         font-weight: 600;
-        font-size: 0.95rem;
-      }
-
-      /* Estilos para el indicador de carga */
-      .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        transition: var(--transition);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 9999;
-        flex-direction: column;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
-      .spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid var(--primary-color);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 15px;
+      .submit-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
       }
 
-      .loading-text {
-        color: var(--primary-color);
-        font-size: 16px;
-        font-weight: 600;
+      .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+      .submit-btn:hover::before {
+        left: 100%;
       }
 
-      /* Estilos para el mensaje de error */
-      .error-message {
-        background-color: #ffebee;
-        color: #c62828;
-        padding: 15px 20px;
-        border-radius: 12px;
-        margin: 20px 30px;
-        text-align: center;
-        display: none;
-        border-left: 4px solid var(--accent-color);
-        box-shadow: var(--shadow);
-      }
-
-      /* Estilos para el mensaje de redirección */
-      .redirect-message {
-        background-color: #e3f2fd;
-        color: var(--primary-color);
-        padding: 15px 20px;
-        border-radius: 12px;
-        margin: 20px 30px;
-        text-align: center;
-        display: none;
-        border-left: 4px solid var(--primary-color);
-        box-shadow: var(--shadow);
+      .submit-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 10px rgba(26, 60, 110, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
       /* Responsive */
-      @media (max-width: 992px) {
-        .sidebar {
-          width: 250px;
-          transform: translateX(-100%);
+      @media (max-width: 900px) {
+        .container {
+          flex-direction: column;
         }
 
-        .sidebar.active {
-          transform: translateX(0);
+        .image-section {
+          padding: 2rem 1rem;
         }
 
-        .main-content {
-          margin-left: 0;
-        }
-
-        .menu-toggle {
-          display: block;
-        }
-
-        .dashboard-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .quick-actions {
-          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-      }
-
-      @media (max-width: 768px) {
-        .header {
-          padding: 15px 20px;
+        .features {
+          flex-direction: row;
           flex-wrap: wrap;
+          justify-content: center;
         }
 
-        .user-menu {
-          width: 100%;
-          justify-content: space-between;
-          margin-top: 15px;
+        .feature-item {
+          flex: 1;
+          min-width: 200px;
+          flex-direction: column;
+          text-align: center;
         }
 
-        .dashboard-content {
-          padding: 20px;
+        .feature-item i {
+          margin-right: 0;
+          margin-bottom: 0.5rem;
         }
 
-        .quick-actions {
-          grid-template-columns: 1fr 1fr;
+        .login-form {
+          transform: none;
+        }
+
+        .login-form:hover {
+          transform: translateY(-5px);
         }
       }
 
-      @media (max-width: 480px) {
-        .quick-actions {
-          grid-template-columns: 1fr;
+      @media (max-width: 600px) {
+        .login-form {
+          padding: 2.2rem 1.8rem;
+          max-width: 90%;
+          border-radius: 12px;
         }
 
-        .user-info {
-          padding: 6px 12px;
+        .form-options {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: flex-start;
         }
 
-        .btn-logout span {
-          display: none;
-        }
-
-        .btn-logout {
-          padding: 10px;
+        .feature-item {
+          min-width: 100%;
         }
       }
     </style>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
   </head>
   <body>
-    <!-- Indicador de carga -->
-    <div class="loading-overlay" id="loading-overlay">
-      <div class="spinner"></div>
-      <div class="loading-text">Cargando información del usuario...</div>
-    </div>
-
-    <!-- Mensaje de redirección -->
-    <div class="redirect-message" id="redirect-message">
-      <i class="fas fa-info-circle"></i>
-      <span id="redirect-text">Redirigiendo al login...</span>
-    </div>
-
-    <!-- Mensaje de error -->
-    <div class="error-message" id="error-message">
-      <i class="fas fa-exclamation-circle"></i>
-      <span id="error-text"></span>
-    </div>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">
-          <img src="/img/saltLogo.png" alt="Logo SALT-UTSV" />
+    <div class="container">
+      <!-- Sección de imagen y texto -->
+      <div class="image-section">
+        <div class="logo-container">
+          <img src="/img/saltLogo.png" alt="Logo SALT-UTSV" class="logo" />
+          <h2>SALT-UTSV</h2>
+          <p class="slogan">Sistema Avanzado de Laboratorios Tecnológicos</p>
         </div>
-        <div>
-          <div class="brand-name">SALT-UTSV</div>
-          <div class="brand-subtitle">Sistema Avanzado de Laboratorios</div>
+        <div class="features">
+          <div class="feature-item">
+            <i class="fas fa-flask"></i>
+            <span>Acceso a laboratorios</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Reserva de equipos</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Seguimiento académico</span>
+          </div>
         </div>
       </div>
 
-      <ul class="nav-menu" id="nav-menu">
-        <!-- El menú se cargará dinámicamente según el rol -->
-      </ul>
-    </aside>
+      <!-- Sección del formulario -->
+      <div class="form-section">
+        <form method="POST" action="/login" class="login-form">
+          <h1>Iniciar Sesión</h1>
+          <p class="form-intro">
+            Ingresa tus credenciales para acceder al sistema
+          </p>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="header">
-        <button class="menu-toggle" onclick="toggleSidebar()">
-          <i class="fas fa-bars"></i>
-        </button>
-        <h1 class="page-title">Panel de Control</h1>
-        <div class="user-menu">
-          <div class="user-info" id="user-info" onclick="toggleAvatarUpload()">
-            <div class="user-avatar" id="user-avatar">
-              <img id="user-avatar-img" src="" alt="Avatar del usuario" />
-            </div>
-            <div class="user-details">
-              <div class="user-name" id="user-name">Usuario</div>
-              <div class="user-role" id="user-role">Rol</div>
-            </div>
-            <div class="avatar-upload" id="avatar-upload">
-              <h3>Cambiar avatar</h3>
-              <div class="avatar-preview">
-                <img id="avatar-preview-img" src="" alt="Vista previa" />
-              </div>
-              <input type="file" id="avatar-input" accept="image/*" />
-              <button onclick="saveAvatar()">Guardar avatar</button>
-            </div>
+          <div class="input-container">
+            <i class="fas fa-user icon"></i>
+            <input
+              type="text"
+              id="matricula"
+              name="matricula"
+              placeholder="Matrícula"
+              required
+              class="input-field"
+            />
           </div>
-          <button type="button" class="btn-logout" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Cerrar sesión</span>
+
+          <div class="input-container">
+            <i class="fas fa-lock icon"></i>
+            <input
+              type="password"
+              id="contrasena"
+              name="contrasena"
+              placeholder="Contraseña"
+              required
+              class="input-field"
+            />
+          </div>
+
+          <div class="form-options">
+            <label class="remember-me">
+              <input type="checkbox" name="remember" />
+              <span>Recordar sesión</span>
+            </label>
+            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
           </button>
-        </div>
+        </form>
       </div>
-
-      <div class="dashboard-content">
-        <!-- Dashboard Stats -->
-        <div class="dashboard-grid">
-          <div class="card">
-            <div class="card-icon primary">
-              <i class="fas fa-flask"></i>
-            </div>
-            <div class="card-value">2</div>
-            <div class="card-label">Laboratorios Activos</div>
-          </div>
-          <div class="card">
-            <div class="card-icon secondary">
-              <i class="fas fa-users"></i>
-            </div>
-            <div class="card-value" id="student-count">0</div>
-            <div class="card-label">Alumnos Registrados</div>
-          </div>
-          <div class="card">
-            <div class="card-icon accent">
-              <i class="fas fa-chalkboard-teacher"></i>
-            </div>
-            <div class="card-value" id="teacher-count">0</div>
-            <div class="card-label">Docentes Activos</div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <h2 class="section-title">Acciones Rápidas</h2>
-        <div class="quick-actions" id="quick-actions">
-          <!-- Las acciones rápidas se cargarán dinámicamente según el rol -->
-        </div>
-      </div>
-    </main>
-
-    <script>
-      // Variable global para almacenar los datos del usuario
-      let currentUser = null;
-
-      // Estructura del menú para cada rol
-      const menuItems = {
-        admin: [
-          {
-            title: "Horario",
-            icon: "fa-calendar-alt",
-            dropdown: [
-              { title: "Laboratorio 1", link: "/horario.html?lab=lab1" },
-              { title: "Laboratorio 2", link: "/horario.html?lab=lab2" },
-            ],
-          },
-          {
-            title: "Informe",
-            icon: "fa-file-alt",
-            dropdown: [
-              { title: "Laboratorio 1", link: "/informe.html?lab=lab1" },
-              { title: "Laboratorio 2", link: "/informe.html?lab=lab2" },
-            ],
-          },
-          {
-            title: "Registro",
-            icon: "fa-edit",
-            dropdown: [
-              { title: "Laboratorio 1", link: "/registro.html?lab=lab1" },
-              { title: "Laboratorio 2", link: "/registro.html?lab=lab2" },
-              { title: "Nuevo Alumno", link: "/alumnos.html" },
-            ],
-          },
-          {
-            title: "Usuarios",
-            icon: "fa-user-cog",
-            dropdown: [{ title: "Registrar Usuario", link: "/usuarios.html" }],
-          },
-          {
-            title: "Pase de Lista",
-            icon: "fa-clipboard-check",
-            dropdown: [{ title: "Pase de Lista", link: "/pase-lista.html" }],
-          },
-        ],
-        user: [
-          {
-            title: "Registro",
-            icon: "fa-edit",
-            dropdown: [
-              { title: "Laboratorio 1", link: "/registro.html?lab=lab1" },
-              { title: "Laboratorio 2", link: "/registro.html?lab=lab2" },
-            ],
-          },
-          {
-            title: "Horario",
-            icon: "fa-calendar-alt",
-            dropdown: [
-              { title: "Laboratorio 1", link: "/horario.html?lab=lab1" },
-              { title: "Laboratorio 2", link: "/horario.html?lab=lab2" },
-            ],
-          },
-          {
-            title: "Pase de Lista",
-            icon: "fa-clipboard-check",
-            dropdown: [{ title: "Lista de Alumnos", link: "/pase-lista.html" }],
-          },
-        ],
-      };
-
-      // Acciones rápidas para cada rol
-      const quickActions = {
-        admin: [
-          {
-            icon: "fa-calendar-check",
-            label: "Horario Lab 1",
-            link: "/horario.html?lab=lab1",
-          },
-          {
-            icon: "fa-calendar-check",
-            label: "Horario Lab 2",
-            link: "/horario.html?lab=lab2",
-          },
-          {
-            icon: "fa-file-alt",
-            label: "Informe Lab 1",
-            link: "/informe.html?lab=lab1",
-          },
-          {
-            icon: "fa-file-alt",
-            label: "Informe Lab 2",
-            link: "/informe.html?lab=lab2",
-          },
-          {
-            icon: "fa-user-plus",
-            label: "Nuevo Alumno",
-            link: "/alumnos.html",
-          },
-          {
-            icon: "fa-edit",
-            label: "Registro Lab 1",
-            link: "/registro.html?lab=lab1",
-          },
-          {
-            icon: "fa-edit",
-            label: "Registro Lab 2",
-            link: "/registro.html?lab=lab2",
-          },
-        ],
-        user: [
-          {
-            icon: "fa-edit",
-            label: "Registro Lab 1",
-            link: "/registro.html?lab=lab1",
-          },
-          {
-            icon: "fa-edit",
-            label: "Registro Lab 2",
-            link: "/registro.html?lab=lab2",
-          },
-          {
-            icon: "fa-calendar-check",
-            label: "Horario Lab 1",
-            link: "/horario.html?lab=lab1",
-          },
-          {
-            icon: "fa-calendar-check",
-            label: "Horario Lab 2",
-            link: "/horario.html?lab=lab2",
-          },
-        ],
-      };
-
-      // Inicializar la página cuando se carga
-      document.addEventListener("DOMContentLoaded", function () {
-        // Obtener datos del usuario desde el servidor
-        fetchUserData();
-
-        // Configurar el input de avatar
-        const avatarInput = document.getElementById("avatar-input");
-        avatarInput.addEventListener("change", function (e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-              document.getElementById("avatar-preview-img").src =
-                event.target.result;
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-      });
-
-      // Función para redirigir al login
-      function redirectToLogin() {
-        showRedirectMessage("No hay sesión activa. Redirigiendo al login...");
-
-        // Esperar 2 segundos antes de redirigir para que el usuario vea el mensaje
-        setTimeout(() => {
-          window.location.href = "/index.html";
-        }, 2000);
-      }
-
-      // Función para obtener datos del usuario desde el servidor
-      async function fetchUserData() {
-        try {
-          showLoading(true);
-          hideError();
-          hideRedirectMessage();
-
-          console.log("Iniciando obtención de datos del usuario...");
-
-          // Hacer petición al endpoint de información del usuario
-          const response = await fetch("/api/user-info", {
-            method: "GET",
-            credentials: "same-origin", // Incluir cookies de sesión
-          });
-
-          if (!response.ok) {
-            if (response.status === 401) {
-              // No autenticado, redirigir al login
-              redirectToLogin();
-              return;
-            }
-            throw new Error(`Error HTTP: ${response.status}`);
-          }
-
-          const userData = await response.json();
-
-          // Usar los datos reales del usuario desde el backend
-          currentUser = {
-            id: userData.id,
-            username: userData.username,
-            nombre: userData.username, // El backend devuelve 'username' que es el nombre real
-            role: userData.role,
-            avatar:
-              localStorage.getItem("userAvatar") || "/img/default-avatar.png",
-          };
-
-          localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
-          // Cargar la interfaz con los datos del usuario
-          loadUserData();
-          renderNavigation();
-          renderQuickActions();
-          showLoading(false);
-        } catch (error) {
-          console.error("Error al obtener datos del usuario:", error);
-          showError("Error de conexión. Redirigiendo al login...");
-          setTimeout(() => {
-            window.location.href = "/index.html";
-          }, 3000);
-        }
-      }
-
-      // Mostrar/ocultar indicador de carga
-      function showLoading(show) {
-        const overlay = document.getElementById("loading-overlay");
-        overlay.style.display = show ? "flex" : "none";
-      }
-
-      // Mostrar mensaje de redirección
-      function showRedirectMessage(message) {
-        const redirectElement = document.getElementById("redirect-message");
-        const redirectText = document.getElementById("redirect-text");
-
-        redirectText.textContent = message;
-        redirectElement.style.display = "block";
-        hideError();
-
-        // Ocultar el contenido principal
-        document.querySelector(".main-content").style.display = "none";
-        document.querySelector(".sidebar").style.display = "none";
-      }
-
-      // Ocultar mensaje de redirección
-      function hideRedirectMessage() {
-        const redirectElement = document.getElementById("redirect-message");
-        redirectElement.style.display = "none";
-
-        // Mostrar el contenido principal
-        document.querySelector(".main-content").style.display = "block";
-        document.querySelector(".sidebar").style.display = "block";
-      }
-
-      // Mostrar mensaje de error
-      function showError(message) {
-        const errorElement = document.getElementById("error-message");
-        const errorText = document.getElementById("error-text");
-
-        errorText.textContent = message;
-        errorElement.style.display = "block";
-        hideRedirectMessage();
-      }
-
-      // Ocultar mensaje de error
-      function hideError() {
-        const errorElement = document.getElementById("error-message");
-        errorElement.style.display = "none";
-      }
-
-      // Cargar datos del usuario en la interfaz
-      function loadUserData() {
-        if (!currentUser) return;
-
-        // Mostrar información del usuario
-        const userAvatar = document.getElementById("user-avatar-img");
-        const userName = document.getElementById("user-name");
-        const userRole = document.getElementById("user-role");
-
-        // Usar el nombre real del usuario desde el backend
-        const displayName =
-          currentUser.nombre || currentUser.username || "Usuario";
-        const userRoleText =
-          currentUser.role === "admin"
-            ? "Administrador"
-            : currentUser.role === "user"
-            ? "Usuario"
-            : currentUser.role || "Usuario";
-
-        // Avatar
-        userAvatar.src = currentUser.avatar || "/img/default-avatar.png";
-        userAvatar.alt = `Avatar de ${displayName}`;
-        userAvatar.onerror = function () {
-          this.src = "/img/default-avatar.png";
-        };
-
-        // Nombre completo
-        userName.textContent = displayName;
-
-        // Rol traducido al español
-        userRole.textContent = userRoleText;
-
-        // Simular datos de estadísticas
-        document.getElementById("student-count").textContent =
-          currentUser.role === "admin" ? "247" : "150";
-        document.getElementById("teacher-count").textContent =
-          currentUser.role === "admin" ? "36" : "50";
-
-        console.log("Interfaz cargada para usuario:", displayName);
-      }
-
-      // Renderizar la navegación según el rol
-      function renderNavigation() {
-        if (!currentUser) return;
-
-        const navMenu = document.getElementById("nav-menu");
-        navMenu.innerHTML = "";
-
-        const role = currentUser.role || "user";
-
-        // Si el rol no existe en menuItems, usar 'user' como valor por defecto
-        const effectiveRole = menuItems[role] ? role : "user";
-
-        menuItems[effectiveRole].forEach((item) => {
-          const li = document.createElement("li");
-          li.className = "nav-item";
-
-          li.innerHTML = `
-                    <a href="#" class="nav-link" onclick="toggleDropdown('${item.title.toLowerCase()}')">
-                        <i class="fas ${item.icon}"></i>
-                        <span>${item.title}</span>
-                        <i class="fas fa-chevron-down chevron"></i>
-                    </a>
-                    <ul class="dropdown-menu" id="${item.title.toLowerCase()}">
-                        ${item.dropdown
-                          .map(
-                            (dropItem) => `
-                            <li>
-                                <a href="${dropItem.link}" class="dropdown-item">${dropItem.title}</a>
-                            </li>
-                        `
-                          )
-                          .join("")}
-                    </ul>
-                `;
-
-          navMenu.appendChild(li);
-        });
-      }
-
-      // Renderizar acciones rápidas según el rol
-      function renderQuickActions() {
-        if (!currentUser) return;
-
-        const quickActionsContainer = document.getElementById("quick-actions");
-        quickActionsContainer.innerHTML = "";
-
-        const role = currentUser.role || "user";
-
-        // Si el rol no existe en quickActions, usar 'user' como valor por defecto
-        const effectiveRole = quickActions[role] ? role : "user";
-
-        quickActions[effectiveRole].forEach((action) => {
-          const actionElement = document.createElement("a");
-          actionElement.href = action.link;
-          actionElement.className = "action-btn";
-          actionElement.innerHTML = `
-                    <i class="fas ${action.icon}"></i>
-                    <span class="action-label">${action.label}</span>
-                `;
-          quickActionsContainer.appendChild(actionElement);
-        });
-      }
-
-      // Función para mostrar/ocultar el panel de carga de avatar
-      function toggleAvatarUpload() {
-        const avatarUpload = document.getElementById("avatar-upload");
-        avatarUpload.classList.toggle("show");
-
-        // Cerrar otros menús abiertos
-        document.querySelectorAll(".dropdown-menu").forEach((menu) => {
-          menu.classList.remove("show");
-          document.querySelectorAll(".nav-link").forEach((link) => {
-            link.classList.remove("active");
-          });
-        });
-      }
-
-      // Función para guardar el avatar
-      function saveAvatar() {
-        const avatarInput = document.getElementById("avatar-input");
-        const file = avatarInput.files[0];
-
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (event) {
-            // Guardar en localStorage (en un caso real, se enviaría al servidor)
-            localStorage.setItem("userAvatar", event.target.result);
-
-            // Actualizar la imagen del avatar
-            document.getElementById("user-avatar-img").src =
-              event.target.result;
-
-            // Cerrar el panel de carga
-            document.getElementById("avatar-upload").classList.remove("show");
-
-            // Mostrar mensaje de éxito
-            alert("Avatar actualizado correctamente");
-          };
-          reader.readAsDataURL(file);
-        } else {
-          alert("Por favor, selecciona una imagen");
-        }
-      }
-
-      // Función para cerrar sesión
-      function logout() {
-        if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-          // Redirigir al endpoint de logout del backend
-          window.location.href = "/logout";
-        }
-      }
-
-      // Funciones existentes para interactividad
-      function toggleDropdown(id) {
-        event.preventDefault();
-        const dropdown = document.getElementById(id);
-        const navLink = event.currentTarget;
-
-        // Toggle active class
-        navLink.classList.toggle("active");
-
-        // Toggle dropdown
-        dropdown.classList.toggle("show");
-
-        document.querySelectorAll(".dropdown-menu").forEach((menu) => {
-          if (menu.id !== id && menu.classList.contains("show")) {
-            menu.classList.remove("show");
-            // Remove active class from other nav links
-            const otherNavLink = document.querySelector(
-              `.nav-link[onclick="toggleDropdown('${menu.id}')"]`
-            );
-            if (otherNavLink) {
-              otherNavLink.classList.remove("active");
-            }
-          }
-        });
-
-        // Cerrar el panel de avatar si está abierto
-        document.getElementById("avatar-upload").classList.remove("show");
-      }
-
-      function toggleSidebar() {
-        document.querySelector(".sidebar").classList.toggle("active");
-      }
-
-      document.addEventListener("click", function (event) {
-        if (
-          !event.target.matches(".nav-link") &&
-          !event.target.closest(".nav-link") &&
-          !event.target.matches(".user-info") &&
-          !event.target.closest(".user-info")
-        ) {
-          document.querySelectorAll(".dropdown-menu").forEach((menu) => {
-            menu.classList.remove("show");
-            // Remove active class from all nav links
-            document.querySelectorAll(".nav-link").forEach((link) => {
-              link.classList.remove("active");
-            });
-          });
-
-          // Cerrar el panel de avatar
-          document.getElementById("avatar-upload").classList.remove("show");
-        }
-      });
-    </script>
+    </div>
   </body>
 </html>
