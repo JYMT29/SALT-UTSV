@@ -277,14 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Cargar grupos desde localStorage
-  function loadGrupos() {
-    const savedGrupos = localStorage.getItem("grupos");
-    if (savedGrupos) {
-      grupos = JSON.parse(savedGrupos);
-    }
-  }
-
   // Cargar grupos desde los estudiantes existentes
   async function loadGrupos() {
     try {
