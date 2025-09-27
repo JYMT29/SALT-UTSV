@@ -278,17 +278,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Cargar grupos desde localStorage
-  function loadGrupos() {
-    const savedGrupos = localStorage.getItem("grupos");
-    if (savedGrupos) {
-      grupos = JSON.parse(savedGrupos);
+
+  // Cargar grupos desde los estudiantes existentes
+  async function loadGrupos() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/estudiantes`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          // Extraer grupos únicos de los estudiantes
+          const gruposUnicos = [
+            ...new Set(
+              data.data
+                .map((student) => student.grupo)
+                .filter((grupo) => grupo && grupo !== "Sin grupo")
+            ),
+          ];
+
+          grupos =
+            gruposUnicos.length > 0
+              ? gruposUnicos
+              : ["701", "702", "703", "801", "802", "803"];
+        }
+      }
+    } catch (error) {
+      console.error("Error cargando grupos:", error);
+      grupos = ["701", "702", "703", "801", "802", "803"];
     }
   }
 
+  // Eliminar saveGrupos() ya que no podemos guardar grupos separadamente
+
   // Guardar grupos en localStorage
-  function saveGrupos() {
-    localStorage.setItem("grupos", JSON.stringify(grupos));
-  }
 
   // Renderizar grupos como tarjetas
   function renderGroupCards() {
