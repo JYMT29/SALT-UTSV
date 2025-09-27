@@ -434,34 +434,6 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
-      /* Elemento decorativo 3D - Sombrerito universitario RESTAURADO */
-      .university-hat {
-        position: absolute;
-        top: -20px;
-        right: -20px;
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(
-          135deg,
-          var(--secondary-color) 0%,
-          #e6c44d 100%
-        );
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color);
-        font-size: 2rem;
-        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-        z-index: 3;
-        transform: rotate(15deg);
-        transition: var(--transition);
-      }
-
-      .login-form:hover .university-hat {
-        transform: rotate(25deg) scale(1.05);
-      }
-
       /* Responsive */
       @media (max-width: 900px) {
         .container {
@@ -497,14 +469,6 @@
         .login-form:hover {
           transform: translateY(-5px);
         }
-
-        .university-hat {
-          top: -15px;
-          right: -15px;
-          width: 60px;
-          height: 60px;
-          font-size: 1.5rem;
-        }
       }
 
       @media (max-width: 600px) {
@@ -522,10 +486,6 @@
 
         .feature-item {
           min-width: 100%;
-        }
-
-        .university-hat {
-          display: none;
         }
       }
     </style>
@@ -560,11 +520,6 @@
       <!-- Sección del formulario -->
       <div class="form-section">
         <form method="POST" action="/login" class="login-form">
-          <!-- Elemento decorativo 3D - Sombrerito universitario RESTAURADO -->
-          <div class="university-hat">
-            <i class="fas fa-graduation-cap"></i>
-          </div>
-
           <h1>Iniciar Sesión</h1>
           <p class="form-intro">
             Ingresa tus credenciales para acceder al sistema
