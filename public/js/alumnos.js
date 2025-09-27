@@ -999,5 +999,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Inicializar la aplicación
-  init();
+  init().catch((error) => {
+    console.error("Error inicializando la aplicación:", error);
+  });
 });
