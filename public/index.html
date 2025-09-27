@@ -27,6 +27,7 @@
         --dark-gray: #4a5568;
         --white: #ffffff;
         --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-strong: 0 8px 25px rgba(0, 0, 0, 0.15);
         --transition: all 0.3s ease;
       }
 
@@ -140,7 +141,7 @@
         font-weight: 400;
       }
 
-      /* Sección del formulario */
+      /* Sección del formulario con fondo médico */
       .form-section {
         flex: 1;
         display: flex;
@@ -148,15 +149,96 @@
         align-items: center;
         padding: 2rem;
         background-color: var(--white);
+        position: relative;
+        overflow: hidden;
       }
 
+      /* Fondo con información médica */
+      .medical-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 24px,
+          rgba(26, 60, 110, 0.03) 24px,
+          rgba(26, 60, 110, 0.03) 25px
+        );
+        z-index: 1;
+        opacity: 0.7;
+      }
+
+      .medical-info {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-5deg);
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: rgba(26, 60, 110, 0.15);
+        white-space: nowrap;
+        z-index: 1;
+        text-align: center;
+        line-height: 2;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .medical-info::before {
+        content: "Tipo Sangre: O- Alergias: NINGUNA";
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .medical-info::after {
+        content: "Servicio médico: IMSS No. Afiliación: 5620056543 2";
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .medical-info span {
+        display: block;
+        content: "Tel. Tutor: (922)593-5929 Tutor: AURELIA TADEO GIL";
+      }
+
+      /* Formulario de login mejorado */
       .login-form {
         width: 100%;
-        max-width: 400px;
+        max-width: 450px;
         padding: 2.5rem;
         background: var(--white);
         border-radius: 12px;
-        box-shadow: var(--shadow);
+        box-shadow: var(--shadow-strong);
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(5px);
+        transition: var(--transition);
+      }
+
+      .login-form:hover {
+        box-shadow: var(--shadow-strong), 0 0 0 1px rgba(26, 60, 110, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .login-form::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
+        );
+        border-radius: 14px;
+        z-index: -1;
+        opacity: 0.1;
       }
 
       .login-form h1 {
@@ -254,11 +336,33 @@
         justify-content: center;
         align-items: center;
         gap: 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .submit-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
       }
 
       .submit-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(26, 60, 110, 0.2);
+      }
+
+      .submit-btn:hover::before {
+        left: 100%;
       }
 
       .submit-btn:active {
@@ -292,11 +396,17 @@
           margin-right: 0;
           margin-bottom: 0.5rem;
         }
+
+        .medical-info {
+          font-size: 1rem;
+          transform: translate(-50%, -50%) rotate(-3deg);
+        }
       }
 
       @media (max-width: 600px) {
         .login-form {
           padding: 2rem 1.5rem;
+          max-width: 90%;
         }
 
         .form-options {
@@ -307,6 +417,12 @@
 
         .feature-item {
           min-width: 100%;
+        }
+
+        .medical-info {
+          font-size: 0.8rem;
+          white-space: normal;
+          width: 90%;
         }
       }
     </style>
@@ -340,6 +456,12 @@
 
       <!-- Sección del formulario -->
       <div class="form-section">
+        <!-- Fondo con información médica -->
+        <div class="medical-background"></div>
+        <div class="medical-info">
+          <span></span>
+        </div>
+
         <form method="POST" action="/login" class="login-form">
           <h1>Iniciar Sesión</h1>
           <p class="form-intro">
