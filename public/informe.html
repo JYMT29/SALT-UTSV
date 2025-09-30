@@ -335,24 +335,6 @@
         text-align: center;
       }
 
-      /* ESTILOS ESPECÍFICOS PARA ALINEACIÓN DE NOMBRES */
-      .table-custom tbody td:nth-child(2) {
-        text-align: left !important;
-        padding-left: 15px;
-      }
-
-      .table-custom thead th:nth-child(2) {
-        text-align: left !important;
-        padding-left: 15px;
-      }
-
-      .nombre-alineado {
-        text-align: left !important;
-        display: block;
-        width: 100%;
-        padding-left: 0;
-      }
-
       .table-custom tbody tr:last-child td {
         border-bottom: none;
       }
@@ -380,13 +362,6 @@
           color: white !important;
           -webkit-print-color-adjust: exact;
         }
-
-        /* Mantener alineación en impresión */
-        .table-custom tbody td:nth-child(2),
-        .table-custom thead th:nth-child(2) {
-          text-align: left !important;
-          padding-left: 15px;
-        }
       }
 
       /* Responsive */
@@ -413,18 +388,6 @@
         .btn-primary-custom {
           width: 100%;
           margin-bottom: 10px;
-        }
-
-        /* Ajustes responsive para nombres */
-        .table-custom tbody td:nth-child(2) {
-          text-align: left !important;
-          padding-left: 10px;
-          word-wrap: break-word;
-        }
-
-        .table-custom thead th:nth-child(2) {
-          text-align: left !important;
-          padding-left: 10px;
         }
       }
     </style>
@@ -522,33 +485,6 @@
               </thead>
               <tbody id="table-body">
                 <!-- Los datos se cargarán aquí dinámicamente -->
-                <tr>
-                  <td>2023001</td>
-                  <td class="nombre-alineado">Juan Pérez Hernández</td>
-                  <td>Ing. en Sistemas</td>
-                  <td>Laboratorio</td>
-                  <td>Lab 1</td>
-                  <td>Dr. Roberto Martínez</td>
-                  <td>2024-01-15</td>
-                </tr>
-                <tr>
-                  <td>2023002</td>
-                  <td class="nombre-alineado">María García López</td>
-                  <td>Ing. en TICs</td>
-                  <td>Laboratorio</td>
-                  <td>Lab 2</td>
-                  <td>Dra. Ana Rodríguez</td>
-                  <td>2024-01-15</td>
-                </tr>
-                <tr>
-                  <td>2023003</td>
-                  <td class="nombre-alineado">Carlos Sánchez Ramírez</td>
-                  <td>Ing. en Mecatrónica</td>
-                  <td>Taller</td>
-                  <td>Taller 1</td>
-                  <td>Ing. Luis Fernández</td>
-                  <td>2024-01-15</td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -557,14 +493,13 @@
           <div class="row">
             <div class="col-md-6">
               <small class="text-muted"
-                >Total de registros: <span id="total-registros">3</span></small
+                >Total de registros: <span id="total-registros">0</span></small
               >
             </div>
             <div class="col-md-6 text-end">
               <small class="text-muted"
-                >Generado el:
-                <span id="fecha-generacion">15 de enero, 2024</span></small
-              >
+                >Generado el: <span id="fecha-generacion"></span
+              ></small>
             </div>
           </div>
         </div>
