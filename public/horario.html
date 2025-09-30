@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Horario Interactivo</title>
+
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
@@ -12,6 +13,12 @@
     <link href="css/horario.css" rel="stylesheet" />
 
     <style>
+      :root {
+        --primary-color: #1a3c6e;
+        --primary-light: #2a5ca0;
+        --secondary-color: #d4af37;
+      }
+
       /* Estilos para los modales */
       .modal {
         display: none;
@@ -78,6 +85,36 @@
       .admin-only {
         display: none;
       }
+
+      /* Encabezado tabla con azul corporativo */
+      .table thead th {
+        background: linear-gradient(
+          180deg,
+          var(--primary-color),
+          var(--primary-light)
+        );
+        color: white;
+        text-align: center;
+      }
+
+      /* Botones principales con colores corporativos */
+      .btn-success {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      .btn-success:hover {
+        background-color: var(--primary-light);
+        border-color: var(--primary-light);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-light);
+        border-color: var(--primary-light);
+      }
+      .btn-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
     </style>
   </head>
 
@@ -95,7 +132,7 @@
 
       <!-- Tabla principal -->
       <table class="table table-bordered horario-table">
-        <thead class="table-light">
+        <thead>
           <tr>
             <th colspan="7" class="text-center">
               <div class="d-flex justify-content-between align-items-center">
