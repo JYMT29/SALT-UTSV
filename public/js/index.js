@@ -261,6 +261,55 @@ const labStyles = `
       white-space: nowrap;
       z-index: 100;
     }
+
+    /* Estilos para el sistema de escaneo */
+    .scan-status-container {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #1a3c6e;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      background: rgba(26, 60, 110, 0.1);
+      font-size: 0.9rem;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .status-indicator.ready {
+      background: rgba(212, 175, 55, 0.15);
+      color: #8a6d00;
+    }
+
+    .status-indicator.scanning {
+      background: rgba(230, 57, 70, 0.1);
+      color: #e63946;
+      animation: scanning-pulse 1.5s infinite;
+    }
+
+    .status-indicator.completed {
+      background: rgba(76, 175, 80, 0.15);
+      color: #2e7d32;
+    }
+
+    @keyframes scanning-pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    .scan-instructions {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #666;
+    }
   </style>
 `;
 
@@ -421,6 +470,17 @@ async function generarLayoutLab(laboratorio, isEditor = false) {
       ${labStyles}
       <div class="lab-theater">
         <div class="lab-screen">Laboratorio ${laboratorio.toUpperCase()}</div>
+        
+        <div class="scan-status-container">
+          <div id="scan-status-indicator" class="status-indicator">
+            <i class="fas fa-info-circle"></i>
+            <span>Listo para escanear credencial</span>
+          </div>
+          <div class="scan-instructions">
+            <i class="fas fa-lightbulb"></i> 
+            Presiona el botón de escaneo o utiliza el lector QR físico
+          </div>
+        </div>
         
         <div class="lab-grid" style="
           grid-template-rows: repeat(${config.layout.rows}, 1fr);
@@ -634,6 +694,30 @@ async function mostrarEditorLab() {
       document.querySelectorAll(".lab-seat").forEach((seat) => {
         seat.addEventListener("click", manejarClicEnEditor);
       });
+
+      // Configurar sistema de escaneo en el editor
+      const statusIndicator = document.getElementById("scan-status-indicator");
+      if (statusIndicator) {
+        statusIndicator.addEventListener("click", function () {
+          statusIndicator.innerHTML =
+            '<i class="fas fa-camera"></i><span>Escaneando...</span>';
+          statusIndicator.className = "status-indicator scanning";
+
+          // Simulación de proceso de escaneo
+          setTimeout(function () {
+            statusIndicator.innerHTML =
+              '<i class="fas fa-check-circle"></i><span>Escaneo completado</span>';
+            statusIndicator.className = "status-indicator completed";
+
+            // Restaurar después de 2 segundos
+            setTimeout(function () {
+              statusIndicator.innerHTML =
+                '<i class="fas fa-info-circle"></i><span>Listo para escanear</span>';
+              statusIndicator.className = "status-indicator";
+            }, 2000);
+          }, 1500);
+        });
+      }
     },
   });
 }
@@ -725,7 +809,7 @@ function agregarEquipoAlEditor(tipo) {
   }, 2000);
 }
 
-// Función para actualizar el tamaño del layout en el editorfunction actualizarTamañoEditor() {
+// Función para actualizar el tamaño del layout en el editor
 function actualizarTamañoEditor() {
   const rowsInput = document.getElementById("rows-input");
   const colsInput = document.getElementById("cols-input");
@@ -1041,6 +1125,7 @@ async function verificarHorarioLaboratorio(laboratorio) {
   const { horario } = await response.json();
   return horario;
 }
+
 async function mostrarSeleccionAsientos(laboratorio) {
   const layoutHtml = await generarLayoutLab(laboratorio);
   let lugarSeleccionado = null;
@@ -1076,6 +1161,14 @@ async function mostrarSeleccionAsientos(laboratorio) {
     didOpen: () => {
       if (typeof pausarLectura === "function") {
         lecturaActiva = false;
+      }
+
+      // Configurar sistema de escaneo en el selector de asientos
+      const statusIndicator = document.getElementById("scan-status-indicator");
+      if (statusIndicator) {
+        statusIndicator.innerHTML =
+          '<i class="fas fa-check-circle"></i><span>QR procesado correctamente</span>';
+        statusIndicator.className = "status-indicator completed";
       }
 
       // Marcar asientos ocupados usando 'asientos'
@@ -1135,6 +1228,7 @@ async function mostrarSeleccionAsientos(laboratorio) {
 
   return equipo;
 }
+
 async function registrarAsignacion(datos) {
   if (!datos.lugar || !datos.matricula || !datos.nombre) {
     throw new Error("Faltan datos requeridos para el registro");
