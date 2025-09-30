@@ -89,11 +89,58 @@
         background-color: var(--primary-color);
         border-color: var(--primary-color);
       }
+
+      /* Estilos para el botón de regreso */
+      .btn-back {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-back:hover {
+        background-color: var(--primary-light);
+        border-color: var(--primary-light);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-back:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-back i {
+        margin-right: 8px;
+        font-size: 1.1em;
+      }
     </style>
+
+    <!-- Iconos de Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
   </head>
 
   <body>
     <div class="container mt-5">
+      <!-- Botón de regreso -->
+      <div class="mb-4">
+        <a href="#" class="btn-back" onclick="history.back()">
+          <i class="bi bi-arrow-left"></i> Regresar
+        </a>
+      </div>
+
       <!-- Botones de acción -->
       <div class="mb-3">
         <button id="addRow" class="btn btn-success admin-only">
