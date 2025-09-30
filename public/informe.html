@@ -310,22 +310,117 @@
         padding: 15px 25px;
       }
 
-      /* Estilos para impresión */
+      /* =========================== */
+      /* ESTILOS ESPECÍFICOS PARA IMPRESIÓN PDF */
+      /* =========================== */
+
       @media print {
-        .no-print {
-          display: none !important;
+        /* Ocultar todo excepto la tabla y elementos necesarios */
+        body * {
+          visibility: hidden;
         }
 
-        .card-container {
-          box-shadow: none;
-          border: 1px solid #ddd;
+        /* Mostrar solo el contenedor de impresión */
+        .print-container,
+        .print-container * {
+          visibility: visible;
         }
 
-        .table-custom thead th {
+        .print-container {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+        }
+
+        /* Estilos específicos para PDF */
+        .pdf-header {
+          text-align: center;
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+          border-bottom: 3px solid #1a3c6e;
+        }
+
+        .pdf-title {
+          color: #1a3c6e;
+          font-size: 24px;
+          font-weight: 700;
+          margin-bottom: 5px;
+        }
+
+        .pdf-subtitle {
+          color: #2a5ca0;
+          font-size: 16px;
+          margin-bottom: 10px;
+        }
+
+        .pdf-info {
+          display: flex;
+          justify-content: space-between;
+          font-size: 12px;
+          color: #4a5568;
+          margin-bottom: 15px;
+        }
+
+        .pdf-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 10px;
+          margin-bottom: 20px;
+        }
+
+        .pdf-table th {
           background: #1a3c6e !important;
           color: white !important;
-          -webkit-print-color-adjust: exact;
+          padding: 8px 5px;
+          text-align: center;
+          font-weight: 700;
+          border: 1px solid #1a3c6e;
         }
+
+        .pdf-table td {
+          padding: 6px 4px;
+          border: 1px solid #ddd;
+          text-align: center;
+          page-break-inside: avoid;
+        }
+
+        .pdf-table tr:nth-child(even) {
+          background-color: #f8f9fa;
+        }
+
+        .pdf-footer {
+          text-align: center;
+          font-size: 10px;
+          color: #6c757d;
+          margin-top: 20px;
+          padding-top: 10px;
+          border-top: 1px solid #dee2e6;
+        }
+
+        /* Optimizar para PDF */
+        @page {
+          size: landscape;
+          margin: 0.5cm;
+        }
+
+        body {
+          margin: 0;
+          padding: 0;
+          background: white;
+        }
+
+        /* Evitar saltos de página dentro de filas */
+        tr {
+          page-break-inside: avoid;
+        }
+      }
+
+      /* Contenedor de impresión (oculto en pantalla normal) */
+      .print-container {
+        display: none;
       }
 
       /* Responsive */
@@ -357,6 +452,7 @@
     </style>
   </head>
   <body>
+    <!-- Contenedor principal (visible en pantalla) -->
     <header class="header-container text-white py-4 mb-5">
       <div class="container">
         <div class="logo-container">
@@ -408,14 +504,14 @@
               class="btn btn-primary-custom print-button"
             >
               <i class="bi bi-printer-fill"></i>
-              <span>Imprimir</span>
+              <span>Imprimir PDF</span>
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Tabla de alumnos -->
+    <!-- Tabla de alumnos (visible en pantalla) -->
     <div class="container mb-5">
       <div class="card card-container">
         <div class="card-header">
@@ -463,9 +559,128 @@
       </div>
     </div>
 
+    <!-- =========================== -->
+    <!-- CONTENEDOR DE IMPRESIÓN PDF (oculto en pantalla) -->
+    <!-- =========================== -->
+    <div class="print-container">
+      <div class="pdf-header">
+        <div class="pdf-title">INFORME DE ALUMNOS - SALT-UTSV</div>
+        <div class="pdf-subtitle">Sistema Avanzado de Laboratorios</div>
+        <div class="pdf-info">
+          <span
+            >Fecha de generación: <span id="pdf-fecha-generacion"></span
+          ></span>
+          <span
+            >Total de registros: <span id="pdf-total-registros">0</span></span
+          >
+        </div>
+      </div>
+
+      <table class="pdf-table" id="pdf-table">
+        <thead>
+          <tr>
+            <th>Matrícula</th>
+            <th>Nombre</th>
+            <th>Carrera</th>
+            <th>Tipo</th>
+            <th>Numero</th>
+            <th>Maestro</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="pdf-table-body">
+          <!-- Los datos se copiarán aquí al imprimir -->
+        </tbody>
+      </table>
+
+      <div class="pdf-footer">
+        Universidad Tecnológica - SALT-UTSV | Sistema Avanzado de Laboratorios
+      </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Script personalizado existente -->
     <script src="js/informe.js"></script>
+
+    <!-- Script para manejar la impresión PDF -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Configurar botón de impresión PDF
+        document
+          .getElementById("print-button")
+          .addEventListener("click", function () {
+            preparePDFPrint();
+            window.print();
+          });
+
+        // Establecer fecha actual
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("fecha").value = today;
+
+        // Establecer fecha de generación
+        const now = new Date();
+        const options = {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        };
+        document.getElementById("fecha-generacion").textContent =
+          now.toLocaleDateString("es-ES", options);
+        document.getElementById("pdf-fecha-generacion").textContent =
+          now.toLocaleDateString("es-ES", options);
+      });
+
+      // Función para preparar los datos para PDF
+      function preparePDFPrint() {
+        // Obtener datos de la tabla principal
+        const mainTable = document.getElementById("alumno-table");
+        const pdfTable = document.getElementById("pdf-table-body");
+        const totalRegistros =
+          document.getElementById("total-registros").textContent;
+
+        // Actualizar total en PDF
+        document.getElementById("pdf-total-registros").textContent =
+          totalRegistros;
+
+        // Limpiar tabla PDF
+        pdfTable.innerHTML = "";
+
+        // Copiar filas de datos a la tabla PDF
+        const rows = mainTable.querySelectorAll("tbody tr");
+        rows.forEach((row) => {
+          // Solo copiar filas con datos (no el mensaje de "no hay datos")
+          if (row.cells.length === 7 && !row.querySelector("td[colspan]")) {
+            const newRow = document.createElement("tr");
+
+            // Copiar cada celda
+            for (let i = 0; i < row.cells.length; i++) {
+              const cell = document.createElement("td");
+              // Remover iconos y solo tomar el texto
+              let cellContent =
+                row.cells[i].innerText || row.cells[i].textContent;
+              cell.textContent = cellContent;
+              newRow.appendChild(cell);
+            }
+
+            pdfTable.appendChild(newRow);
+          }
+        });
+
+        // Si no hay datos, mostrar mensaje
+        if (pdfTable.children.length === 0) {
+          const emptyRow = document.createElement("tr");
+          const emptyCell = document.createElement("td");
+          emptyCell.colSpan = 7;
+          emptyCell.textContent = "No hay datos para mostrar";
+          emptyCell.style.textAlign = "center";
+          emptyCell.style.fontStyle = "italic";
+          emptyRow.appendChild(emptyCell);
+          pdfTable.appendChild(emptyRow);
+        }
+      }
+    </script>
   </body>
 </html>
