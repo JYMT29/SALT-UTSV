@@ -3,141 +3,467 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro de Usuarios</title>
+    <title>Registro de Usuarios | SALT-UTSV</title>
+    <!-- Bootstrap Icons -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS Personalizado -->
     <style>
       :root {
-        --primary: #4361ee;
-        --secondary: #3a0ca3;
-        --light: #f8f9fa;
-        --dark: #212529;
-        --success: #4cc9f0;
-        --danger: #f72585;
-        --gradient: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--secondary) 100%
-        );
+        --primary-color: #1a3c6e;
+        --primary-light: #2a5ca0;
+        --secondary-color: #d4af37;
+        --accent-color: #e63946;
+        --light-gray: #f5f7fa;
+        --medium-gray: #e0e5ec;
+        --dark-gray: #4a5568;
+        --white: #ffffff;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-3d: 0 10px 30px rgba(0, 0, 0, 0.15),
+          0 1px 8px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: "Lato", sans-serif;
+        background-color: var(--light-gray);
+        color: var(--dark-gray);
+        line-height: 1.6;
         min-height: 100vh;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        padding: 20px 0;
+        background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(26, 60, 110, 0.03) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 85% 30%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 20%
+          );
       }
 
-      .container {
-        max-width: 1200px;
-      }
-
-      .header {
-        text-align: center;
-        margin-bottom: 30px;
-        color: var(--dark);
-      }
-
-      .header h1 {
-        font-weight: 700;
-        margin-bottom: 10px;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-      }
-
-      .header p {
-        color: #6c757d;
-        font-size: 1.1rem;
-      }
-
-      .card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      /* Header con diseño corporativo */
+      .header-container {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        box-shadow: var(--shadow-3d);
+        border-bottom: 4px solid var(--secondary-color);
+        position: relative;
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        margin-bottom: 30px;
       }
 
-      .card:hover {
+      .header-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><polygon points="50,0 100,50 50,100 0,50" fill="white"/></svg>');
+        background-size: 80px;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        background: white;
+        padding: 5px;
+      }
+
+      .logo-container h1 {
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 0.25rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .logo-container p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      /* Botón de regreso */
+      .btn-back {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
+        margin-bottom: 20px;
+      }
+
+      .btn-back:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
+        background: linear-gradient(
+          135deg,
+          var(--primary-light) 0%,
+          var(--primary-color) 100%
+        );
+        color: white;
+      }
+
+      .btn-back i {
+        margin-right: 8px;
+        font-size: 1.1em;
+      }
+
+      /* Contenedor de tarjetas */
+      .card-container {
+        border-radius: 12px;
+        box-shadow: var(--shadow-3d);
+        border: 1px solid var(--medium-gray);
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .card-container:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
       }
 
       .card-header {
-        background: var(--gradient);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
         color: white;
+        padding: 18px 25px;
         border-bottom: none;
-        padding: 20px 25px;
         position: relative;
       }
 
-      .card-header::after {
+      .card-header::before {
         content: "";
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 4px;
-        background: rgba(255, 255, 255, 0.3);
+        background: linear-gradient(
+          90deg,
+          var(--secondary-color),
+          rgba(212, 175, 55, 0.5)
+        );
       }
 
-      .card-header h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
+      .card-header h4 {
+        font-weight: 700;
+        font-size: 1.3rem;
       }
 
       .card-body {
-        padding: 30px;
+        padding: 25px;
       }
 
+      /* Botones con estilo corporativo */
+      .btn-success-custom {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
+      }
+
+      .btn-success-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
+        background: linear-gradient(
+          135deg,
+          var(--primary-light) 0%,
+          var(--primary-color) 100%
+        );
+        color: white;
+      }
+
+      .btn-primary-custom {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color) 0%,
+          #e6c64c 100%
+        );
+        border: none;
+        color: #1a3c6e;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      }
+
+      .btn-primary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        background: linear-gradient(
+          135deg,
+          #e6c64c 0%,
+          var(--secondary-color) 100%
+        );
+        color: #1a3c6e;
+      }
+
+      .btn-warning-custom {
+        background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
+        border: none;
+        color: #1a3c6e;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+      }
+
+      .btn-warning-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        background: linear-gradient(135deg, #ffd54f 0%, #ffc107 100%);
+        color: #1a3c6e;
+      }
+
+      .btn-secondary-custom {
+        background: linear-gradient(135deg, #6c757d 0%, #8e9ba8 100%);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+      }
+
+      .btn-secondary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #8e9ba8 0%, #6c757d 100%);
+        color: white;
+      }
+
+      /* Estilos para formularios */
       .form-label {
         font-weight: 600;
-        color: var(--dark);
+        color: var(--primary-color);
         margin-bottom: 8px;
       }
 
       .form-control,
-      .form-select {
-        border-radius: 10px;
-        padding: 12px 15px;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s;
+      .form-select,
+      .input-group-text {
+        border-radius: 8px;
+        border: 1px solid var(--medium-gray);
+        transition: var(--transition);
       }
 
       .form-control:focus,
       .form-select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 0.25rem rgba(26, 60, 110, 0.15);
       }
 
-      .btn-primary {
-        background: var(--gradient);
-        border: none;
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: 600;
-        transition: all 0.3s;
+      .input-group-text {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        border-color: var(--primary-light);
+      }
+
+      /* Tabla con estilo corporativo */
+      .table-custom {
+        border-collapse: separate;
+        border-spacing: 0;
         width: 100%;
-        margin-top: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px var(--medium-gray);
       }
 
-      .btn-primary:hover {
+      .table-custom thead th {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        font-weight: 700;
+        padding: 15px 12px;
+        border: none;
+        text-align: center;
+        position: relative;
+      }
+
+      .table-custom thead th::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--secondary-color),
+          rgba(212, 175, 55, 0.5)
+        );
+      }
+
+      .table-custom tbody tr {
+        transition: var(--transition);
+      }
+
+      .table-custom tbody tr:hover {
+        background-color: rgba(26, 60, 110, 0.05);
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
       }
 
+      .table-custom tbody td {
+        padding: 12px;
+        border-bottom: 1px solid var(--medium-gray);
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      .table-custom tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Footer de la tarjeta */
+      .card-footer {
+        background-color: rgba(26, 60, 110, 0.05);
+        border-top: 1px solid var(--medium-gray);
+        padding: 15px 25px;
+      }
+
+      /* Alertas */
+      .alert {
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        border-left: 5px solid;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left-color: #28a745;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left-color: #dc3545;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border-left-color: #ffc107;
+      }
+
+      .table-container {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--dark-gray);
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      /* Badges para roles */
       .badge-admin {
-        background: linear-gradient(135deg, var(--danger) 0%, #b5179e 100%);
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         color: white;
         padding: 6px 12px;
         border-radius: 20px;
@@ -146,7 +472,11 @@
       }
 
       .badge-user {
-        background: linear-gradient(135deg, var(--success) 0%, #4895ef 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
         color: white;
         padding: 6px 12px;
         border-radius: 20px;
@@ -154,93 +484,31 @@
         font-weight: 600;
       }
 
-      .table {
-        margin-bottom: 0;
-        border-radius: 10px;
-        overflow: hidden;
-      }
-
-      .table thead th {
-        background: var(--gradient);
-        color: white;
-        border: none;
-        padding: 15px;
-        font-weight: 600;
-      }
-
-      .table tbody td {
-        padding: 15px;
-        vertical-align: middle;
-        border-color: #f1f3f4;
-      }
-
-      .table tbody tr:nth-child(even) {
-        background-color: rgba(67, 97, 238, 0.03);
-      }
-
-      .table tbody tr:hover {
-        background-color: rgba(67, 97, 238, 0.08);
-      }
-
-      .alert {
-        border-radius: 10px;
-        border: none;
-        padding: 15px 20px;
-        margin-top: 20px;
-        display: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-      }
-
-      .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-      }
-
-      .alert-danger {
-        background-color: #f8d7da;
-        color: #721c24;
-      }
-
-      .alert-warning {
-        background-color: #fff3cd;
-        color: #856404;
-      }
-
-      .icon-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 70px;
-        height: 70px;
-        background: var(--gradient);
-        border-radius: 50%;
-        margin: 0 auto 20px;
-        box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
-      }
-
-      .icon-container i {
-        font-size: 2rem;
-        color: white;
-      }
-
-      .required::after {
-        content: " *";
-        color: var(--danger);
-      }
-
+      /* Tarjetas de estadísticas */
       .stats-card {
         text-align: center;
-        padding: 20px;
-        border-radius: 10px;
+        padding: 25px 20px;
+        border-radius: 12px;
         background: white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
         margin-bottom: 20px;
+        transition: var(--transition);
+        border-top: 4px solid var(--primary-color);
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-3d);
       }
 
       .stats-card i {
         font-size: 2.5rem;
-        margin-bottom: 10px;
-        background: var(--gradient);
+        margin-bottom: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -249,47 +517,50 @@
         font-size: 2rem;
         margin: 0;
         font-weight: 700;
-        color: var(--primary);
+        color: var(--primary-color);
       }
 
       .stats-card p {
         margin: 0;
-        color: #6c757d;
+        color: var(--dark-gray);
         font-weight: 500;
       }
 
-      @media (max-width: 768px) {
-        .card-body {
-          padding: 20px;
-        }
-
-        .header h1 {
-          font-size: 1.8rem;
-        }
-
-        .table-responsive {
-          border-radius: 10px;
-        }
+      /* Icono de formulario */
+      .form-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        box-shadow: 0 8px 20px rgba(26, 60, 110, 0.3);
       }
 
-      .empty-state {
-        text-align: center;
-        padding: 40px 20px;
-        color: #6c757d;
+      .form-icon i {
+        font-size: 2.5rem;
+        color: white;
       }
 
-      .empty-state i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        color: #dee2e6;
+      /* Indicador de campo requerido */
+      .required::after {
+        content: " *";
+        color: var(--accent-color);
       }
 
+      /* Indicador de estado de conexión */
       .connection-status {
         position: fixed;
         top: 20px;
         right: 20px;
         padding: 10px 15px;
-        border-radius: 5px;
+        border-radius: 8px;
         font-weight: 600;
         z-index: 1000;
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
@@ -312,41 +583,91 @@
         color: #856404;
         border: 1px solid #ffeaa7;
       }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .logo-container {
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+        }
+
+        .logo-container h1 {
+          font-size: 1.8rem;
+        }
+
+        .card-body {
+          padding: 15px;
+        }
+
+        .table-responsive {
+          font-size: 0.9rem;
+        }
+
+        .btn-success-custom,
+        .btn-primary-custom {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .stats-card {
+          margin-bottom: 15px;
+        }
+      }
     </style>
   </head>
   <body>
-    <div
-      id="connectionStatus"
-      class="connection-status demo-mode"
-      style="display: none"
-    >
-      <i class="fas fa-info-circle me-1"></i>Modo Demo Activado
+    <!-- Header con diseño corporativo -->
+    <header class="header-container text-white py-4 mb-5">
+      <div class="container">
+        <div class="logo-container">
+          <img src="img/saltLogo.png" alt="Logo SALT-UTSV" class="logo-img" />
+          <div>
+            <h1 class="mb-1">SALT-UTSV</h1>
+            <p class="mb-0 text-light">
+              Sistema Avanzado de Laboratorios - Gestión de Usuarios
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container mb-4">
+      <!-- Botón de regreso -->
+      <a href="inicio.html" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Regresar al Inicio
+      </a>
     </div>
 
-    <div class="container">
-      <div class="header">
-        <h1><i class="fas fa-user-plus me-2"></i>Registro de Usuarios</h1>
-        <p>Gestiona los usuarios del sistema de forma sencilla</p>
+    <div class="container mb-5">
+      <!-- Indicador de estado de conexión -->
+      <div
+        id="connectionStatus"
+        class="connection-status demo-mode"
+        style="display: none"
+      >
+        <i class="bi bi-info-circle me-1"></i>Modo Demo Activado
       </div>
 
-      <div class="row">
+      <!-- Tarjetas de estadísticas -->
+      <div class="row mb-4">
         <div class="col-md-4">
           <div class="stats-card">
-            <i class="fas fa-users"></i>
+            <i class="bi bi-people-fill"></i>
             <h3 id="totalUsers">0</h3>
             <p>Usuarios Totales</p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stats-card">
-            <i class="fas fa-user-shield"></i>
+            <i class="bi bi-shield-check"></i>
             <h3 id="adminUsers">0</h3>
             <p>Administradores</p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stats-card">
-            <i class="fas fa-user"></i>
+            <i class="bi bi-person-fill"></i>
             <h3 id="normalUsers">0</h3>
             <p>Usuarios Normales</p>
           </div>
@@ -354,19 +675,21 @@
       </div>
 
       <!-- Formulario de registro -->
-      <div class="card mb-4">
+      <div class="card card-container mb-4">
         <div class="card-header">
-          <h2><i class="fas fa-user-circle me-2"></i>Nuevo Usuario</h2>
+          <h4 class="mb-0">
+            <i class="bi bi-person-plus-fill me-2"></i>Registro de Nuevo Usuario
+          </h4>
         </div>
         <div class="card-body">
-          <div class="icon-container">
-            <i class="fas fa-user-plus"></i>
+          <div class="form-icon">
+            <i class="bi bi-person-plus"></i>
           </div>
           <form id="userForm">
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="matricula" class="form-label">
-                  <i class="fas fa-id-card me-1"></i>Matrícula (opcional)
+                  <i class="bi bi-person-badge me-1"></i>Matrícula (opcional)
                 </label>
                 <input
                   type="text"
@@ -377,7 +700,7 @@
               </div>
               <div class="col-md-6 mb-3">
                 <label for="nombre" class="form-label required">
-                  <i class="fas fa-user me-1"></i>Nombre
+                  <i class="bi bi-person-fill me-1"></i>Nombre
                 </label>
                 <input
                   type="text"
@@ -391,7 +714,7 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="contrasena" class="form-label required">
-                  <i class="fas fa-lock me-1"></i>Contraseña
+                  <i class="bi bi-lock-fill me-1"></i>Contraseña
                 </label>
                 <input
                   type="password"
@@ -403,7 +726,7 @@
               </div>
               <div class="col-md-6 mb-3">
                 <label for="rol" class="form-label">
-                  <i class="fas fa-user-tag me-1"></i>Rol
+                  <i class="bi bi-person-gear me-1"></i>Rol
                 </label>
                 <select class="form-select" id="rol">
                   <option value="user">Usuario normal</option>
@@ -411,8 +734,8 @@
                 </select>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-user-plus me-2"></i>Registrar Usuario
+            <button type="submit" class="btn btn-success-custom">
+              <i class="bi bi-person-plus me-2"></i>Registrar Usuario
             </button>
           </form>
           <div id="alert" class="alert mt-3" role="alert"></div>
@@ -420,38 +743,152 @@
       </div>
 
       <!-- Tabla de usuarios -->
-      <div class="card">
+      <div class="card card-container">
         <div class="card-header">
-          <h2><i class="fas fa-users me-2"></i>Usuarios Registrados</h2>
+          <h4 class="mb-0">
+            <i class="bi bi-people-fill me-2"></i>Usuarios Registrados
+          </h4>
         </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table">
+        <div class="card-body p-0">
+          <div class="table-container">
+            <table class="table table-custom mb-0">
               <thead>
                 <tr>
-                  <th><i class="fas fa-id-badge me-1"></i>ID</th>
-                  <th><i class="fas fa-id-card me-1"></i>Matrícula</th>
-                  <th><i class="fas fa-user me-1"></i>Nombre</th>
-                  <th><i class="fas fa-user-tag me-1"></i>Rol</th>
-                  <th><i class="fas fa-cog me-1"></i>Acciones</th>
+                  <th>ID</th>
+                  <th>Matrícula</th>
+                  <th>Nombre</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody">
                 <tr>
                   <td colspan="5" class="text-center py-4">
-                    <i class="fas fa-spinner fa-spin me-2"></i>Cargando
-                    usuarios...
+                    <div class="empty-state">
+                      <i class="bi bi-people"></i>
+                      <p>Cargando usuarios...</p>
+                    </div>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
+        <div class="card-footer text-muted">
+          <div class="row">
+            <div class="col-md-6">
+              <small class="text-muted"
+                >Total de usuarios: <span id="total-registros">0</span></small
+              >
+            </div>
+            <div class="col-md-6 text-end">
+              <small class="text-muted"
+                >Actualizado el: <span id="fecha-actualizacion"></span
+              ></small>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script personalizado -->
     <script src="js/usuarios.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script para simular funcionalidad -->
+    <script>
+      // Simulación de datos para demostración
+      document.addEventListener("DOMContentLoaded", function () {
+        // Mostrar indicador de modo demo
+        document.getElementById("connectionStatus").style.display = "block";
+
+        // Actualizar estadísticas
+        document.getElementById("totalUsers").textContent = "12";
+        document.getElementById("adminUsers").textContent = "3";
+        document.getElementById("normalUsers").textContent = "9";
+        document.getElementById("total-registros").textContent = "12";
+
+        // Actualizar fecha
+        const now = new Date();
+        document.getElementById("fecha-actualizacion").textContent =
+          now.toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+        // Simular tabla de usuarios
+        const usersTableBody = document.getElementById("usersTableBody");
+        usersTableBody.innerHTML = `
+          <tr>
+            <td>1</td>
+            <td>2023001</td>
+            <td>Juan Pérez García</td>
+            <td><span class="badge-admin">Administrador</span></td>
+            <td>
+              <button class="btn btn-warning-custom btn-sm me-1">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-secondary-custom btn-sm">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>2023002</td>
+            <td>María González López</td>
+            <td><span class="badge-user">Usuario</span></td>
+            <td>
+              <button class="btn btn-warning-custom btn-sm me-1">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-secondary-custom btn-sm">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>2023003</td>
+            <td>Carlos Rodríguez Martínez</td>
+            <td><span class="badge-user">Usuario</span></td>
+            <td>
+              <button class="btn btn-warning-custom btn-sm me-1">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-secondary-custom btn-sm">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+
+        // Manejar envío del formulario
+        document
+          .getElementById("userForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Mostrar alerta de éxito
+            const alert = document.getElementById("alert");
+            alert.className = "alert alert-success";
+            alert.innerHTML =
+              '<i class="bi bi-check-circle-fill me-2"></i> Usuario registrado correctamente';
+            alert.style.display = "block";
+
+            // Ocultar alerta después de 3 segundos
+            setTimeout(function () {
+              alert.style.display = "none";
+            }, 3000);
+
+            // Limpiar formulario
+            this.reset();
+          });
+      });
+    </script>
   </body>
 </html>
