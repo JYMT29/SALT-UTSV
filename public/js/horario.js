@@ -3,12 +3,16 @@ const { jsPDF } = window.jspdf;
 
 // Función para exportar el horario a PDF con el diseño exacto
 async function exportarHorarioPDF() {
-  try {
-    // Ocultar botones temporalmente para que no aparezcan en el PDF
-    const botones = document.querySelector(".mb-3.d-flex.gap-2");
-    const estiloOriginal = botones.style.display;
-    botones.style.display = "none";
+  const botones = document.querySelector(".no-pdf");
+  const elementosOcultos = document.querySelectorAll(".no-pdf");
 
+  // Ocultar elementos que no deben aparecer en el PDF
+  elementosOcultos.forEach((elemento) => {
+    elemento.style.visibility = "hidden";
+    elemento.style.position = "absolute";
+  });
+
+  try {
     // Capturar la tabla completa con html2canvas
     const tabla = document.getElementById("horarioTable");
 
@@ -17,40 +21,41 @@ async function exportarHorarioPDF() {
       useCORS: true, // Permitir imágenes externas
       allowTaint: true,
       backgroundColor: "#ffffff",
+      logging: false, // Desactivar logs para mejor rendimiento
     });
 
-    // Restaurar botones
-    botones.style.display = estiloOriginal;
-
-    // Convertir canvas a imagen
-    const imgData = canvas.toDataURL("image/png");
-
-    // Crear PDF
+    // Crear PDF en orientación horizontal para mejor ajuste
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",
       format: "a4",
     });
 
-    // Obtener dimensiones
+    // Obtener dimensiones de la página
     const pdfWidth = doc.internal.pageSize.getWidth();
     const pdfHeight = doc.internal.pageSize.getHeight();
 
-    // Calcular dimensiones para que la imagen quepa en la página
+    // Calcular dimensiones para que la imagen ocupe casi toda la página
     const imgWidth = canvas.width;
     const imgHeight = canvas.height;
-    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95;
+    const ratio = Math.min(
+      (pdfWidth - 20) / imgWidth, // Dejar 10mm de margen a cada lado
+      (pdfHeight - 30) / imgHeight // Dejar 15mm de margen arriba y abajo
+    );
+
     const imgX = (pdfWidth - imgWidth * ratio) / 2;
-    const imgY = 10;
+    const imgY = 15; // Margen superior
 
     // Agregar imagen al PDF
     doc.addImage(
-      imgData,
+      canvas,
       "PNG",
       imgX,
       imgY,
       imgWidth * ratio,
-      imgHeight * ratio
+      imgHeight * ratio,
+      undefined,
+      "FAST"
     );
 
     // Pie de página
@@ -65,15 +70,19 @@ async function exportarHorarioPDF() {
 
     // Guardar el PDF
     const laboratorio = obtenerLaboratorioDesdeUrl();
-    const fileName = `horario_${laboratorio}_${new Date().getTime()}.pdf`;
+    const fileName = `horario_${laboratorio}_${new Date()
+      .toLocaleDateString("es-ES")
+      .replace(/\//g, "-")}.pdf`;
     doc.save(fileName);
   } catch (error) {
     console.error("Error al generar PDF:", error);
     alert("Error al generar el PDF: " + error.message);
-
-    // Asegurarse de que los botones se muestren nuevamente en caso de error
-    const botones = document.querySelector(".mb-3.d-flex.gap-2");
-    botones.style.display = "flex";
+  } finally {
+    // Siempre restaurar la visibilidad de los elementos, incluso si hay error
+    elementosOcultos.forEach((elemento) => {
+      elemento.style.visibility = "visible";
+      elemento.style.position = "";
+    });
   }
 }
 
@@ -83,11 +92,26 @@ function obtenerLaboratorioDesdeUrl() {
   return urlParams.get("lab") || "laboratorio";
 }
 
+// Función para manejar el botón de regreso sin desloguear
+function manejarRegreso() {
+  // Usar replace para evitar que el navegador guarde esta página en el historial
+  window.location.replace("inicio.html");
+}
+
 // Event listener para el botón de exportar PDF
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("exportPdf")
     .addEventListener("click", exportarHorarioPDF);
+
+  // Prevenir el comportamiento por defecto del botón de regreso
+  const backButton = document.getElementById("backButton");
+  if (backButton) {
+    backButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      manejarRegreso();
+    });
+  }
 });
 
 // ... (TODO TU CÓDIGO ORIGINAL SIGUE AQUÍ, SIN MODIFICACIONES)

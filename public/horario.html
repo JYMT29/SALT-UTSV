@@ -135,6 +135,11 @@
         border-color: #c82333;
         color: white;
       }
+
+      /* Clase para ocultar elementos en PDF */
+      .no-pdf {
+        /* Esta clase se usa para elementos que no deben aparecer en el PDF */
+      }
     </style>
 
     <!-- Iconos de Bootstrap -->
@@ -146,9 +151,9 @@
 
   <body>
     <div class="container mt-5">
-      <!-- Botones de acción -->
-      <div class="mb-3 d-flex gap-2">
-        <a href="inicio.html" class="btn btn-back">
+      <!-- Botones de acción - Agregamos clase no-pdf para ocultar en PDF -->
+      <div class="mb-3 d-flex gap-2 no-pdf">
+        <a href="inicio.html" class="btn btn-back" id="backButton">
           <i class="bi bi-arrow-left"></i> Regresar
         </a>
         <button id="addRow" class="btn btn-success admin-only">
