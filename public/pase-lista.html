@@ -3,267 +3,885 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lista de Alumnos</title>
+    <title>Lista de Alumnos | SALT-UTSV</title>
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS Personalizado -->
     <style>
       :root {
-        --primary-color: #3498db;
-        --secondary-color: #2980b9;
-        --light-color: #f8f9fa;
-        --dark-color: #343a40;
-        --gray-color: #6c757d;
-        --border-radius: 8px;
-        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --primary-color: #1a3c6e;
+        --primary-light: #2a5ca0;
+        --secondary-color: #d4af37;
+        --accent-color: #e63946;
+        --light-gray: #f5f7fa;
+        --medium-gray: #e0e5ec;
+        --dark-gray: #4a5568;
+        --white: #ffffff;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-3d: 0 10px 30px rgba(0, 0, 0, 0.15),
+          0 1px 8px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
       }
 
       * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
 
       body {
-        background-color: #f5f7fa;
-        color: var(--dark-color);
+        font-family: "Lato", sans-serif;
+        background-color: var(--light-gray);
+        color: var(--dark-gray);
         line-height: 1.6;
-        padding: 20px;
+        min-height: 100vh;
+        background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(26, 60, 110, 0.03) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 85% 30%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 20%
+          );
       }
 
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-
-      header {
+      /* Header con diseño corporativo */
+      .header-container {
         background: linear-gradient(
           135deg,
-          var(--primary-color),
-          var(--secondary-color)
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        box-shadow: var(--shadow-3d);
+        border-bottom: 4px solid var(--secondary-color);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><polygon points="50,0 100,50 50,100 0,50" fill="white"/></svg>');
+        background-size: 80px;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        background: white;
+        padding: 5px;
+      }
+
+      .logo-container h1 {
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 0.25rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .logo-container p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      /* Botón de regreso */
+      .btn-back {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
+        margin-bottom: 20px;
+      }
+
+      .btn-back:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
+        background: linear-gradient(
+          135deg,
+          var(--primary-light) 0%,
+          var(--primary-color) 100%
         );
         color: white;
-        padding: 20px;
-        border-radius: var(--border-radius);
-        margin-bottom: 30px;
-        box-shadow: var(--box-shadow);
+      }
+
+      .btn-back i {
+        margin-right: 8px;
+        font-size: 1.1em;
+      }
+
+      /* Contenedor de tarjetas */
+      .card-container {
+        border-radius: 12px;
+        box-shadow: var(--shadow-3d);
+        border: 1px solid var(--medium-gray);
+        overflow: hidden;
+        transition: var(--transition);
+      }
+
+      .card-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        padding: 18px 25px;
+        border-bottom: none;
+        position: relative;
+      }
+
+      .card-header::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--secondary-color),
+          rgba(212, 175, 55, 0.5)
+        );
+      }
+
+      .card-header h4 {
+        font-weight: 700;
+        font-size: 1.3rem;
+      }
+
+      .card-body {
+        padding: 25px;
+      }
+
+      /* Botones con estilo corporativo */
+      .btn-success-custom {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
+      }
+
+      .btn-success-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
+        background: linear-gradient(
+          135deg,
+          var(--primary-light) 0%,
+          var(--primary-color) 100%
+        );
+        color: white;
+      }
+
+      .btn-primary-custom {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color) 0%,
+          #e6c64c 100%
+        );
+        border: none;
+        color: #1a3c6e;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      }
+
+      .btn-primary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        background: linear-gradient(
+          135deg,
+          #e6c64c 0%,
+          var(--secondary-color) 100%
+        );
+        color: #1a3c6e;
+      }
+
+      .btn-warning-custom {
+        background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
+        border: none;
+        color: #1a3c6e;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+      }
+
+      .btn-warning-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        background: linear-gradient(135deg, #ffd54f 0%, #ffc107 100%);
+        color: #1a3c6e;
+      }
+
+      .btn-secondary-custom {
+        background: linear-gradient(135deg, #6c757d 0%, #8e9ba8 100%);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+      }
+
+      .btn-secondary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #8e9ba8 0%, #6c757d 100%);
+        color: white;
+      }
+
+      /* Estilos para formularios */
+      .form-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+      }
+
+      .form-control,
+      .form-select,
+      .input-group-text {
+        border-radius: 8px;
+        border: 1px solid var(--medium-gray);
+        transition: var(--transition);
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 0.25rem rgba(26, 60, 110, 0.15);
+      }
+
+      .input-group-text {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        border-color: var(--primary-light);
+      }
+
+      /* Tabla con estilo corporativo */
+      .table-custom {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px var(--medium-gray);
+      }
+
+      .table-custom thead th {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        font-weight: 700;
+        padding: 15px 12px;
+        border: none;
+        text-align: center;
+        position: relative;
+      }
+
+      .table-custom thead th::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--secondary-color),
+          rgba(212, 175, 55, 0.5)
+        );
+      }
+
+      .table-custom tbody tr {
+        transition: var(--transition);
+      }
+
+      .table-custom tbody tr:hover {
+        background-color: rgba(26, 60, 110, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-custom tbody td {
+        padding: 12px;
+        border-bottom: 1px solid var(--medium-gray);
+        vertical-align: middle;
         text-align: center;
       }
 
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 10px;
+      .table-custom tbody tr:last-child td {
+        border-bottom: none;
       }
 
-      .controls {
-        background: white;
+      /* Footer de la tarjeta */
+      .card-footer {
+        background-color: rgba(26, 60, 110, 0.05);
+        border-top: 1px solid var(--medium-gray);
+        padding: 15px 25px;
+      }
+
+      /* Alertas */
+      .alert {
         padding: 20px;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
+        border-radius: 8px;
         margin-bottom: 20px;
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        flex-wrap: wrap;
+        display: none;
+        border-left: 5px solid;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left-color: #28a745;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left-color: #dc3545;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border-left-color: #ffc107;
+      }
+
+      .table-container {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--dark-gray);
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      /* Tarjetas de estadísticas */
+      .stats-card {
+        text-align: center;
+        padding: 25px 20px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+        transition: var(--transition);
+        border-top: 4px solid var(--primary-color);
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-3d);
+      }
+
+      .stats-card i {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .stats-card h3 {
+        font-size: 2rem;
+        margin: 0;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .stats-card p {
+        margin: 0;
+        color: var(--dark-gray);
+        font-weight: 500;
+      }
+
+      /* Badges para laboratorios */
+      .badge-lab {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .badge-lab1 {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .badge-lab2 {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* Controles de filtro */
+      .controls-container {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+        border: 1px solid var(--medium-gray);
       }
 
       .filter-group {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 8px;
       }
 
       .filter-group label {
         font-weight: 600;
-        color: var(--gray-color);
-        font-size: 0.9rem;
-      }
-
-      .filter-group select {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: var(--border-radius);
-        font-size: 1rem;
-        min-width: 150px;
-      }
-
-      .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        background-color: var(--primary-color);
-        color: white;
-      }
-
-      .btn:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-      }
-
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-
-      .stat-card {
-        background-color: white;
-        padding: 15px;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        text-align: center;
-      }
-
-      .stat-value {
-        font-size: 1.8rem;
-        font-weight: bold;
         color: var(--primary-color);
+        margin-bottom: 0;
       }
 
-      .stat-label {
-        font-size: 0.9rem;
-        color: var(--gray-color);
-      }
-
-      .students-list {
-        background-color: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        overflow: hidden;
-      }
-
-      .list-header {
-        display: grid;
-        grid-template-columns: 2fr 2fr 1fr;
-        background-color: var(--primary-color);
-        color: white;
-        padding: 15px 20px;
-        font-weight: 600;
-      }
-
-      .student-row {
-        display: grid;
-        grid-template-columns: 2fr 2fr 1fr;
-        padding: 12px 20px;
-        border-bottom: 1px solid #eee;
-        align-items: center;
-      }
-
-      .student-row:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-
-      .student-row:hover {
-        background-color: #f0f7ff;
-      }
-
-      .loading {
-        text-align: center;
-        padding: 40px;
-        color: var(--gray-color);
-        font-size: 1.1rem;
-      }
-
-      .error {
-        background-color: #fdedec;
-        color: #e74c3c;
-        padding: 15px;
-        border-radius: var(--border-radius);
-        margin: 10px 0;
-        text-align: center;
-      }
-
-      .success {
-        background-color: #e8f7ef;
-        color: #2ecc71;
-        padding: 15px;
-        border-radius: var(--border-radius);
-        margin: 10px 0;
-        text-align: center;
-      }
-
+      /* Responsive */
       @media (max-width: 768px) {
-        .controls {
+        .logo-container {
           flex-direction: column;
-          align-items: stretch;
-        }
-
-        .stats {
-          grid-template-columns: 1fr;
-        }
-
-        .list-header,
-        .student-row {
-          grid-template-columns: 1fr;
           text-align: center;
+          gap: 10px;
         }
 
-        .list-header div:nth-child(2),
-        .student-row div:nth-child(2) {
-          display: none;
+        .logo-container h1 {
+          font-size: 1.8rem;
+        }
+
+        .card-body {
+          padding: 15px;
+        }
+
+        .table-responsive {
+          font-size: 0.9rem;
+        }
+
+        .btn-success-custom,
+        .btn-primary-custom {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .stats-card {
+          margin-bottom: 15px;
+        }
+
+        .controls-container {
+          padding: 15px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>Lista de Alumnos Registrados</h1>
-        <p>Datos obtenidos de la tabla Alumnos</p>
-      </header>
-
-      <div class="controls">
-        <div class="filter-group">
-          <label for="laboratorio-filter">Filtrar por Laboratorio:</label>
-          <select id="laboratorio-filter">
-            <option value="all">Todos los laboratorios</option>
-            <option value="lab1">Laboratorio 1</option>
-            <option value="lab2">Laboratorio 2</option>
-          </select>
+    <!-- Header con diseño corporativo -->
+    <header class="header-container text-white py-4 mb-5">
+      <div class="container">
+        <div class="logo-container">
+          <img src="img/saltLogo.png" alt="Logo SALT-UTSV" class="logo-img" />
+          <div>
+            <h1 class="mb-1">SALT-UTSV</h1>
+            <p class="mb-0 text-light">
+              Sistema Avanzado de Laboratorios - Lista de Alumnos
+            </p>
+          </div>
         </div>
+      </div>
+    </header>
 
-        <div class="filter-group">
-          <label for="carrera-filter">Filtrar por Carrera:</label>
-          <select id="carrera-filter">
-            <option value="all">Todas las carreras</option>
-          </select>
+    <div class="container mb-4">
+      <!-- Botón de regreso -->
+      <a href="inicio.html" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Regresar al Inicio
+      </a>
+    </div>
+
+    <div class="container mb-5">
+      <!-- Controles de filtro -->
+      <div class="controls-container">
+        <div class="row align-items-end">
+          <div class="col-md-4 mb-3">
+            <div class="filter-group">
+              <label for="laboratorio-filter">
+                <i class="bi bi-building me-1"></i>Filtrar por Laboratorio:
+              </label>
+              <select class="form-select" id="laboratorio-filter">
+                <option value="all">Todos los laboratorios</option>
+                <option value="lab1">Laboratorio 1</option>
+                <option value="lab2">Laboratorio 2</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="filter-group">
+              <label for="carrera-filter">
+                <i class="bi bi-book me-1"></i>Filtrar por Carrera:
+              </label>
+              <select class="form-select" id="carrera-filter">
+                <option value="all">Todas las carreras</option>
+                <!-- Las opciones se cargarán dinámicamente -->
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <button class="btn btn-success-custom w-100" id="refresh-btn">
+              <i class="bi bi-arrow-clockwise me-2"></i>Actualizar Lista
+            </button>
+          </div>
         </div>
-
-        <button class="btn" id="refresh-btn">Actualizar Lista</button>
       </div>
 
+      <!-- Alertas -->
       <div id="message-container"></div>
 
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-value" id="total-alumnos">0</div>
-          <div class="stat-label">Total de Alumnos</div>
+      <!-- Tarjetas de estadísticas -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="stats-card">
+            <i class="bi bi-people-fill"></i>
+            <h3 id="total-alumnos">0</h3>
+            <p>Total de Alumnos</p>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="total-lab1">0</div>
-          <div class="stat-label">Laboratorio 1</div>
+        <div class="col-md-4">
+          <div class="stats-card">
+            <i class="bi bi-cpu-fill"></i>
+            <h3 id="total-lab1">0</h3>
+            <p>Laboratorio 1</p>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="total-lab2">0</div>
-          <div class="stat-label">Laboratorio 2</div>
+        <div class="col-md-4">
+          <div class="stats-card">
+            <i class="bi bi-motherboard-fill"></i>
+            <h3 id="total-lab2">0</h3>
+            <p>Laboratorio 2</p>
+          </div>
         </div>
       </div>
 
-      <div class="students-list">
-        <div class="list-header">
-          <div>Nombre del Alumno</div>
-          <div>Carrera</div>
-          <div>Laboratorio</div>
+      <!-- Lista de alumnos -->
+      <div class="card card-container">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="bi bi-list-ul me-2"></i>Alumnos Registrados
+          </h4>
         </div>
-
-        <div id="alumnos-container">
-          <div class="loading">Cargando lista de alumnos...</div>
+        <div class="card-body p-0">
+          <div class="table-container">
+            <table class="table table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Nombre del Alumno</th>
+                  <th>Carrera</th>
+                  <th>Laboratorio</th>
+                </tr>
+              </thead>
+              <tbody id="alumnos-container">
+                <tr>
+                  <td colspan="3" class="text-center py-4">
+                    <div class="empty-state">
+                      <i class="bi bi-people"></i>
+                      <p>Cargando lista de alumnos...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+          <div class="row">
+            <div class="col-md-6">
+              <small class="text-muted"
+                >Total de alumnos: <span id="total-registros">0</span></small
+              >
+            </div>
+            <div class="col-md-6 text-end">
+              <small class="text-muted"
+                >Actualizado el: <span id="fecha-actualizacion"></span
+              ></small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script personalizado -->
     <script src="js/pase-lista.js"></script>
+
+    <!-- Script para simular funcionalidad -->
+    <script>
+      // Simulación de datos para demostración
+      document.addEventListener("DOMContentLoaded", function () {
+        // Actualizar fecha
+        const now = new Date();
+        document.getElementById("fecha-actualizacion").textContent =
+          now.toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+        // Simular datos de alumnos
+        const alumnosData = [
+          {
+            nombre: "Juan Pérez García",
+            carrera: "Ingeniería en Sistemas",
+            laboratorio: "lab1",
+          },
+          {
+            nombre: "María González López",
+            carrera: "Ingeniería Industrial",
+            laboratorio: "lab2",
+          },
+          {
+            nombre: "Carlos Rodríguez Martínez",
+            carrera: "Ingeniería en Sistemas",
+            laboratorio: "lab1",
+          },
+          {
+            nombre: "Ana Sánchez Hernández",
+            carrera: "Ingeniería Mecánica",
+            laboratorio: "lab2",
+          },
+          {
+            nombre: "Pedro Ramírez Jiménez",
+            carrera: "Ingeniería Industrial",
+            laboratorio: "lab1",
+          },
+        ];
+
+        // Actualizar estadísticas
+        document.getElementById("total-alumnos").textContent =
+          alumnosData.length;
+        document.getElementById("total-lab1").textContent = alumnosData.filter(
+          (a) => a.laboratorio === "lab1"
+        ).length;
+        document.getElementById("total-lab2").textContent = alumnosData.filter(
+          (a) => a.laboratorio === "lab2"
+        ).length;
+        document.getElementById("total-registros").textContent =
+          alumnosData.length;
+
+        // Renderizar alumnos
+        renderAlumnos(alumnosData);
+
+        // Manejar botón de actualizar
+        document
+          .getElementById("refresh-btn")
+          .addEventListener("click", function () {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML =
+              '<i class="bi bi-arrow-clockwise me-2"></i>Actualizando...';
+            btn.disabled = true;
+
+            // Simular actualización
+            setTimeout(() => {
+              showAlert("Lista actualizada correctamente", "success");
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }, 1000);
+          });
+
+        // Manejar filtros
+        document
+          .getElementById("laboratorio-filter")
+          .addEventListener("change", function () {
+            const filtro = this.value;
+            let alumnosFiltrados = alumnosData;
+
+            if (filtro !== "all") {
+              alumnosFiltrados = alumnosData.filter(
+                (a) => a.laboratorio === filtro
+              );
+            }
+
+            renderAlumnos(alumnosFiltrados);
+          });
+      });
+
+      function renderAlumnos(alumnos) {
+        const container = document.getElementById("alumnos-container");
+
+        if (alumnos.length === 0) {
+          container.innerHTML = `
+            <tr>
+              <td colspan="3" class="text-center py-4">
+                <div class="empty-state">
+                  <i class="bi bi-search"></i>
+                  <p>No se encontraron alumnos</p>
+                  <small class="text-muted">Intenta cambiar los filtros</small>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        container.innerHTML = alumnos
+          .map(
+            (alumno) => `
+          <tr>
+            <td>${alumno.nombre}</td>
+            <td>${alumno.carrera}</td>
+            <td>
+              <span class="badge ${
+                alumno.laboratorio === "lab1" ? "badge-lab1" : "badge-lab2"
+              }">
+                ${
+                  alumno.laboratorio === "lab1"
+                    ? "Laboratorio 1"
+                    : "Laboratorio 2"
+                }
+              </span>
+            </td>
+          </tr>
+        `
+          )
+          .join("");
+      }
+
+      function showAlert(message, type) {
+        const container = document.getElementById("message-container");
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.innerHTML = `
+          <i class="bi bi-${
+            type === "success"
+              ? "check-circle"
+              : type === "warning"
+              ? "exclamation-triangle"
+              : "exclamation-circle"
+          } me-2"></i>
+          ${message}
+        `;
+        container.appendChild(alertDiv);
+
+        // Ocultar después de 3 segundos
+        setTimeout(() => {
+          alertDiv.remove();
+        }, 3000);
+      }
+    </script>
   </body>
 </html>
