@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gruposOrdenados.length === 0) {
       groupsGrid.innerHTML = `
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6c757d;">
-                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <i class="bi bi-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
                     <p>No hay grupos creados</p>
                 </div>
             `;
@@ -362,16 +362,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="group-name">${grupo}</span>
                     <div class="group-actions">
                         <button class="group-action-btn group-edit-btn" title="Editar grupo">
-                            <i class="fas fa-edit"></i>
+                            <i class="bi bi-pencil"></i>
                         </button>
                         <button class="group-action-btn group-delete-btn" title="Eliminar grupo">
-                            <i class="fas fa-trash"></i>
+                            <i class="bi bi-trash"></i>
                         </button>
                     </div>
                 </div>
                 <div class="group-stats">
                     <span>${stats} estudiantes</span>
-                    <span><i class="fas fa-users"></i></span>
+                    <span><i class="bi bi-people"></i></span>
                 </div>
             `;
 
@@ -538,7 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="modal-content">
                     <div class="modal-header bg-warning text-dark">
                         <h5 class="modal-title">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Eliminar Grupo
+                            <i class="bi bi-exclamation-triangle me-2"></i>Eliminar Grupo
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -693,7 +693,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="modal-content">
                     <div class="modal-header bg-info text-white">
                         <h5 class="modal-title">
-                            <i class="fas fa-broom me-2"></i>Limpiar Grupos Duplicados
+                            <i class="bi bi-broom me-2"></i>Limpiar Grupos Duplicados
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
@@ -746,7 +746,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title">
-                            <i class="fas fa-cog me-2"></i>Gestión Avanzada de Grupos
+                            <i class="bi bi-gear me-2"></i>Gestión Avanzada de Grupos
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
@@ -754,10 +754,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="text-muted mb-4">Opciones de gestión para todos los grupos:</p>
                         <div class="d-flex flex-column gap-3">
                             <button class="btn btn-success btn-lg py-3" id="merge-groups-btn">
-                                <i class="fas fa-object-group me-2"></i> Unificar Grupos Similares
+                                <i class="bi bi-diagram-3 me-2"></i> Unificar Grupos Similares
                             </button>
                             <button class="btn btn-warning btn-lg py-3" id="export-groups-btn">
-                                <i class="fas fa-file-export me-2"></i> Exportar Lista de Grupos
+                                <i class="bi bi-file-arrow-down me-2"></i> Exportar Lista de Grupos
                             </button>
                         </div>
                     </div>
@@ -777,16 +777,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // FUNCIONES DEL FILTRO CORREGIDAS
+  // FUNCIONES DEL FILTRO MEJORADAS
   function toggleFilter() {
     if (filteredGroup) {
-      if (
-        confirm(
-          `¿Quieres remover el filtro actual (${getFilterDisplayName(
-            filteredGroup
-          )})?`
-        )
-      ) {
+      const cambiar = confirm(
+        `Actualmente estás filtrando por: ${getFilterDisplayName(
+          filteredGroup
+        )}\n\n¿Quieres cambiar el filtro o removerlo?\n\n- Click en "Aceptar" para cambiar el filtro\n- Click en "Cancelar" para remover el filtro actual`
+      );
+
+      if (cambiar) {
+        showFilterModal();
+      } else {
         clearFilter();
       }
     } else {
@@ -796,51 +798,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showFilterModal() {
     const modal = document.createElement("div");
-    modal.className = "modal fade";
+    modal.className = "modal fade modal-filter";
     modal.innerHTML = `
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">
-                            <i class="fas fa-filter me-2"></i>Filtrar por Grupo
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-funnel-fill me-2"></i>Filtrar Estudiantes por Grupo
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-0">Selecciona una opción para filtrar los estudiantes en la tabla</p>
+                        <small class="text-muted">Puedes cambiar el filtro en cualquier momento</small>
                     </div>
-                    <div class="modal-body">
-                        <p class="text-muted mb-4">Selecciona el grupo que deseas visualizar en la tabla de estudiantes:</p>
-                        
-                        <div class="filter-options-container" style="max-height: 400px; overflow-y: auto;">
-                            ${getFilterOptionsHTML()}
-                        </div>
-                        
-                        <div class="mt-4 p-3 bg-light rounded">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Se mostrarán solo los estudiantes del grupo seleccionado. Puedes cambiar el filtro en cualquier momento.
-                            </small>
-                        </div>
+                    
+                    <div class="filter-options-container" style="max-height: 500px; overflow-y: auto;">
+                        ${getFilterOptionsHTML()}
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i>Cancelar
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="clear-filter-btn">
-                            <i class="fas fa-broom me-1"></i>Limpiar Filtro
-                        </button>
+                    
+                    <div class="mt-4 p-4 bg-white rounded border" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-info-circle-fill text-primary fs-4"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <small class="text-muted">
+                                    <strong>Tip:</strong> El filtro se aplicará inmediatamente a la tabla de estudiantes. 
+                                    Puedes limpiar el filtro en cualquier momento usando el botón correspondiente.
+                                </small>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="clear-filter-btn">
+                        <i class="bi bi-broom me-1"></i>Limpiar Filtro
+                    </button>
+                </div>
             </div>
-        `;
+        </div>
+    `;
 
     document.body.appendChild(modal);
     const modalInstance = new bootstrap.Modal(modal);
     modalInstance.show();
 
     // Agregar event listeners a las opciones de filtro
-    const options = modal.querySelectorAll(".filter-option");
+    const options = modal.querySelectorAll(".filter-card");
     options.forEach((option) => {
       option.addEventListener("click", () => {
         const selectedValue = option.getAttribute("data-value");
+
+        // Remover clase active de todas las opciones
+        options.forEach((opt) => opt.classList.remove("active"));
+        // Agregar clase active a la opción seleccionada
+        option.classList.add("active");
+
         applyFilter(selectedValue);
         modalInstance.hide();
       });
@@ -863,46 +881,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const opcionesGrupos = [
       {
         valor: "todos",
-        texto: "Todos los estudiantes",
-        icono: "fas fa-users",
-        descripcion: "Mostrar todos los estudiantes registrados",
+        texto: "Todos los Estudiantes",
+        icono: "bi-people-fill",
+        descripcion: "Mostrar todos los estudiantes registrados en el sistema",
+        color: "primary",
       },
       {
         valor: "sin-grupo",
-        texto: "Sin grupo asignado",
-        icono: "fas fa-question-circle",
+        texto: "Sin Grupo Asignado",
+        icono: "bi-question-circle-fill",
         descripcion: "Estudiantes que no tienen grupo asignado",
+        color: "warning",
       },
       ...grupos.map((grupo) => ({
         valor: grupo,
         texto: `Grupo ${grupo}`,
-        icono: "fas fa-user-friends",
-        descripcion: `Estudiantes del grupo ${grupo}`,
+        icono: "bi-person-badge-fill",
+        descripcion: `Estudiantes asignados al grupo ${grupo}`,
+        color: "success",
       })),
     ];
 
     return opcionesGrupos
       .map(
         (opcion) => `
-            <div class="filter-option card mb-3 border-0 shadow-sm" 
-                 data-value="${opcion.valor}" 
-                 style="cursor: pointer; transition: all 0.3s ease;">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <i class="${opcion.icono} fa-2x text-primary"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="card-title mb-1 fw-bold">${opcion.texto}</h6>
-                            <p class="card-text text-muted small mb-0">${opcion.descripcion}</p>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-chevron-right text-muted"></i>
-                        </div>
-                    </div>
-                </div>
+        <div class="filter-card d-flex align-items-center" data-value="${opcion.valor}">
+            <div class="filter-card-icon">
+                <i class="bi ${opcion.icono}"></i>
             </div>
-        `
+            <div class="filter-card-content">
+                <div class="filter-card-title">${opcion.texto}</div>
+                <p class="filter-card-description">${opcion.descripcion}</p>
+            </div>
+            <div class="filter-card-arrow">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+    `
       )
       .join("");
   }
@@ -911,32 +926,32 @@ document.addEventListener("DOMContentLoaded", () => {
     filteredGroup = grupoFiltro;
 
     const filterInfo = getFilterDisplayInfo(grupoFiltro);
-    filterGroupBtn.innerHTML = `<i class="${filterInfo.icono}"></i> ${filterInfo.texto}`;
+    filterGroupBtn.innerHTML = `<i class="bi ${filterInfo.icono}"></i> ${filterInfo.texto}`;
     filterGroupBtn.classList.remove("btn-warning-custom");
     filterGroupBtn.classList.add("btn-primary", "filter-active");
 
     loadStudents();
-    showAlert(`Filtrando: ${filterInfo.texto}`, "success");
+    showAlert(`Filtro aplicado: ${filterInfo.texto}`, "success");
   }
 
   function clearFilter() {
     filteredGroup = "";
     filterGroupBtn.innerHTML =
-      '<i class="fas fa-filter"></i> Filtrar por Grupo';
+      '<i class="bi bi-funnel-fill me-1"></i> Filtrar por Grupo';
     filterGroupBtn.classList.remove("btn-primary", "filter-active");
     filterGroupBtn.classList.add("btn-warning-custom");
     loadStudents();
-    showAlert("Filtro removido", "info");
+    showAlert("Filtro removido - Mostrando todos los estudiantes", "info");
   }
 
   function getFilterDisplayInfo(filtro) {
     switch (filtro) {
       case "todos":
-        return { texto: "Todos", icono: "fas fa-users" };
+        return { texto: "Todos", icono: "bi-people-fill" };
       case "sin-grupo":
-        return { texto: "Sin grupo", icono: "fas fa-question" };
+        return { texto: "Sin Grupo", icono: "bi-question-circle-fill" };
       default:
-        return { texto: `Grupo ${filtro}`, icono: "fas fa-user-friends" };
+        return { texto: `Grupo ${filtro}`, icono: "bi-person-badge-fill" };
     }
   }
 
@@ -1021,7 +1036,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <tr>
                         <td colspan="5" class="text-center py-5">
                             <div class="empty-state">
-                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                <i class="bi bi-inbox fa-3x text-muted mb-3"></i>
                                 <p class="text-muted">${mensaje}</p>
                             </div>
                         </td>
@@ -1053,12 +1068,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="btn btn-warning btn-sm" onclick="editStudent('${
                   student.matricula
                 }')">
-                    <i class="fas fa-edit"></i>
+                    <i class="bi bi-pencil"></i>
                 </button>
                 <button class="btn btn-danger btn-sm" onclick="deleteStudent('${
                   student.matricula
                 }')">
-                    <i class="fas fa-trash"></i>
+                    <i class="bi bi-trash"></i>
                 </button>
             </td>
         `;
@@ -1125,7 +1140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showAlert(message, type) {
     qrResult.className = `alert alert-${type}`;
-    qrResult.innerHTML = `<i class="fas fa-${
+    qrResult.innerHTML = `<i class="bi bi-${
       type === "success" ? "check" : "exclamation"
     }-circle"></i> ${message}`;
     qrResult.style.display = "block";
