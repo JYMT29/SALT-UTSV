@@ -66,6 +66,42 @@
         margin: 0 auto;
       }
 
+      /* Botón de regreso */
+      .btn-back {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
+        margin-bottom: 20px;
+      }
+
+      .btn-back:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
+        background: linear-gradient(
+          135deg,
+          var(--primary-light) 0%,
+          var(--primary-color) 100%
+        );
+        color: white;
+      }
+
+      .btn-back i {
+        margin-right: 8px;
+        font-size: 1.1em;
+      }
+
       /* Header con diseño corporativo */
       .header-container {
         background: linear-gradient(
@@ -349,6 +385,11 @@
   </head>
   <body>
     <div class="container">
+      <!-- Botón de regreso al inicio -->
+      <a href="inicio.html" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Regresar al Inicio
+      </a>
+
       <!-- Header con diseño corporativo -->
       <div class="header-container">
         <div class="logo-container">
