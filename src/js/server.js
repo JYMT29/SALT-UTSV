@@ -410,6 +410,7 @@ app.post("/verificar-alumno", (req, res) => {
 
 // Ruta para obtener horarios por laboratorio
 // Ruta para obtener horarios por laboratorio - ACTUALIZADA CON GRUPO
+// Ruta para obtener horarios por laboratorio - ACTUALIZADA CON GRUPO
 app.get("/api/horarios", (req, res) => {
   const { lab } = req.query;
 
@@ -426,7 +427,7 @@ app.get("/api/horarios", (req, res) => {
       hora,
       materia,
       maestro,
-      grupo,  // ← AGREGAR ESTE CAMPO
+      grupo,
       dia,
       laboratorio
     FROM horarios 
