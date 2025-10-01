@@ -97,47 +97,6 @@ function formatearFechaHoraCDMX() {
   const horaCDMX = obtenerHoraCDMX();
   return horaCDMX.toISOString().replace("T", " ").substring(0, 19);
 }
-async function verificarRegistroDuplicado(matricula, laboratorio) {
-  try {
-    const { horario } = await verificarHorario(laboratorio);
-
-    if (!horario) {
-      return { duplicado: false, mensaje: "No hay clase activa" };
-    }
-
-    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-
-    const [registroExistente] = await pool.promise().query(
-      `SELECT id, tipo_equipo, numero_equipo, PC, fecha 
-       FROM alumnos 
-       WHERE matricula = ? 
-         AND laboratorio = ?
-         AND DATE(fecha) = CURDATE()
-         AND TIME(fecha) BETWEEN ? AND ?`,
-      [matricula, laboratorio, horaInicio, horaFin]
-    );
-
-    if (registroExistente.length > 0) {
-      const registro = registroExistente[0];
-      const lugar =
-        registro.tipo_equipo && registro.numero_equipo
-          ? `${registro.tipo_equipo}-${registro.numero_equipo}`
-          : registro.PC;
-
-      return {
-        duplicado: true,
-        mensaje: `Ya estás registrado en esta clase. Lugar: ${lugar}`,
-        lugar: lugar,
-        fecha: registro.fecha,
-      };
-    }
-
-    return { duplicado: false };
-  } catch (error) {
-    console.error("Error en verificación de duplicado:", error);
-    return { duplicado: false, error: error.message };
-  }
-}
 
 // -------------------- RUTAS PARA USUARIOS --------------------
 
@@ -858,42 +817,11 @@ app.post("/alumnos", async (req, res) => {
 
   try {
     const { horario } = await verificarHorario(laboratorio);
-
-    if (!horario) {
-      return res.status(400).json({
-        error:
-          "No hay una clase activa en este momento. No se puede registrar.",
-      });
-    }
-
     const maestro = horario?.maestro || "No asignado";
-    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-
-    // Verificar si el alumno ya está registrado en esta clase
-    const [registroExistente] = await pool.promise().query(
-      `SELECT id, PC, fecha 
-       FROM alumnos 
-       WHERE matricula = ? 
-         AND laboratorio = ?
-         AND DATE(fecha) = CURDATE()
-         AND TIME(fecha) BETWEEN ? AND ?`,
-      [matricula, laboratorio, horaInicio, horaFin]
-    );
-
-    if (registroExistente.length > 0) {
-      const registro = registroExistente[0];
-      return res.status(409).json({
-        error: `Ya estás registrado en esta clase. Lugar asignado: ${registro.PC}`,
-        lugar_asignado: registro.PC,
-        fecha_registro: registro.fecha,
-        ya_registrado: true,
-      });
-    }
 
     // Usar fecha y hora de CDMX
     const fechaCDMX = formatearFechaHoraCDMX();
 
-    // Query actualizada sin columna materia
     const query = `
       INSERT INTO alumnos (matricula, nombre, carrera, maestro, PC, fecha, laboratorio)
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -904,7 +832,7 @@ app.post("/alumnos", async (req, res) => {
       carrera,
       maestro,
       PC,
-      fechaCDMX,
+      fechaCDMX, // Usar fecha de CDMX
       laboratorio,
     ];
 
@@ -922,7 +850,6 @@ app.post("/alumnos", async (req, res) => {
         message: "Alumno registrado correctamente",
         id: result.insertId,
         fechaRegistro: fechaCDMX,
-        ya_registrado: false,
       });
     });
   } catch (error) {
@@ -1106,237 +1033,6 @@ app.get("/api/horario-actual", async (req, res) => {
     });
   }
 });
-
-// -------------------- ENDPOINT PARA REGISTRAR ASIGNACIÓN CON VALIDACIÓN DE DUPLICADOS --------------------
-
-// Ruta para registrar asignación - MEJORADA PARA EVITAR DUPLICADOS
-// Ruta para registrar asignación - CORREGIDA SIN COLUMNA MATERIA
-app.post("/api/registrar-asignacion", async (req, res) => {
-  try {
-    const {
-      matricula,
-      nombre,
-      carrera,
-      tipo_equipo,
-      numero_equipo,
-      laboratorio,
-      maestro,
-    } = req.body;
-
-    // Validación básica de campos
-    if (
-      !matricula ||
-      !nombre ||
-      !tipo_equipo ||
-      !numero_equipo ||
-      !laboratorio
-    ) {
-      return res.status(400).json({
-        error:
-          "Faltan campos requeridos: matricula, nombre, tipo_equipo, numero_equipo, laboratorio",
-      });
-    }
-
-    // Usar fecha y hora de CDMX
-    const fechaCDMX = formatearFechaHoraCDMX();
-    const horaActualCDMX = formatearHoraCDMX();
-
-    // Obtener horario actual para verificar la clase
-    const { horario } = await verificarHorario(laboratorio);
-
-    if (!horario) {
-      return res.status(400).json({
-        error:
-          "No hay una clase activa en este momento. No se puede registrar.",
-      });
-    }
-
-    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-    const maestroClase = horario.maestro || "No asignado";
-    const materia = horario.materia || "Clase en curso";
-
-    // VERIFICACIÓN 1: Verificar si el alumno ya está registrado en ESTA MISMA CLASE
-    const [registroExistente] = await pool.promise().query(
-      `SELECT id, tipo_equipo, numero_equipo, fecha 
-       FROM alumnos 
-       WHERE matricula = ? 
-         AND laboratorio = ?
-         AND DATE(fecha) = CURDATE()
-         AND TIME(fecha) BETWEEN ? AND ?`,
-      [matricula, laboratorio, horaInicio, horaFin]
-    );
-
-    if (registroExistente.length > 0) {
-      const registro = registroExistente[0];
-      return res.status(409).json({
-        error: `Ya estás registrado en esta clase. Lugar asignado: ${registro.tipo_equipo}-${registro.numero_equipo}`,
-        lugar_asignado: `${registro.tipo_equipo}-${registro.numero_equipo}`,
-        fecha_registro: registro.fecha,
-        ya_registrado: true,
-      });
-    }
-
-    // VERIFICACIÓN 2: Verificar si el equipo está disponible
-    const [equipoResult] = await pool
-      .promise()
-      .query(
-        "SELECT id, estado FROM equipos WHERE laboratorio = ? AND tipo = ? AND numero = ?",
-        [laboratorio, tipo_equipo, numero_equipo]
-      );
-
-    if (equipoResult.length === 0) {
-      return res.status(404).json({
-        error: "El equipo especificado no existe",
-      });
-    }
-
-    if (equipoResult[0].estado === "occupied") {
-      return res.status(409).json({
-        error: "Este equipo ya está ocupado. Por favor elige otro lugar.",
-      });
-    }
-
-    const equipoId = equipoResult[0].id;
-
-    // VERIFICACIÓN 3: Verificar si el alumno tiene otro equipo en la misma clase
-    const [otrosEquipos] = await pool.promise().query(
-      `SELECT tipo_equipo, numero_equipo FROM alumnos 
-       WHERE matricula = ? 
-         AND laboratorio = ?
-         AND DATE(fecha) = CURDATE() 
-         AND TIME(fecha) BETWEEN ? AND ?`,
-      [matricula, laboratorio, horaInicio, horaFin]
-    );
-
-    if (otrosEquipos.length > 0) {
-      const equipoActual = otrosEquipos[0];
-      return res.status(409).json({
-        error: `Ya tienes un lugar asignado en esta clase: ${equipoActual.tipo_equipo}-${equipoActual.numero_equipo}`,
-        lugar_actual: `${equipoActual.tipo_equipo}-${equipoActual.numero_equipo}`,
-      });
-    }
-
-    // TRANSACCIÓN: Insertar alumno y actualizar equipo
-    const connection = await pool.promise().getConnection();
-
-    try {
-      await connection.beginTransaction();
-
-      // Insertar alumno con fecha de CDMX - SIN COLUMNA MATERIA
-      const [alumnoResult] = await connection.query(
-        `INSERT INTO alumnos 
-          (matricula, nombre, carrera, maestro, tipo_equipo, numero_equipo, fecha, laboratorio)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          matricula,
-          nombre,
-          carrera,
-          maestroClase,
-          tipo_equipo,
-          numero_equipo,
-          fechaCDMX,
-          laboratorio,
-        ]
-      );
-
-      // Marcar equipo como ocupado
-      await connection.query(
-        `UPDATE equipos SET estado = 'occupied' WHERE id = ?`,
-        [equipoId]
-      );
-
-      await connection.commit();
-
-      res.json({
-        success: true,
-        message: "Asignación registrada con éxito",
-        fechaRegistro: fechaCDMX,
-        equipo: `${tipo_equipo}-${numero_equipo}`,
-        clase: materia,
-        maestro: maestroClase,
-        id_registro: alumnoResult.insertId,
-      });
-    } catch (transactionError) {
-      await connection.rollback();
-      console.error("Error en transacción de registro:", transactionError);
-      throw transactionError;
-    } finally {
-      connection.release();
-    }
-  } catch (error) {
-    console.error("Error al registrar asignación:", error);
-    res.status(500).json({
-      error: "Error interno del servidor",
-      detalles: error.message,
-    });
-  }
-});
-
-// -------------------- ENDPOINT PARA VERIFICAR REGISTRO --------------------
-
-// Endpoint para verificar si un alumno ya está registrado
-app.get("/api/verificar-registro/:matricula", async (req, res) => {
-  try {
-    const { matricula } = req.params;
-    const { lab } = req.query;
-
-    if (!matricula || !lab) {
-      return res.status(400).json({
-        success: false,
-        error: "Matrícula y laboratorio son requeridos",
-      });
-    }
-
-    // Obtener horario actual
-    const { horario } = await verificarHorario(lab);
-
-    if (!horario) {
-      return res.json({
-        success: true,
-        ya_registrado: false,
-        mensaje: "No hay clase activa en este momento",
-      });
-    }
-
-    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-
-    const [registroExistente] = await pool.promise().query(
-      `SELECT id, tipo_equipo, numero_equipo, fecha 
-       FROM alumnos 
-       WHERE matricula = ? 
-         AND laboratorio = ?
-         AND DATE(fecha) = CURDATE()
-         AND TIME(fecha) BETWEEN ? AND ?`,
-      [matricula, lab, horaInicio, horaFin]
-    );
-
-    if (registroExistente.length > 0) {
-      const registro = registroExistente[0];
-      return res.json({
-        success: true,
-        ya_registrado: true,
-        mensaje: `Ya estás registrado en esta clase. Lugar: ${registro.tipo_equipo}-${registro.numero_equipo}`,
-        lugar_asignado: `${registro.tipo_equipo}-${registro.numero_equipo}`,
-        fecha_registro: registro.fecha,
-      });
-    }
-
-    res.json({
-      success: true,
-      ya_registrado: false,
-      mensaje: "No estás registrado en la clase actual",
-    });
-  } catch (error) {
-    console.error("Error en verificación de registro:", error);
-    res.status(500).json({
-      success: false,
-      error: "Error al verificar registro",
-    });
-  }
-});
-
-// Función para verificar si un alumno ya está registrado en la clase actual
-// Función para verificar si un alumno ya está registrado en la clase actual
 
 // Ruta para manejar solicitudes de cambio de horario
 app.post("/api/solicitudes", async (req, res) => {
