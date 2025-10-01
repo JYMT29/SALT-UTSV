@@ -935,39 +935,39 @@ app.delete("/horarios/:id", (req, res) => {
 });
 
 // Liberación automática de lugares
-// setInterval(async () => {
-//   try {
-//     const ahora = new Date();
-//     const horaActual = `${String(ahora.getHours()).padStart(2, "0")}:${String(
-//       ahora.getMinutes()
-//     ).padStart(2, "0")}`;
+setInterval(async () => {
+  try {
+    const ahora = new Date();
+    const horaActual = `${String(ahora.getHours()).padStart(2, "0")}:${String(
+      ahora.getMinutes()
+    ).padStart(2, "0")}`;
 
-//     const [horarios] = await pool
-//       .promise()
-//       .query(`SELECT laboratorio, hora FROM horarios`);
+    const [horarios] = await pool
+      .promise()
+      .query(`SELECT laboratorio, hora FROM horarios`);
 
-//     const horariosTerminados = horarios.filter((horario) => {
-//       const horaFin = horario.hora.split("-")[1].trim();
-//       return horaFin <= horaActual;
-//     });
+    const horariosTerminados = horarios.filter((horario) => {
+      const horaFin = horario.hora.split("-")[1].trim();
+      return horaFin <= horaActual;
+    });
 
-//     for (const { laboratorio } of horariosTerminados) {
-//       try {
-//         await fetch(`http://localhost:${port}/api/liberar-lugares`, {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ lab: laboratorio }),
-//         });
-//       } catch (error) {
-//         console.error(`Error al liberar lugares para ${laboratorio}:`, error);
-//       }
-//     }
-//   } catch (error) {
-//     console.error("Error en el script de liberación automática:", error);
-//   }
-// }, 60000); // Ejecutar cada minuto
+    for (const { laboratorio } of horariosTerminados) {
+      try {
+        await fetch(`http://localhost:${port}/api/liberar-lugares`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ lab: laboratorio }),
+        });
+      } catch (error) {
+        console.error(`Error al liberar lugares para ${laboratorio}:`, error);
+      }
+    }
+  } catch (error) {
+    console.error("Error en el script de liberación automática:", error);
+  }
+}, 60000); // Ejecutar cada minuto
 
 app.post("/api/registrar-asignacion", async (req, res) => {
   try {
