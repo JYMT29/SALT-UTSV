@@ -1104,7 +1104,7 @@
           >
             <div class="d-flex align-items-center">
               <span class="text-muted me-3" id="filter-indicator"
-                >Mostrando todos los grupos</span
+                >Mostrando todos los estudiantes</span
               >
               <span class="badge bg-primary" id="records-count"
                 >0 registros</span
@@ -1202,42 +1202,14 @@
             <!-- Estado del filtro actual -->
             <div class="filter-status">
               <p class="filter-status-text" id="currentFilterStatus">
-                Filtro actual: Mostrando todos los grupos
+                Filtro actual: Mostrando todos los estudiantes
               </p>
             </div>
 
             <!-- Lista de grupos -->
             <div class="filter-groups-container">
               <div class="filter-groups-grid" id="filterGroupsGrid">
-                <!-- Los grupos se cargarán dinámicamente -->
-                <div class="filter-group-card" data-group="all">
-                  <div class="filter-group-name">Todos</div>
-                  <div class="filter-group-count">45 alumnos</div>
-                </div>
-                <div class="filter-group-card" data-group="701">
-                  <div class="filter-group-name">701</div>
-                  <div class="filter-group-count">15 alumnos</div>
-                </div>
-                <div class="filter-group-card" data-group="702">
-                  <div class="filter-group-name">702</div>
-                  <div class="filter-group-count">18 alumnos</div>
-                </div>
-                <div class="filter-group-card" data-group="801">
-                  <div class="filter-group-name">801</div>
-                  <div class="filter-group-count">12 alumnos</div>
-                </div>
-                <div class="filter-group-card" data-group="802">
-                  <div class="filter-group-name">802</div>
-                  <div class="filter-group-count">9 alumnos</div>
-                </div>
-                <div class="filter-group-card" data-group="901">
-                  <div class="filter-group-name">901</div>
-                  <div class="filter-group-count">14 alumnos</div>
-                </div>
-                <div class="filter-group-card" data-group="902">
-                  <div class="filter-group-name">902</div>
-                  <div class="filter-group-count">11 alumnos</div>
-                </div>
+                <!-- Los grupos se cargarán dinámicamente con tu script -->
               </div>
             </div>
           </div>
@@ -1267,83 +1239,296 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script para el modal de filtro (compatible con tu script existente) -->
+    <!-- Script para el modal de filtro integrado con tu código -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const filterModal = document.getElementById("filterModal");
-        const filterGroups = document.querySelectorAll(".filter-group-card");
-        const clearFilterBtn = document.getElementById("clearFilterBtn");
-        const applyFilterBtn = document.getElementById("applyFilterBtn");
-        const filterSearch = document.getElementById("filterSearch");
-        const currentFilterStatus = document.getElementById(
-          "currentFilterStatus"
-        );
-        const filterIndicator = document.getElementById("filter-indicator");
+      // Variables globales para integración con tu script
+      let filteredGroup = "";
+      let grupos = [];
 
-        let selectedGroup = "all";
+      // Función para actualizar el modal de filtro con los grupos actuales
+      function updateFilterModal() {
+        const filterGroupsGrid = document.getElementById("filterGroupsGrid");
+        if (!filterGroupsGrid) return;
 
-        // Seleccionar grupo
-        filterGroups.forEach((group) => {
-          group.addEventListener("click", function () {
-            // Remover selección anterior
-            filterGroups.forEach((g) => g.classList.remove("selected"));
-            // Seleccionar nuevo grupo
-            this.classList.add("selected");
-            selectedGroup = this.getAttribute("data-group");
+        // Crear opciones de filtro
+        const opcionesFiltro = [
+          {
+            valor: "todos",
+            nombre: "Todos",
+            descripcion: "Todos los estudiantes",
+            icono: "bi-collection",
+            count: 0, // Se actualizará después
+          },
+          {
+            valor: "sin-grupo",
+            nombre: "Sin grupo",
+            descripcion: "Estudiantes sin grupo",
+            icono: "bi-question-circle",
+            count: 0, // Se actualizará después
+          },
+        ];
 
-            // Actualizar estado
-            if (selectedGroup === "all") {
-              currentFilterStatus.textContent =
-                "Filtro actual: Mostrando todos los grupos";
-            } else {
-              currentFilterStatus.textContent = `Filtro actual: Grupo ${selectedGroup}`;
-            }
+        // Agregar grupos existentes
+        grupos.forEach((grupo) => {
+          opcionesFiltro.push({
+            valor: grupo,
+            nombre: grupo,
+            descripcion: `Grupo ${grupo}`,
+            icono: "bi-people",
+            count: 0, // Se actualizará después
           });
         });
 
-        // Limpiar filtro
-        clearFilterBtn.addEventListener("click", function () {
-          filterGroups.forEach((g) => g.classList.remove("selected"));
-          document
-            .querySelector('.filter-group-card[data-group="all"]')
-            .classList.add("selected");
-          selectedGroup = "all";
-          currentFilterStatus.textContent =
-            "Filtro actual: Mostrando todos los grupos";
-        });
+        // Renderizar las opciones
+        filterGroupsGrid.innerHTML = opcionesFiltro
+          .map(
+            (opcion) => `
+          <div class="filter-group-card" data-group="${opcion.valor}">
+            <div class="filter-group-name">
+              <i class="bi ${opcion.icono} me-1"></i>${opcion.nombre}
+            </div>
+            <div class="filter-group-count" id="count-${opcion.valor}">Cargando...</div>
+          </div>
+        `
+          )
+          .join("");
 
-        // Aplicar filtro
-        applyFilterBtn.addEventListener("click", function () {
-          if (selectedGroup === "all") {
-            filterIndicator.textContent = "Mostrando todos los grupos";
-          } else {
-            filterIndicator.textContent = `Filtrado por: Grupo ${selectedGroup}`;
+        // Actualizar contadores después de cargar
+        updateFilterCounts();
+      }
+
+      // Función para actualizar los contadores de estudiantes por grupo
+      async function updateFilterCounts() {
+        try {
+          // Contador para "Todos"
+          const responseTodos = await fetch(`${API_BASE_URL}/estudiantes`);
+          if (responseTodos.ok) {
+            const dataTodos = await responseTodos.json();
+            if (dataTodos.success) {
+              const countElement = document.getElementById("count-todos");
+              if (countElement)
+                countElement.textContent = `${dataTodos.count} estudiantes`;
+            }
           }
 
-          // Aquí puedes llamar a tu función de filtrado existente
-          // filterByGroup(selectedGroup);
-        });
+          // Contador para "Sin grupo"
+          const responseSinGrupo = await fetch(
+            `${API_BASE_URL}/estudiantes?sin_grupo=true`
+          );
+          if (responseSinGrupo.ok) {
+            const dataSinGrupo = await responseSinGrupo.json();
+            if (dataSinGrupo.success) {
+              const countElement = document.getElementById("count-sin-grupo");
+              if (countElement)
+                countElement.textContent = `${dataSinGrupo.count} estudiantes`;
+            }
+          }
 
-        // Búsqueda de grupos
-        filterSearch.addEventListener("input", function () {
-          const searchTerm = this.value.toLowerCase();
-          filterGroups.forEach((group) => {
-            const groupName = group
-              .querySelector(".filter-group-name")
-              .textContent.toLowerCase();
-            if (groupName.includes(searchTerm) || searchTerm === "") {
-              group.style.display = "block";
-            } else {
-              group.style.display = "none";
+          // Contadores para cada grupo
+          for (const grupo of grupos) {
+            const response = await fetch(
+              `${API_BASE_URL}/estudiantes/grupo/${grupo}`
+            );
+            if (response.ok) {
+              const data = await response.json();
+              const countElement = document.getElementById(`count-${grupo}`);
+              if (countElement) {
+                countElement.textContent = data.success
+                  ? `${data.count} estudiantes`
+                  : "0 estudiantes";
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error actualizando contadores:", error);
+        }
+      }
+
+      // Función para aplicar filtro (integrada con tu función applyFilter)
+      function applyFilterFromModal(grupoFiltro) {
+        filteredGroup = grupoFiltro;
+
+        // Actualizar texto del botón según la selección
+        let textoBoton = "";
+        let textoIndicador = "";
+
+        switch (grupoFiltro) {
+          case "todos":
+            textoBoton = "Todos";
+            textoIndicador = "Mostrando todos los estudiantes";
+            break;
+          case "sin-grupo":
+            textoBoton = "Sin grupo";
+            textoIndicador = "Estudiantes sin grupo asignado";
+            break;
+          default:
+            textoBoton = `Grupo ${grupoFiltro}`;
+            textoIndicador = `Filtrado por: Grupo ${grupoFiltro}`;
+        }
+
+        const filterGroupBtn = document.getElementById("filter-group-btn");
+        if (filterGroupBtn) {
+          filterGroupBtn.innerHTML = `<i class="bi bi-funnel-fill me-1"></i> ${textoBoton}`;
+        }
+
+        const filterIndicator = document.getElementById("filter-indicator");
+        if (filterIndicator) {
+          filterIndicator.textContent = textoIndicador;
+        }
+
+        // Llamar a tu función loadStudents para aplicar el filtro
+        if (typeof loadStudents === "function") {
+          loadStudents();
+        }
+
+        // Mostrar alerta de éxito
+        if (typeof showAlert === "function") {
+          showAlert(`Filtrando: ${textoBoton}`, "success");
+        }
+      }
+
+      // Inicializar eventos del modal cuando el DOM esté listo
+      document.addEventListener("DOMContentLoaded", function () {
+        const filterModal = document.getElementById("filterModal");
+
+        if (filterModal) {
+          // Evento cuando se muestra el modal
+          filterModal.addEventListener("show.bs.modal", function () {
+            updateFilterModal();
+          });
+
+          // Eventos para selección de grupos
+          filterModal.addEventListener("click", function (e) {
+            const groupCard = e.target.closest(".filter-group-card");
+            if (groupCard) {
+              // Remover selección anterior
+              const selectedCards = filterModal.querySelectorAll(
+                ".filter-group-card.selected"
+              );
+              selectedCards.forEach((card) =>
+                card.classList.remove("selected")
+              );
+
+              // Seleccionar nueva tarjeta
+              groupCard.classList.add("selected");
+
+              const selectedGroup = groupCard.getAttribute("data-group");
+              const currentFilterStatus = document.getElementById(
+                "currentFilterStatus"
+              );
+
+              if (currentFilterStatus) {
+                if (selectedGroup === "todos") {
+                  currentFilterStatus.textContent =
+                    "Filtro actual: Mostrando todos los estudiantes";
+                } else if (selectedGroup === "sin-grupo") {
+                  currentFilterStatus.textContent =
+                    "Filtro actual: Estudiantes sin grupo asignado";
+                } else {
+                  currentFilterStatus.textContent = `Filtro actual: Grupo ${selectedGroup}`;
+                }
+              }
             }
           });
-        });
 
-        // Inicializar con "Todos" seleccionado
-        document
-          .querySelector('.filter-group-card[data-group="all"]')
-          .classList.add("selected");
+          // Botón aplicar filtro
+          const applyFilterBtn = document.getElementById("applyFilterBtn");
+          if (applyFilterBtn) {
+            applyFilterBtn.addEventListener("click", function () {
+              const selectedCard = filterModal.querySelector(
+                ".filter-group-card.selected"
+              );
+              if (selectedCard) {
+                const selectedGroup = selectedCard.getAttribute("data-group");
+                applyFilterFromModal(selectedGroup);
+              }
+            });
+          }
+
+          // Botón limpiar filtro
+          const clearFilterBtn = document.getElementById("clearFilterBtn");
+          if (clearFilterBtn) {
+            clearFilterBtn.addEventListener("click", function () {
+              // Seleccionar "Todos" por defecto
+              const todosCard = filterModal.querySelector(
+                '.filter-group-card[data-group="todos"]'
+              );
+              if (todosCard) {
+                const selectedCards = filterModal.querySelectorAll(
+                  ".filter-group-card.selected"
+                );
+                selectedCards.forEach((card) =>
+                  card.classList.remove("selected")
+                );
+                todosCard.classList.add("selected");
+
+                const currentFilterStatus = document.getElementById(
+                  "currentFilterStatus"
+                );
+                if (currentFilterStatus) {
+                  currentFilterStatus.textContent =
+                    "Filtro actual: Mostrando todos los estudiantes";
+                }
+              }
+            });
+          }
+
+          // Búsqueda en tiempo real
+          const filterSearch = document.getElementById("filterSearch");
+          if (filterSearch) {
+            filterSearch.addEventListener("input", function () {
+              const searchTerm = this.value.toLowerCase();
+              const groupCards =
+                filterModal.querySelectorAll(".filter-group-card");
+
+              groupCards.forEach((card) => {
+                const groupName = card
+                  .querySelector(".filter-group-name")
+                  .textContent.toLowerCase();
+                if (groupName.includes(searchTerm) || searchTerm === "") {
+                  card.style.display = "block";
+                } else {
+                  card.style.display = "none";
+                }
+              });
+            });
+          }
+        }
+
+        // Botón de actualizar
+        const refreshBtn = document.getElementById("refresh-btn");
+        if (refreshBtn) {
+          refreshBtn.addEventListener("click", function () {
+            if (typeof loadStudents === "function") {
+              loadStudents();
+            }
+            if (typeof showAlert === "function") {
+              showAlert("Datos actualizados", "success");
+            }
+          });
+        }
       });
+
+      // Sobrescribir tu función applyFilter para usar el modal
+      if (typeof applyFilter === "function") {
+        // Guardar referencia original
+        const originalApplyFilter = applyFilter;
+
+        // Reemplazar con nueva implementación que usa el modal
+        window.applyFilter = function (grupoFiltro) {
+          applyFilterFromModal(grupoFiltro);
+        };
+      }
+
+      // Sobrescribir tu función toggleFilter para abrir el modal
+      if (typeof toggleFilter === "function") {
+        window.toggleFilter = function () {
+          const filterModal = new bootstrap.Modal(
+            document.getElementById("filterModal")
+          );
+          filterModal.show();
+        };
+      }
     </script>
 
     <!-- Tu script original sin modificaciones -->
