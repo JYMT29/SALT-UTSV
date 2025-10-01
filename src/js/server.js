@@ -97,6 +97,47 @@ function formatearFechaHoraCDMX() {
   const horaCDMX = obtenerHoraCDMX();
   return horaCDMX.toISOString().replace("T", " ").substring(0, 19);
 }
+async function verificarRegistroDuplicado(matricula, laboratorio) {
+  try {
+    const { horario } = await verificarHorario(laboratorio);
+
+    if (!horario) {
+      return { duplicado: false, mensaje: "No hay clase activa" };
+    }
+
+    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
+
+    const [registroExistente] = await pool.promise().query(
+      `SELECT id, tipo_equipo, numero_equipo, PC, fecha 
+       FROM alumnos 
+       WHERE matricula = ? 
+         AND laboratorio = ?
+         AND DATE(fecha) = CURDATE()
+         AND TIME(fecha) BETWEEN ? AND ?`,
+      [matricula, laboratorio, horaInicio, horaFin]
+    );
+
+    if (registroExistente.length > 0) {
+      const registro = registroExistente[0];
+      const lugar =
+        registro.tipo_equipo && registro.numero_equipo
+          ? `${registro.tipo_equipo}-${registro.numero_equipo}`
+          : registro.PC;
+
+      return {
+        duplicado: true,
+        mensaje: `Ya estás registrado en esta clase. Lugar: ${lugar}`,
+        lugar: lugar,
+        fecha: registro.fecha,
+      };
+    }
+
+    return { duplicado: false };
+  } catch (error) {
+    console.error("Error en verificación de duplicado:", error);
+    return { duplicado: false, error: error.message };
+  }
+}
 
 // -------------------- RUTAS PARA USUARIOS --------------------
 
@@ -1296,47 +1337,7 @@ app.get("/api/verificar-registro/:matricula", async (req, res) => {
 
 // Función para verificar si un alumno ya está registrado en la clase actual
 // Función para verificar si un alumno ya está registrado en la clase actual
-async function verificarRegistroDuplicado(matricula, laboratorio) {
-  try {
-    const { horario } = await verificarHorario(laboratorio);
 
-    if (!horario) {
-      return { duplicado: false, mensaje: "No hay clase activa" };
-    }
-
-    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-
-    const [registroExistente] = await pool.promise().query(
-      `SELECT id, tipo_equipo, numero_equipo, PC, fecha 
-       FROM alumnos 
-       WHERE matricula = ? 
-         AND laboratorio = ?
-         AND DATE(fecha) = CURDATE()
-         AND TIME(fecha) BETWEEN ? AND ?`,
-      [matricula, laboratorio, horaInicio, horaFin]
-    );
-
-    if (registroExistente.length > 0) {
-      const registro = registroExistente[0];
-      const lugar =
-        registro.tipo_equipo && registro.numero_equipo
-          ? `${registro.tipo_equipo}-${registro.numero_equipo}`
-          : registro.PC;
-
-      return {
-        duplicado: true,
-        mensaje: `Ya estás registrado en esta clase. Lugar: ${lugar}`,
-        lugar: lugar,
-        fecha: registro.fecha,
-      };
-    }
-
-    return { duplicado: false };
-  } catch (error) {
-    console.error("Error en verificación de duplicado:", error);
-    return { duplicado: false, error: error.message };
-  }
-}
 // Ruta para manejar solicitudes de cambio de horario
 app.post("/api/solicitudes", async (req, res) => {
   const { laboratorio, usuarioId, dia, hora_actual, hora_nueva, motivo } =
