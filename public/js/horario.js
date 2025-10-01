@@ -242,6 +242,7 @@ function initializeHorarioFunctions() {
         hora_fin: hora_fin.length === 4 ? `0${hora_fin}` : hora_fin,
         materia: horario.materia,
         maestro: horario.maestro,
+        grupo: horario.grupo || "", // Incluir grupo
         dia:
           horario.dia.charAt(0).toUpperCase() +
           horario.dia.slice(1).toLowerCase(),
@@ -296,11 +297,15 @@ function initializeHorarioFunctions() {
           .replace("sábado", "sabado");
         const materia = item.materia || "";
         const maestro = item.maestro || "";
+        const grupo = item.grupo || "";
 
         if (DIAS_NORMALIZADOS.includes(dia) && horariosPorHora[hora]) {
-          horariosPorHora[hora][dia] = `${materia}${
-            maestro ? " / " + maestro : ""
-          }`;
+          // Formato: materia / maestro / grupo
+          let contenido = materia;
+          if (maestro) contenido += ` / ${maestro}`;
+          if (grupo) contenido += ` / ${grupo}`;
+
+          horariosPorHora[hora][dia] = contenido;
         }
       });
 
@@ -343,7 +348,7 @@ function initializeHorarioFunctions() {
     }
   };
 
-  // 2. Función para editar celdas (solo para admin)
+  // 2. Función para editar celdas (solo para admin) - ACTUALIZADA PARA GRUPO
   const editarCelda = (cell) => {
     if (userRole === "user") return;
 
@@ -355,6 +360,7 @@ function initializeHorarioFunctions() {
     input.type = "text";
     input.value = currentText;
     input.className = "form-control rounded-0 h-100 border-0";
+    input.placeholder = "materia / maestro / grupo";
 
     cell.textContent = "";
     cell.appendChild(input);
@@ -365,10 +371,16 @@ function initializeHorarioFunctions() {
       cell.textContent = nuevoValor;
       cell.classList.remove("editando", "p-0");
 
-      const [materia, maestro] = nuevoValor.split("/").map((s) => s.trim());
+      // Parsear el formato: materia / maestro / grupo
+      const partes = nuevoValor.split("/").map((s) => s.trim());
+      const materia = partes[0] || "";
+      const maestro = partes[1] || "";
+      const grupo = partes[2] || "";
+
       if (materia) {
         cell.setAttribute("data-materia", materia);
-        cell.setAttribute("data-maestro", maestro || "");
+        cell.setAttribute("data-maestro", maestro);
+        cell.setAttribute("data-grupo", grupo);
       }
     };
 
@@ -382,7 +394,7 @@ function initializeHorarioFunctions() {
     });
   };
 
-  // 3. Función para guardar horarios (solo para admin)
+  // 3. Función para guardar horarios (solo para admin) - ACTUALIZADA PARA GRUPO
   const guardarHorario = async () => {
     if (userRole === "user") {
       alert("No tienes permisos para guardar horarios");
@@ -405,14 +417,18 @@ function initializeHorarioFunctions() {
           const dia = cell.getAttribute("data-dia");
           const contenido = cell.textContent.trim();
           if (contenido) {
-            const [materia, maestro] = contenido
-              .split("/")
-              .map((s) => s.trim());
+            // Parsear el formato: materia / maestro / grupo
+            const partes = contenido.split("/").map((s) => s.trim());
+            const materia = partes[0] || "";
+            const maestro = partes[1] || "";
+            const grupo = partes[2] || "";
+
             horarios.push({
               hora,
               dia,
-              materia: materia || "",
-              maestro: maestro || "",
+              materia: materia,
+              maestro: maestro,
+              grupo: grupo,
             });
           }
         });
