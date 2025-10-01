@@ -1,6 +1,83 @@
 // Inicializar jsPDF
 const { jsPDF } = window.jspdf;
 
+// Función para exportar el horario a PDF
+function exportarHorarioPDF() {
+  const doc = new jsPDF();
+
+  // Configuración de colores
+  const primaryColor = [26, 60, 110]; // #1a3c6e
+
+  // Título
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Horario Laboratorio", 105, 15, { align: "center" });
+
+  const ubicacion = document.getElementById("ubicacion").textContent;
+  doc.setFontSize(12);
+  doc.text(ubicacion, 105, 22, { align: "center" });
+
+  // Preparar datos de la tabla
+  const tableData = [];
+  const rows = document.querySelectorAll("#horarioBody tr");
+
+  rows.forEach((row) => {
+    const cells = row.querySelectorAll("td");
+    if (cells.length === 7) {
+      // Hora + 6 días
+      const rowData = [
+        cells[0].textContent.trim(), // Hora
+        cells[1].textContent.trim(), // Lunes
+        cells[2].textContent.trim(), // Martes
+        cells[3].textContent.trim(), // Miércoles
+        cells[4].textContent.trim(), // Jueves
+        cells[5].textContent.trim(), // Viernes
+        cells[6].textContent.trim(), // Sábado
+      ];
+      tableData.push(rowData);
+    }
+  });
+
+  // Generar tabla
+  doc.autoTable({
+    startY: 30,
+    head: [
+      ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+    ],
+    body: tableData,
+    theme: "grid",
+    headStyles: {
+      fillColor: primaryColor,
+      textColor: 255,
+      fontStyle: "bold",
+      halign: "center",
+    },
+    bodyStyles: {
+      halign: "center",
+    },
+    margin: { top: 30 },
+  });
+
+  // Guardar el PDF
+  const laboratorio = obtenerLaboratorioDesdeUrl();
+  const fileName = `horario_${laboratorio}_${new Date().getTime()}.pdf`;
+  doc.save(fileName);
+}
+
+// Función para obtener el laboratorio desde la URL
+function obtenerLaboratorioDesdeUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("lab") || "laboratorio";
+}
+
+// Event listener para el botón de exportar PDF
+document.addEventListener("DOMContentLoaded", function () {
+  document
+    .getElementById("exportPdf")
+    .addEventListener("click", exportarHorarioPDF);
+});
+
+// Tu código original continúa aquí...
 // Variable global para almacenar el rol del usuario
 let userRole = "user"; // Valor por defecto
 let userId = ""; // Almacenar ID del usuario
@@ -39,152 +116,6 @@ function adjustUIForRole(role) {
   }
 }
 
-// Función para cargar imágenes como Base64 para el PDF
-function cargarImagenComoBase64(url) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      const dataURL = canvas.toDataURL("image/png");
-      resolve(dataURL);
-    };
-    img.onerror = function () {
-      console.error("Error al cargar la imagen:", url);
-      reject(new Error("Error al cargar la imagen: " + url));
-    };
-    img.src = url;
-  });
-}
-
-// Función para exportar el horario a PDF
-async function exportarHorarioPDF() {
-  try {
-    const doc = new jsPDF();
-    const laboratorio = obtenerLaboratorioDesdeUrl();
-
-    // Cargar logos
-    const [logo1Base64, logo2Base64] = await Promise.all([
-      cargarImagenComoBase64("img/utsv.png").catch(() => null),
-      cargarImagenComoBase64("img/TI_Logo2.png").catch(() => null),
-    ]);
-
-    // Configuración de colores
-    const primaryColor = [26, 60, 110]; // #1a3c6e
-    const primaryLight = [42, 92, 160]; // #2a5ca0
-
-    // Encabezado con logos
-    doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, 210, 25, "F");
-
-    // Agregar logos
-    if (logo1Base64) {
-      doc.addImage(logo1Base64, "PNG", 10, 5, 30, 15);
-    }
-
-    if (logo2Base64) {
-      doc.addImage(logo2Base64, "PNG", 170, 5, 30, 15);
-    }
-
-    // Título
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text("Horario Laboratorio", 105, 12, { align: "center" });
-
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    const ubicacion = document.getElementById("ubicacion").textContent;
-    doc.text(ubicacion, 105, 18, { align: "center" });
-
-    // Preparar datos de la tabla
-    const tableData = [];
-    const rows = document.querySelectorAll("#horarioBody tr");
-
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
-      if (cells.length === 7) {
-        // Hora + 6 días
-        const rowData = [
-          cells[0].textContent.trim(), // Hora
-          cells[1].textContent.trim(), // Lunes
-          cells[2].textContent.trim(), // Martes
-          cells[3].textContent.trim(), // Miércoles
-          cells[4].textContent.trim(), // Jueves
-          cells[5].textContent.trim(), // Viernes
-          cells[6].textContent.trim(), // Sábado
-        ];
-        tableData.push(rowData);
-      }
-    });
-
-    // Configurar y generar la tabla
-    doc.autoTable({
-      startY: 30,
-      head: [
-        ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-      ],
-      body: tableData,
-      theme: "grid",
-      styles: {
-        fontSize: 8,
-        cellPadding: 3,
-        lineColor: [0, 0, 0],
-        lineWidth: 0.1,
-        halign: "center",
-      },
-      headStyles: {
-        fillColor: primaryColor,
-        textColor: 255,
-        fontStyle: "bold",
-        halign: "center",
-      },
-      bodyStyles: {
-        halign: "center",
-      },
-      margin: {
-        top: 30,
-        left: 10,
-        right: 10,
-      },
-      tableWidth: "auto",
-    });
-
-    // Pie de página
-    const pageCount = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.setTextColor(100);
-      doc.text(
-        `Página ${i} de ${pageCount} - Generado el ${new Date().toLocaleDateString(
-          "es-ES"
-        )}`,
-        105,
-        285,
-        { align: "center" }
-      );
-    }
-
-    // Guardar el PDF
-    const fileName = `horario_${laboratorio}_${new Date().getTime()}.pdf`;
-    doc.save(fileName);
-  } catch (error) {
-    console.error("Error al generar PDF:", error);
-    alert("Error al generar el PDF: " + error.message);
-  }
-}
-
-// Función para obtener el laboratorio desde la URL
-function obtenerLaboratorioDesdeUrl() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("lab") || "laboratorio";
-}
-
 // Inicializar la página
 document.addEventListener("DOMContentLoaded", async function () {
   // Obtener información del usuario
@@ -195,16 +126,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Ajustar la interfaz según el rol
   adjustUIForRole(userRole);
 
-  // Event listener para el botón de exportar PDF
-  document
-    .getElementById("exportPdf")
-    .addEventListener("click", exportarHorarioPDF);
-
-  // Cargar el resto de la funcionalidad
+  // Cargar el resto de la funcionalidad desde horario.js
+  // pero usando nuestro sistema de roles
   initializeHorarioFunctions();
 });
 
-// Función para inicializar todas las funciones de horario
+// Función para inicializar todas las funciones de horario.js
+// pero adaptadas a nuestro sistema de roles
 function initializeHorarioFunctions() {
   // Obtener laboratorio de la URL
   const urlParams = new URLSearchParams(window.location.search);
