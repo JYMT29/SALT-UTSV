@@ -967,7 +967,7 @@ setInterval(async () => {
   } catch (error) {
     console.error("Error en el script de liberación automática:", error);
   }
-}, 60000); // Ejecutar cada minuto
+}, 3000000); // Ejecutar cada minuto
 
 app.post("/api/registrar-asignacion", async (req, res) => {
   try {
