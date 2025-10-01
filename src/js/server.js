@@ -77,6 +77,27 @@ if (!fs.existsSync("lab-config.json")) {
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "views"));
 
+// Función para obtener la hora actual de CDMX
+function obtenerHoraCDMX() {
+  return new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Mexico_City" })
+  );
+}
+
+// Función para formatear hora en formato HH:MM de CDMX
+function formatearHoraCDMX() {
+  const horaCDMX = obtenerHoraCDMX();
+  return `${String(horaCDMX.getHours()).padStart(2, "0")}:${String(
+    horaCDMX.getMinutes()
+  ).padStart(2, "0")}`;
+}
+
+// Función para formatear fecha completa de CDMX
+function formatearFechaHoraCDMX() {
+  const horaCDMX = obtenerHoraCDMX();
+  return horaCDMX.toISOString().replace("T", " ").substring(0, 19);
+}
+
 // -------------------- RUTAS PARA USUARIOS --------------------
 
 // Obtener todos los usuarios
@@ -271,8 +292,11 @@ function agregarHoras(hora, horas) {
 
 // Función para verificar horarios activos
 // Función para verificar horarios activos - ACTUALIZADA CON GRUPO
+// Función para verificar horarios activos - ACTUALIZADA CON HORA CDMX
 async function verificarHorario(lab) {
-  const ahora = new Date();
+  const horaActualCDMX = formatearHoraCDMX();
+  const ahoraCDMX = obtenerHoraCDMX();
+
   const diaSemana = [
     "Domingo",
     "Lunes",
@@ -281,10 +305,7 @@ async function verificarHorario(lab) {
     "Jueves",
     "Viernes",
     "Sábado",
-  ][ahora.getDay()];
-  const horaActual = `${String(ahora.getHours()).padStart(2, "0")}:${String(
-    ahora.getMinutes()
-  ).padStart(2, "0")}`;
+  ][ahoraCDMX.getDay()];
 
   return new Promise((resolve, reject) => {
     pool.query(
@@ -295,12 +316,11 @@ async function verificarHorario(lab) {
       (err, results) => {
         if (err) return reject(err);
 
-        // Verificar si la hora actual está dentro de algún horario
         const horarioActivo = results.find((horario) => {
           const [horaInicio, horaFin] = horario.hora
             .split("-")
             .map((h) => h.trim());
-          return horaActual >= horaInicio && horaActual <= horaFin;
+          return horaActualCDMX >= horaInicio && horaActualCDMX <= horaFin;
         });
 
         resolve({ horario: horarioActivo });
@@ -786,7 +806,7 @@ app.post("/api/liberar-lugares", async (req, res) => {
 });
 
 app.post("/alumnos", async (req, res) => {
-  const { matricula, nombre, carrera, PC, fecha } = req.body;
+  const { matricula, nombre, carrera, PC } = req.body;
   const laboratorio = req.query.lab;
 
   if (!laboratorio) {
@@ -799,7 +819,8 @@ app.post("/alumnos", async (req, res) => {
     const { horario } = await verificarHorario(laboratorio);
     const maestro = horario?.maestro || "No asignado";
 
-    console.log("Maestro a guardar:", maestro);
+    // Usar fecha y hora de CDMX
+    const fechaCDMX = formatearFechaHoraCDMX();
 
     const query = `
       INSERT INTO alumnos (matricula, nombre, carrera, maestro, PC, fecha, laboratorio)
@@ -811,11 +832,9 @@ app.post("/alumnos", async (req, res) => {
       carrera,
       maestro,
       PC,
-      fecha,
+      fechaCDMX, // Usar fecha de CDMX
       laboratorio,
     ];
-
-    console.log("INSERTANDO ALUMNO CON:", values);
 
     pool.query(query, values, (err, result) => {
       if (err) {
@@ -830,6 +849,7 @@ app.post("/alumnos", async (req, res) => {
         success: true,
         message: "Alumno registrado correctamente",
         id: result.insertId,
+        fechaRegistro: fechaCDMX,
       });
     });
   } catch (error) {
@@ -841,6 +861,18 @@ app.post("/alumnos", async (req, res) => {
   }
 });
 
+// Endpoint para verificar la hora del servidor
+app.get("/api/hora-servidor", (req, res) => {
+  const horaUTC = new Date();
+  const horaCDMX = obtenerHoraCDMX();
+
+  res.json({
+    hora_utc: horaUTC.toISOString(),
+    hora_cdmx: horaCDMX.toISOString(),
+    hora_cdmx_formateada: formatearHoraCDMX(),
+    fecha_cdmx_formateada: formatearFechaHoraCDMX(),
+  });
+});
 // Ruta para obtener todos los alumnos
 app.get("/alumnos", (req, res) => {
   const query = "SELECT * FROM alumnos";
