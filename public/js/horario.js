@@ -1,9 +1,8 @@
 // Inicializar jsPDF
 const { jsPDF } = window.jspdf;
 
-// Función para exportar el horario a PDF con el diseño exacto
+// Función para exportar el horario a PDF ocupando toda la hoja
 async function exportarHorarioPDF() {
-  const botones = document.querySelector(".no-pdf");
   const elementosOcultos = document.querySelectorAll(".no-pdf");
 
   // Ocultar elementos que no deben aparecer en el PDF
@@ -13,58 +12,84 @@ async function exportarHorarioPDF() {
   });
 
   try {
-    // Capturar la tabla completa con html2canvas
+    // Forzar un pequeño delay para asegurar que los elementos estén ocultos
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Capturar la tabla completa con html2canvas - configuración optimizada
     const tabla = document.getElementById("horarioTable");
 
     const canvas = await html2canvas(tabla, {
-      scale: 2, // Mayor calidad
-      useCORS: true, // Permitir imágenes externas
+      scale: 3, // Mayor escala para mejor calidad
+      useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
-      logging: false, // Desactivar logs para mejor rendimiento
+      logging: false,
+      width: tabla.scrollWidth,
+      height: tabla.scrollHeight,
+      windowWidth: tabla.scrollWidth,
+      windowHeight: tabla.scrollHeight,
+      onclone: function (clonedDoc) {
+        // Asegurar que la tabla ocupe todo el ancho en el clon
+        const clonedTable = clonedDoc.getElementById("horarioTable");
+        if (clonedTable) {
+          clonedTable.style.width = "100%";
+          clonedTable.style.margin = "0";
+          clonedTable.style.padding = "0";
+        }
+      },
     });
 
-    // Crear PDF en orientación horizontal para mejor ajuste
+    // Crear PDF en orientación horizontal
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",
       format: "a4",
     });
 
-    // Obtener dimensiones de la página
+    // Dimensiones de la página A4 en horizontal
     const pdfWidth = doc.internal.pageSize.getWidth();
     const pdfHeight = doc.internal.pageSize.getHeight();
 
-    // Calcular dimensiones para que la imagen ocupe casi toda la página
-    const imgWidth = canvas.width;
-    const imgHeight = canvas.height;
-    const ratio = Math.min(
-      (pdfWidth - 20) / imgWidth, // Dejar 10mm de margen a cada lado
-      (pdfHeight - 30) / imgHeight // Dejar 15mm de margen arriba y abajo
-    );
+    // Calcular dimensiones para ocupar toda la página
+    const margin = 5; // Márgenes muy pequeños
+    const availableWidth = pdfWidth - margin * 2;
+    const availableHeight = pdfHeight - margin * 2;
 
-    const imgX = (pdfWidth - imgWidth * ratio) / 2;
-    const imgY = 15; // Margen superior
+    // Calcular ratio de escala para ocupar máximo espacio posible
+    const widthRatio = availableWidth / canvas.width;
+    const heightRatio = availableHeight / canvas.height;
+    const ratio = Math.min(widthRatio, heightRatio);
 
-    // Agregar imagen al PDF
-    doc.addImage(
-      canvas,
-      "PNG",
-      imgX,
-      imgY,
-      imgWidth * ratio,
-      imgHeight * ratio,
-      undefined,
-      "FAST"
-    );
+    // Calcular dimensiones finales
+    const imgWidth = canvas.width * ratio;
+    const imgHeight = canvas.height * ratio;
 
-    // Pie de página
-    doc.setFontSize(10);
+    // Centrar en la página
+    const x = (pdfWidth - imgWidth) / 2;
+    const y = (pdfHeight - imgHeight) / 2;
+
+    console.log("Dimensiones PDF:", {
+      pdfWidth,
+      pdfHeight,
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height,
+      ratio,
+      imgWidth,
+      imgHeight,
+      x,
+      y,
+    });
+
+    // Agregar imagen al PDF ocupando toda la página
+    doc.addImage(canvas, "PNG", x, y, imgWidth, imgHeight, undefined, "FAST");
+
+    // Pie de página discreto
+    doc.setFontSize(8);
     doc.setTextColor(100);
     doc.text(
       `Generado el ${new Date().toLocaleDateString("es-ES")} - SALT-UTSV`,
       pdfWidth / 2,
-      pdfHeight - 10,
+      pdfHeight - 5,
       { align: "center" }
     );
 
@@ -78,7 +103,7 @@ async function exportarHorarioPDF() {
     console.error("Error al generar PDF:", error);
     alert("Error al generar el PDF: " + error.message);
   } finally {
-    // Siempre restaurar la visibilidad de los elementos, incluso si hay error
+    // Siempre restaurar la visibilidad de los elementos
     elementosOcultos.forEach((elemento) => {
       elemento.style.visibility = "visible";
       elemento.style.position = "";
@@ -94,7 +119,6 @@ function obtenerLaboratorioDesdeUrl() {
 
 // Función para manejar el botón de regreso sin desloguear
 function manejarRegreso() {
-  // Usar replace para evitar que el navegador guarde esta página en el historial
   window.location.replace("inicio.html");
 }
 
