@@ -46,6 +46,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  timezone: "-06:00",
 });
 // Verificar conexión a la base de datos
 pool.getConnection((err, connection) => {
