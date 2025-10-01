@@ -1,8 +1,23 @@
 // Variable global para almacenar los datos del horario
 let horarioData = [];
+let currentAlumnosData = []; // Variable para almacenar los datos actuales
+
+// Inicializar jsPDF
+const { jsPDF } = window.jspdf;
 
 // Cargar horarios al cargar la página
 document.addEventListener("DOMContentLoaded", function () {
+  // Actualizar fecha de generación
+  const now = new Date();
+  document.getElementById("fecha-generacion").textContent =
+    now.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   const savedHorario = localStorage.getItem("horarioData");
   if (savedHorario) {
     horarioData = JSON.parse(savedHorario);
@@ -36,8 +51,8 @@ document.getElementById("load-data").addEventListener("click", function () {
   fetch("https://salt-utsv-production.up.railway.app/alumnos")
     .then((response) => response.json())
     .then((data) => {
-      const filteredData = filterAlumnos(data, fechaFiltro, laboratorio);
-      loadTableData(filteredData);
+      currentAlumnosData = filterAlumnos(data, fechaFiltro, laboratorio);
+      loadTableData(currentAlumnosData);
     })
     .catch((error) => {
       console.error("Error al cargar los datos de los alumnos:", error);
@@ -89,6 +104,9 @@ function loadTableData(data) {
 
     tableBody.appendChild(newRow);
   });
+
+  // Actualizar contador de registros
+  document.getElementById("total-registros").textContent = data.length;
 }
 
 // Función para extraer solo el nombre del campo combinado
@@ -175,3 +193,125 @@ function convertirFechaLocal(fecha) {
 document.getElementById("print-button").addEventListener("click", function () {
   window.print();
 });
+
+// Evento para generar PDF
+document.getElementById("pdf-button").addEventListener("click", function () {
+  generarPDF();
+});
+
+// Función para generar PDF con diseño profesional
+function generarPDF() {
+  if (currentAlumnosData.length === 0) {
+    alert("No hay datos para exportar. Por favor, carga los datos primero.");
+    return;
+  }
+
+  const doc = new jsPDF();
+  const laboratorio = obtenerLaboratorioDesdeUrl();
+  const fechaFiltro = document.getElementById("fecha").value;
+
+  // Configuración de colores
+  const primaryColor = [26, 60, 110]; // #1a3c6e
+  const secondaryColor = [212, 175, 55]; // #d4af37
+  const lightGray = [245, 247, 250];
+
+  // Encabezado del PDF
+  doc.setFillColor(...primaryColor);
+  doc.rect(0, 0, 210, 40, "F");
+
+  // Logo y título
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("SALT-UTSV", 105, 15, { align: "center" });
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text("Sistema Avanzado de Laboratorios", 105, 22, { align: "center" });
+  doc.text("Informe de Alumnos", 105, 29, { align: "center" });
+
+  // Información del reporte
+  doc.setFillColor(...lightGray);
+  doc.rect(10, 45, 190, 25, "F");
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(10);
+
+  const fechaActual = new Date().toLocaleDateString("es-ES");
+  const labText = laboratorio
+    ? `Laboratorio: ${laboratorio.toUpperCase()}`
+    : "Laboratorio: Todos";
+  const fechaText = fechaFiltro ? `Fecha: ${fechaFiltro}` : "Fecha: Todas";
+
+  doc.text(`Generado el: ${fechaActual}`, 15, 55);
+  doc.text(labText, 15, 62);
+  doc.text(fechaText, 105, 55);
+  doc.text(`Total de registros: ${currentAlumnosData.length}`, 105, 62);
+
+  // Preparar datos para la tabla
+  const tableData = currentAlumnosData.map((alumno) => [
+    alumno.matricula || "N/A",
+    extraerSoloNombre(alumno.nombre),
+    alumno.carrera || "N/A",
+    alumno.tipo_equipo || "N/A",
+    alumno.numero_equipo || "N/A",
+    alumno.maestro || "Sin asignar",
+    convertirFechaLocal(alumno.fecha),
+  ]);
+
+  // Configurar y generar la tabla
+  doc.autoTable({
+    startY: 75,
+    head: [
+      ["Matrícula", "Nombre", "Carrera", "Tipo", "Número", "Maestro", "Fecha"],
+    ],
+    body: tableData,
+    theme: "grid",
+    styles: {
+      fontSize: 8,
+      cellPadding: 3,
+      lineColor: [0, 0, 0],
+      lineWidth: 0.1,
+    },
+    headStyles: {
+      fillColor: primaryColor,
+      textColor: 255,
+      fontStyle: "bold",
+    },
+    alternateRowStyles: {
+      fillColor: lightGray,
+    },
+    margin: { top: 75 },
+    tableWidth: "wrap",
+  });
+
+  // Pie de página
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(100);
+    doc.text(`Página ${i} de ${pageCount} - SALT-UTSV`, 105, 285, {
+      align: "center",
+    });
+  }
+
+  // Guardar el PDF
+  const fileName = `informe_alumnos_${laboratorio || "todos"}_${
+    fechaFiltro || "todas"
+  }_${new Date().getTime()}.pdf`;
+  doc.save(fileName);
+}
+
+// Función para probar la conexión
+async function testConnection() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/hello`);
+    const data = await response.json();
+    console.log("Conexión exitosa:", data);
+  } catch (error) {
+    console.error("Error de conexión:", error);
+  }
+}
+
+// Probar conexión al cargar
+testConnection();
