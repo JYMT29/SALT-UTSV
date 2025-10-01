@@ -1,67 +1,80 @@
 // Inicializar jsPDF
 const { jsPDF } = window.jspdf;
 
-// Función para exportar el horario a PDF
-function exportarHorarioPDF() {
-  const doc = new jsPDF();
+// Función para exportar el horario a PDF con el diseño exacto
+async function exportarHorarioPDF() {
+  try {
+    // Ocultar botones temporalmente para que no aparezcan en el PDF
+    const botones = document.querySelector(".mb-3.d-flex.gap-2");
+    const estiloOriginal = botones.style.display;
+    botones.style.display = "none";
 
-  // Configuración de colores
-  const primaryColor = [26, 60, 110]; // #1a3c6e
+    // Capturar la tabla completa con html2canvas
+    const tabla = document.getElementById("horarioTable");
 
-  // Título
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.text("Horario Laboratorio", 105, 15, { align: "center" });
+    const canvas = await html2canvas(tabla, {
+      scale: 2, // Mayor calidad
+      useCORS: true, // Permitir imágenes externas
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+    });
 
-  const ubicacion = document.getElementById("ubicacion").textContent;
-  doc.setFontSize(12);
-  doc.text(ubicacion, 105, 22, { align: "center" });
+    // Restaurar botones
+    botones.style.display = estiloOriginal;
 
-  // Preparar datos de la tabla
-  const tableData = [];
-  const rows = document.querySelectorAll("#horarioBody tr");
+    // Convertir canvas a imagen
+    const imgData = canvas.toDataURL("image/png");
 
-  rows.forEach((row) => {
-    const cells = row.querySelectorAll("td");
-    if (cells.length === 7) {
-      // Hora + 6 días
-      const rowData = [
-        cells[0].textContent.trim(), // Hora
-        cells[1].textContent.trim(), // Lunes
-        cells[2].textContent.trim(), // Martes
-        cells[3].textContent.trim(), // Miércoles
-        cells[4].textContent.trim(), // Jueves
-        cells[5].textContent.trim(), // Viernes
-        cells[6].textContent.trim(), // Sábado
-      ];
-      tableData.push(rowData);
-    }
-  });
+    // Crear PDF
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4",
+    });
 
-  // Generar tabla
-  doc.autoTable({
-    startY: 30,
-    head: [
-      ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-    ],
-    body: tableData,
-    theme: "grid",
-    headStyles: {
-      fillColor: primaryColor,
-      textColor: 255,
-      fontStyle: "bold",
-      halign: "center",
-    },
-    bodyStyles: {
-      halign: "center",
-    },
-    margin: { top: 30 },
-  });
+    // Obtener dimensiones
+    const pdfWidth = doc.internal.pageSize.getWidth();
+    const pdfHeight = doc.internal.pageSize.getHeight();
 
-  // Guardar el PDF
-  const laboratorio = obtenerLaboratorioDesdeUrl();
-  const fileName = `horario_${laboratorio}_${new Date().getTime()}.pdf`;
-  doc.save(fileName);
+    // Calcular dimensiones para que la imagen quepa en la página
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95;
+    const imgX = (pdfWidth - imgWidth * ratio) / 2;
+    const imgY = 10;
+
+    // Agregar imagen al PDF
+    doc.addImage(
+      imgData,
+      "PNG",
+      imgX,
+      imgY,
+      imgWidth * ratio,
+      imgHeight * ratio
+    );
+
+    // Pie de página
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(
+      `Generado el ${new Date().toLocaleDateString("es-ES")} - SALT-UTSV`,
+      pdfWidth / 2,
+      pdfHeight - 10,
+      { align: "center" }
+    );
+
+    // Guardar el PDF
+    const laboratorio = obtenerLaboratorioDesdeUrl();
+    const fileName = `horario_${laboratorio}_${new Date().getTime()}.pdf`;
+    doc.save(fileName);
+  } catch (error) {
+    console.error("Error al generar PDF:", error);
+    alert("Error al generar el PDF: " + error.message);
+
+    // Asegurarse de que los botones se muestren nuevamente en caso de error
+    const botones = document.querySelector(".mb-3.d-flex.gap-2");
+    botones.style.display = "flex";
+  }
 }
 
 // Función para obtener el laboratorio desde la URL
@@ -77,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("click", exportarHorarioPDF);
 });
 
-// Tu código original continúa aquí...
+// ... (TODO TU CÓDIGO ORIGINAL SIGUE AQUÍ, SIN MODIFICACIONES)
 // Variable global para almacenar el rol del usuario
 let userRole = "user"; // Valor por defecto
 let userId = ""; // Almacenar ID del usuario
