@@ -330,11 +330,10 @@
         font-weight: 500;
       }
 
-      /* Tabla con estilo corporativo */
+      /* Tabla con estilo corporativo CORREGIDA */
       .table-custom {
-        border-collapse: separate;
-        border-spacing: 0;
         width: 100%;
+        border-collapse: collapse;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 0 0 1px var(--medium-gray);
@@ -350,7 +349,7 @@
         font-weight: 700;
         padding: 15px 12px;
         border: none;
-        text-align: center;
+        text-align: left;
         position: relative;
       }
 
@@ -370,23 +369,31 @@
 
       .table-custom tbody tr {
         transition: var(--transition);
+        border-bottom: 1px solid var(--medium-gray);
+      }
+
+      .table-custom tbody tr:last-child {
+        border-bottom: none;
       }
 
       .table-custom tbody tr:hover {
         background-color: rgba(26, 60, 110, 0.05);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-custom tbody tr:nth-child(even) {
+        background-color: rgba(212, 175, 55, 0.03);
+      }
+
+      .table-custom tbody tr:nth-child(even):hover {
+        background-color: rgba(26, 60, 110, 0.05);
       }
 
       .table-custom tbody td {
         padding: 12px;
-        border-bottom: 1px solid var(--medium-gray);
         vertical-align: middle;
-        text-align: center;
-      }
-
-      .table-custom tbody tr:last-child td {
-        border-bottom: none;
+        text-align: left;
       }
 
       .table-container {
@@ -528,6 +535,15 @@
         .controls-container {
           padding: 15px;
         }
+
+        .table-custom {
+          font-size: 0.9rem;
+        }
+
+        .table-custom thead th,
+        .table-custom tbody td {
+          padding: 8px 10px;
+        }
       }
     </style>
   </head>
@@ -625,7 +641,7 @@
         </div>
         <div class="card-body p-0">
           <div class="table-container">
-            <table class="table table-custom mb-0">
+            <table class="table-custom">
               <thead>
                 <tr>
                   <th>Nombre del Alumno</th>
