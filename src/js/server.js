@@ -852,9 +852,10 @@ app.post("/alumnos", async (req, res) => {
     // Usar fecha y hora de CDMX
     const fechaCDMX = formatearFechaHoraCDMX();
 
+    // Query actualizada sin columna materia
     const query = `
-      INSERT INTO alumnos (matricula, nombre, carrera, maestro, PC, fecha, laboratorio, materia)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO alumnos (matricula, nombre, carrera, maestro, PC, fecha, laboratorio)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       matricula,
@@ -864,7 +865,6 @@ app.post("/alumnos", async (req, res) => {
       PC,
       fechaCDMX,
       laboratorio,
-      horario.materia || "Clase en curso",
     ];
 
     pool.query(query, values, (err, result) => {
@@ -1294,6 +1294,7 @@ app.get("/api/verificar-registro/:matricula", async (req, res) => {
   }
 });
 
+// Función para verificar si un alumno ya está registrado en la clase actual
 // Función para verificar si un alumno ya está registrado en la clase actual
 async function verificarRegistroDuplicado(matricula, laboratorio) {
   try {
