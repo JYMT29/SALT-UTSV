@@ -193,7 +193,27 @@ document.getElementById("pdf-button").addEventListener("click", function () {
   generarPDF();
 });
 
-// Función para generar PDF con diseño profesional y tabla centrada
+// Función para cargar imágenes como Base64 para el PDF
+function cargarImagenComoBase64(url, callback) {
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.onload = function () {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    const dataURL = canvas.toDataURL("image/png");
+    callback(dataURL);
+  };
+  img.onerror = function () {
+    console.error("Error al cargar la imagen:", url);
+    callback(null);
+  };
+  img.src = url;
+}
+
+// Función para generar PDF con diseño profesional, tabla centrada y 2 logos
 function generarPDF() {
   if (currentAlumnosData.length === 0) {
     alert("No hay datos para exportar. Por favor, carga los datos primero.");
@@ -209,111 +229,150 @@ function generarPDF() {
   const secondaryColor = [212, 175, 55]; // #d4af37
   const lightGray = [245, 247, 250];
 
-  // Encabezado del PDF
-  doc.setFillColor(...primaryColor);
-  doc.rect(0, 0, 210, 40, "F");
+  // URLs de los logos - REEMPLAZA ESTAS URLS CON LAS DE TUS LOGOS
+  const logo1Url = "img/logo ut-Photoroom.png"; // Primer logo
+  const logo2Url = "img/logo-salt.png"; // Segundo logo - cambia por tu segundo logo
 
-  // Logo y título
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20);
-  doc.setFont("helvetica", "bold");
-  doc.text("SALT-UTSV", 105, 15, { align: "center" });
+  // Cargar ambas imágenes antes de generar el PDF
+  Promise.all([
+    new Promise((resolve) => cargarImagenComoBase64(logo1Url, resolve)),
+    new Promise((resolve) => cargarImagenComoBase64(logo2Url, resolve)),
+  ])
+    .then(([logo1Base64, logo2Base64]) => {
+      // Encabezado del PDF con logos
+      doc.setFillColor(...primaryColor);
+      doc.rect(0, 0, 210, 50, "F");
 
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  doc.text("Sistema Avanzado de Laboratorios", 105, 22, {
-    align: "center",
-  });
-  doc.text("Informe de Alumnos", 105, 29, { align: "center" });
+      // Agregar logos al encabezado
+      const logoWidth = 25;
+      const logoHeight = 25;
+      const logoY = 12;
 
-  // Información del reporte
-  doc.setFillColor(...lightGray);
-  doc.rect(10, 45, 190, 25, "F");
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(10);
+      // Logo izquierdo
+      if (logo1Base64) {
+        doc.addImage(logo1Base64, "PNG", 15, logoY, logoWidth, logoHeight);
+      }
 
-  const fechaActual = new Date().toLocaleDateString("es-ES");
-  const labText = laboratorio
-    ? `Laboratorio: ${laboratorio.toUpperCase()}`
-    : "Laboratorio: Todos";
-  const fechaText = fechaFiltro ? `Fecha: ${fechaFiltro}` : "Fecha: Todas";
+      // Logo derecho
+      if (logo2Base64) {
+        doc.addImage(logo2Base64, "PNG", 170, logoY, logoWidth, logoHeight);
+      }
 
-  doc.text(`Generado el: ${fechaActual}`, 15, 55);
-  doc.text(labText, 15, 62);
-  doc.text(fechaText, 105, 55);
-  doc.text(`Total de registros: ${currentAlumnosData.length}`, 105, 62);
+      // Título centrado entre los logos
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("SALT-UTSV", 105, 20, { align: "center" });
 
-  // Preparar datos para la tabla
-  const tableData = currentAlumnosData.map((alumno) => [
-    alumno.matricula || "N/A",
-    extraerSoloNombre(alumno.nombre),
-    alumno.carrera || "N/A",
-    alumno.tipo_equipo || "N/A",
-    alumno.numero_equipo || "N/A",
-    alumno.maestro || "Sin asignar",
-    convertirFechaLocal(alumno.fecha),
-  ]);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text("Sistema Avanzado de Laboratorios", 105, 27, {
+        align: "center",
+      });
+      doc.text("Informe de Alumnos", 105, 34, { align: "center" });
 
-  // Configurar y generar la tabla CENTRADA
-  doc.autoTable({
-    startY: 75,
-    head: [
-      ["Matrícula", "Nombre", "Carrera", "Tipo", "Número", "Maestro", "Fecha"],
-    ],
-    body: tableData,
-    theme: "grid",
-    styles: {
-      fontSize: 8,
-      cellPadding: 3,
-      lineColor: [0, 0, 0],
-      lineWidth: 0.1,
-      halign: "center", // Centrar el contenido de las celdas
-    },
-    headStyles: {
-      fillColor: primaryColor,
-      textColor: 255,
-      fontStyle: "bold",
-      halign: "center", // Centrar los encabezados
-    },
-    bodyStyles: {
-      halign: "center", // Centrar el contenido del cuerpo
-    },
-    alternateRowStyles: {
-      fillColor: lightGray,
-    },
-    margin: {
-      top: 75,
-      left: 10, // Margen izquierdo reducido para centrar mejor
-      right: 10, // Margen derecho reducido para centrar mejor
-    },
-    tableWidth: "auto", // Cambiado a 'auto' para mejor centrado
-    columnStyles: {
-      0: { cellWidth: "auto" }, // Matrícula
-      1: { cellWidth: "auto" }, // Nombre
-      2: { cellWidth: "auto" }, // Carrera
-      3: { cellWidth: "auto" }, // Tipo
-      4: { cellWidth: "auto" }, // Número
-      5: { cellWidth: "auto" }, // Maestro
-      6: { cellWidth: "auto" }, // Fecha
-    },
-  });
+      // Información del reporte
+      doc.setFillColor(...lightGray);
+      doc.rect(10, 55, 190, 20, "F");
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
 
-  // Pie de página
-  const pageCount = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(8);
-    doc.setTextColor(100);
-    doc.text(`Página ${i} de ${pageCount} - SALT-UTSV`, 105, 285, {
-      align: "center",
+      const fechaActual = new Date().toLocaleDateString("es-ES");
+      const labText = laboratorio
+        ? `Laboratorio: ${laboratorio.toUpperCase()}`
+        : "Laboratorio: Todos";
+      const fechaText = fechaFiltro ? `Fecha: ${fechaFiltro}` : "Fecha: Todas";
+
+      doc.text(`Generado el: ${fechaActual}`, 15, 64);
+      doc.text(labText, 15, 70);
+      doc.text(fechaText, 105, 64);
+      doc.text(`Total de registros: ${currentAlumnosData.length}`, 105, 70);
+
+      // Preparar datos para la tabla
+      const tableData = currentAlumnosData.map((alumno) => [
+        alumno.matricula || "N/A",
+        extraerSoloNombre(alumno.nombre),
+        alumno.carrera || "N/A",
+        alumno.tipo_equipo || "N/A",
+        alumno.numero_equipo || "N/A",
+        alumno.maestro || "Sin asignar",
+        convertirFechaLocal(alumno.fecha),
+      ]);
+
+      // Configurar y generar la tabla CENTRADA
+      doc.autoTable({
+        startY: 80,
+        head: [
+          [
+            "Matrícula",
+            "Nombre",
+            "Carrera",
+            "Tipo",
+            "Número",
+            "Maestro",
+            "Fecha",
+          ],
+        ],
+        body: tableData,
+        theme: "grid",
+        styles: {
+          fontSize: 7,
+          cellPadding: 2,
+          lineColor: [0, 0, 0],
+          lineWidth: 0.1,
+          halign: "center",
+        },
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: 255,
+          fontStyle: "bold",
+          halign: "center",
+        },
+        bodyStyles: {
+          halign: "center",
+        },
+        alternateRowStyles: {
+          fillColor: lightGray,
+        },
+        margin: {
+          top: 80,
+          left: 10,
+          right: 10,
+        },
+        tableWidth: "auto",
+        columnStyles: {
+          0: { cellWidth: "auto" },
+          1: { cellWidth: "auto" },
+          2: { cellWidth: "auto" },
+          3: { cellWidth: "auto" },
+          4: { cellWidth: "auto" },
+          5: { cellWidth: "auto" },
+          6: { cellWidth: "auto" },
+        },
+      });
+
+      // Pie de página
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(100);
+        doc.text(`Página ${i} de ${pageCount} - SALT-UTSV`, 105, 285, {
+          align: "center",
+        });
+      }
+
+      // Guardar el PDF
+      const fileName = `informe_alumnos_${laboratorio || "todos"}_${
+        fechaFiltro || "todas"
+      }_${new Date().getTime()}.pdf`;
+      doc.save(fileName);
+    })
+    .catch((error) => {
+      console.error("Error al cargar las imágenes:", error);
+      alert("Error al cargar los logos. Generando PDF sin logos...");
+      // Aquí podrías llamar a una versión alternativa sin logos
     });
-  }
-
-  // Guardar el PDF
-  const fileName = `informe_alumnos_${laboratorio || "todos"}_${
-    fechaFiltro || "todas"
-  }_${new Date().getTime()}.pdf`;
-  doc.save(fileName);
 }
 
 // Función para probar la conexión
