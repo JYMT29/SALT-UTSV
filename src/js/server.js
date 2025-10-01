@@ -1069,6 +1069,7 @@ app.get("/api/horario-actual", async (req, res) => {
 // -------------------- ENDPOINT PARA REGISTRAR ASIGNACIÓN CON VALIDACIÓN DE DUPLICADOS --------------------
 
 // Ruta para registrar asignación - MEJORADA PARA EVITAR DUPLICADOS
+// Ruta para registrar asignación - CORREGIDA SIN COLUMNA MATERIA
 app.post("/api/registrar-asignacion", async (req, res) => {
   try {
     const {
@@ -1180,11 +1181,11 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     try {
       await connection.beginTransaction();
 
-      // Insertar alumno con fecha de CDMX
+      // Insertar alumno con fecha de CDMX - SIN COLUMNA MATERIA
       const [alumnoResult] = await connection.query(
         `INSERT INTO alumnos 
-          (matricula, nombre, carrera, maestro, tipo_equipo, numero_equipo, fecha, laboratorio, materia)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (matricula, nombre, carrera, maestro, tipo_equipo, numero_equipo, fecha, laboratorio)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           matricula,
           nombre,
@@ -1194,7 +1195,6 @@ app.post("/api/registrar-asignacion", async (req, res) => {
           numero_equipo,
           fechaCDMX,
           laboratorio,
-          materia,
         ]
       );
 
@@ -1217,6 +1217,7 @@ app.post("/api/registrar-asignacion", async (req, res) => {
       });
     } catch (transactionError) {
       await connection.rollback();
+      console.error("Error en transacción de registro:", transactionError);
       throw transactionError;
     } finally {
       connection.release();
