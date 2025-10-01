@@ -1240,21 +1240,8 @@ async function registrarAsignacion(datos) {
     throw new Error("El lugar seleccionado no es válido");
   }
 
-  // Primero verificar si ya está registrado
-  try {
-    const verificacionResponse = await fetch(
-      `https://salt-utsv-production.up.railway.app/api/verificar-registro/${datos.matricula}?lab=${datos.laboratorio}`
-    );
-
-    const verificacion = await verificacionResponse.json();
-
-    if (verificacion.ya_registrado) {
-      throw new Error(verificacion.mensaje);
-    }
-  } catch (error) {
-    // Si hay error en la verificación, continuar pero mostrar advertencia
-    console.warn("No se pudo verificar registro previo:", error);
-  }
+  const fecha = new Date();
+  const fechaFormateada = fecha.toISOString().slice(0, 19).replace("T", " ");
 
   const payload = {
     matricula: datos.matricula.trim(),
@@ -1262,8 +1249,9 @@ async function registrarAsignacion(datos) {
     carrera: datos.carrera?.trim() || "",
     tipo_equipo: tipo_equipo,
     numero_equipo: numero_equipo,
-    laboratorio: datos.laboratorio,
     maestro: datos.maestro?.trim() || "No especificado",
+    laboratorio: datos.laboratorio,
+    fecha: fechaFormateada,
   };
 
   const response = await fetch(
@@ -1277,20 +1265,14 @@ async function registrarAsignacion(datos) {
     }
   );
 
-  const responseData = await response.json();
-
   if (!response.ok) {
-    // Manejar específicamente el error de duplicado
-    if (response.status === 409) {
-      throw new Error(
-        responseData.error || "Ya estás registrado en esta clase"
-      );
-    }
-    throw new Error(responseData.error || "Error en el registro");
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Error en el registro");
   }
 
-  return responseData;
+  return await response.json();
 }
+
 // Manejo del lector QR físico
 document.addEventListener("DOMContentLoaded", () => {
   const inputQR = document.getElementById("qr-reader-input");
