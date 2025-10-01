@@ -934,65 +934,151 @@ app.delete("/horarios/:id", (req, res) => {
   });
 });
 
-// Liberación automática de lugares - MODIFICADA
-setInterval(async () => {
+// Liberación automática de lugares
+// setInterval(async () => {
+//   try {
+//     const ahora = new Date();
+//     const horaActual = `${String(ahora.getHours()).padStart(2, "0")}:${String(
+//       ahora.getMinutes()
+//     ).padStart(2, "0")}`;
+
+//     const [horarios] = await pool
+//       .promise()
+//       .query(`SELECT laboratorio, hora FROM horarios`);
+
+//     const horariosTerminados = horarios.filter((horario) => {
+//       const horaFin = horario.hora.split("-")[1].trim();
+//       return horaFin <= horaActual;
+//     });
+
+//     for (const { laboratorio } of horariosTerminados) {
+//       try {
+//         await fetch(`http://localhost:${port}/api/liberar-lugares`, {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ lab: laboratorio }),
+//         });
+//       } catch (error) {
+//         console.error(`Error al liberar lugares para ${laboratorio}:`, error);
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error en el script de liberación automática:", error);
+//   }
+// }, 60000); // Ejecutar cada minuto
+
+app.post("/api/registrar-asignacion", async (req, res) => {
   try {
-    const horaActualCDMX = formatearHoraCDMX();
-    const ahoraCDMX = obtenerHoraCDMX();
+    const {
+      matricula,
+      nombre,
+      carrera,
+      PC,
+      tipo_equipo,
+      numero_equipo,
+      laboratorio,
+      fecha,
+    } = req.body;
 
-    const diaSemana = [
-      "Domingo",
-      "Lunes",
-      "Martes",
-      "Miércoles",
-      "Jueves",
-      "Viernes",
-      "Sábado",
-    ][ahoraCDMX.getDay()];
+    // Validación básica de campos
+    if (
+      !matricula ||
+      !nombre ||
+      (!PC && (!tipo_equipo || !numero_equipo)) ||
+      !laboratorio ||
+      !fecha
+    ) {
+      return res.status(400).json({ error: "Faltan campos requeridos" });
+    }
 
-    // Obtener solo los horarios del día actual
-    const [horarios] = await pool
+    // Obtener tipo y número de equipo desde lugar (PC-13 → PC y 13)
+    const tipo = tipo_equipo || (PC ? PC.split("-")[0] : null);
+    const numero = numero_equipo || (PC ? PC.split("-")[1] : null);
+
+    if (!tipo || !numero) {
+      return res.status(400).json({
+        error: "No se pudo determinar tipo o número de equipo",
+      });
+    }
+
+    // Verificar si el equipo existe
+    const [equipoResult] = await pool
       .promise()
-      .query(`SELECT laboratorio, hora, materia FROM horarios WHERE dia = ?`, [
-        diaSemana,
-      ]);
+      .query(
+        "SELECT id FROM equipos WHERE laboratorio = ? AND tipo = ? AND numero = ?",
+        [laboratorio, tipo, numero]
+      );
 
-    const horariosTerminados = horarios.filter((horario) => {
-      const horaFin = horario.hora.split("-")[1].trim();
-      // Solo liberar cuando la hora actual sea EXACTAMENTE la hora de fin
-      return horaFin === horaActualCDMX;
-    });
+    if (equipoResult.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "El equipo especificado no existe" });
+    }
 
-    console.log(
-      `[${horaActualCDMX}] Verificando clases terminadas: ${horariosTerminados.length} encontradas`
+    const equipoId = equipoResult[0].id;
+
+    // Obtener horario actual y maestro
+    const { horario } = await verificarHorario(laboratorio);
+    if (!horario || !horario.hora || !horario.maestro) {
+      return res
+        .status(400)
+        .json({ error: "No se pudo determinar la clase actual" });
+    }
+
+    const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
+    const maestro = horario.maestro;
+
+    // Verificar si ya está registrado en esta clase
+    const [yaRegistrado] = await pool.promise().query(
+      `SELECT id FROM alumnos
+       WHERE matricula = ?
+         AND laboratorio = ?
+         AND maestro = ?
+         AND TIME(fecha) BETWEEN ? AND ?
+         AND DATE(fecha) = ?`,
+      [
+        matricula,
+        laboratorio,
+        maestro,
+        horaInicio,
+        horaFin,
+        fecha.split(" ")[0],
+      ]
     );
 
-    for (const { laboratorio, hora, materia } of horariosTerminados) {
-      try {
-        console.log(
-          `🕒 Liberando lugares: ${laboratorio} - ${materia} (${hora})`
-        );
-
-        await fetch(`http://localhost:${port}/api/liberar-lugares`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ lab: laboratorio }),
-        });
-
-        console.log(`✅ Lugares liberados para ${laboratorio}`);
-      } catch (error) {
-        console.error(
-          `❌ Error al liberar lugares para ${laboratorio}:`,
-          error
-        );
-      }
+    if (yaRegistrado.length > 0) {
+      return res.status(409).json({
+        error: "Ya estás registrado en esta clase",
+      });
     }
+
+    // Insertar alumno
+    await pool.promise().query(
+      `INSERT INTO alumnos 
+        (matricula, nombre, carrera, maestro, tipo_equipo, numero_equipo, fecha, laboratorio)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [matricula, nombre, carrera, maestro, tipo, numero, fecha, laboratorio]
+    );
+
+    // Marcar equipo como ocupado
+    await pool
+      .promise()
+      .query(`UPDATE equipos SET estado = 'occupied' WHERE id = ?`, [equipoId]);
+
+    res.json({
+      success: true,
+      message: "Asignación registrada con éxito",
+    });
   } catch (error) {
-    console.error("Error en el script de liberación automática:", error);
+    console.error("Error al registrar asignación:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      detalles: error.message,
+    });
   }
-}, 60000); // Ejecutar cada minuto
+});
 
 // Ruta para verificar si hay un horario activo actualmente en un laboratorio
 app.get("/api/horario-actual", async (req, res) => {
