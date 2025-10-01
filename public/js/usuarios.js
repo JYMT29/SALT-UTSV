@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function registerUser() {
-  const matricula = document.getElementById("matricula").value;
-  const nombre = document.getElementById("nombre").value;
+  const matricula = document.getElementById("matricula").value.trim();
+  const nombre = document.getElementById("nombre").value.trim();
   const contrasena = document.getElementById("contrasena").value;
   const rol = document.getElementById("rol").value;
 
@@ -25,8 +25,16 @@ function registerUser() {
     return;
   }
 
+  // Validar que la matrícula no esté duplicada (si se proporcionó)
+  if (matricula) {
+    if (isMatriculaDuplicate(matricula)) {
+      showAlert("La matrícula ya está registrada en el sistema", "danger");
+      return;
+    }
+  }
+
   const userData = {
-    matricula: matricula,
+    matricula: matricula || null,
     nombre: nombre,
     contrasena: contrasena,
     rol: rol,
@@ -124,6 +132,46 @@ function registerUser() {
       submitBtn.innerHTML = originalText;
       submitBtn.disabled = false;
     });
+}
+
+function isMatriculaDuplicate(matricula) {
+  // Verificar si la matrícula ya existe en los usuarios actuales
+  if (demoMode) {
+    // En modo demo, verificar en el array local
+    return users.some(
+      (user) =>
+        user.matricula &&
+        user.matricula.toString().toLowerCase() === matricula.toLowerCase()
+    );
+  } else {
+    // En modo normal, verificar en la lista renderizada
+    const currentUsers = getCurrentUsersFromTable();
+    return currentUsers.some(
+      (user) =>
+        user.matricula &&
+        user.matricula.toString().toLowerCase() === matricula.toLowerCase()
+    );
+  }
+}
+
+function getCurrentUsersFromTable() {
+  // Obtener usuarios actuales de la tabla (para validación en tiempo real)
+  const tableRows = document.querySelectorAll("#usersTableBody tr");
+  const currentUsers = [];
+
+  tableRows.forEach((row) => {
+    const cells = row.querySelectorAll("td");
+    if (cells.length >= 4) {
+      currentUsers.push({
+        idusuario: parseInt(cells[0].textContent),
+        matricula: cells[1].textContent !== "N/A" ? cells[1].textContent : null,
+        nombre: cells[2].textContent,
+        rol: cells[3].querySelector(".badge").textContent.toLowerCase(),
+      });
+    }
+  });
+
+  return currentUsers;
 }
 
 function loadUsers() {
@@ -233,14 +281,17 @@ function renderUsers(userList) {
 }
 
 function deleteUser(userId) {
-  if (!confirm("¿Está seguro de que desea eliminar este usuario?"))
-    if (demoMode) {
-      // Si estamos en modo demo
-      users = users.filter((user) => user.idusuario !== userId);
-      renderUsers(users);
-      showAlert("Usuario eliminado correctamente (modo demo)", "success");
-      return;
-    }
+  if (!confirm("¿Está seguro de que desea eliminar este usuario?")) {
+    return;
+  }
+
+  if (demoMode) {
+    // Si estamos en modo demo
+    users = users.filter((user) => user.idusuario !== userId);
+    renderUsers(users);
+    showAlert("Usuario eliminado correctamente (modo demo)", "success");
+    return;
+  }
 
   // Conexión real a la API LOCAL
   fetch(`https://salt-utsv-production.up.railway.app/api/usuarios/${userId}`, {
@@ -313,3 +364,17 @@ function showAlert(message, type) {
     alertDiv.style.display = "none";
   }, 5000);
 }
+
+// Validación en tiempo real de matrícula duplicada
+document.addEventListener("DOMContentLoaded", function () {
+  const matriculaInput = document.getElementById("matricula");
+  if (matriculaInput) {
+    matriculaInput.addEventListener("blur", function () {
+      const matricula = this.value.trim();
+      if (matricula && isMatriculaDuplicate(matricula)) {
+        showAlert("Esta matrícula ya está registrada en el sistema", "danger");
+        this.focus();
+      }
+    });
+  }
+});
