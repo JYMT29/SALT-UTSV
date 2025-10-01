@@ -58,12 +58,59 @@
             rgba(212, 175, 55, 0.03) 0%,
             transparent 20%
           );
-        padding: 20px;
       }
 
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
+      /* Header con diseño corporativo */
+      .header-container {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        box-shadow: var(--shadow-3d);
+        border-bottom: 4px solid var(--secondary-color);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><polygon points="50,0 100,50 50,100 0,50" fill="white"/></svg>');
+        background-size: 80px;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        background: white;
+        padding: 5px;
+      }
+
+      .logo-container h1 {
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 0.25rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .logo-container p {
+        font-size: 1.1rem;
+        opacity: 0.9;
       }
 
       /* Botón de regreso */
@@ -102,123 +149,74 @@
         font-size: 1.1em;
       }
 
-      /* Header con diseño corporativo */
-      .header-container {
+      /* Contenedor de tarjetas */
+      .card-container {
+        border-radius: 12px;
+        box-shadow: var(--shadow-3d);
+        border: 1px solid var(--medium-gray);
+        overflow: hidden;
+        transition: var(--transition);
+        background-color: var(--white);
+        margin-bottom: 2rem;
+      }
+
+      .card-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-header {
         background: linear-gradient(
           135deg,
           var(--primary-color) 0%,
           var(--primary-light) 100%
         );
-        box-shadow: var(--shadow-3d);
-        border-bottom: 4px solid var(--secondary-color);
-        position: relative;
-        overflow: hidden;
         color: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
-        text-align: center;
+        padding: 18px 25px;
+        border-bottom: none;
+        position: relative;
       }
 
-      .header-container::before {
+      .card-header::before {
         content: "";
         position: absolute;
-        top: 0;
+        bottom: 0;
         left: 0;
         width: 100%;
-        height: 100%;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><polygon points="50,0 100,50 50,100 0,50" fill="white"/></svg>');
-        background-size: 80px;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--secondary-color),
+          rgba(212, 175, 55, 0.5)
+        );
       }
 
-      .logo-container {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        justify-content: center;
-      }
-
-      .logo-img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        background: white;
-        padding: 5px;
-      }
-
-      .logo-container h1 {
+      .card-header h4 {
         font-weight: 700;
-        font-size: 2.2rem;
-        margin-bottom: 0.25rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        font-size: 1.3rem;
       }
 
-      .logo-container p {
-        font-size: 1.1rem;
-        opacity: 0.9;
+      .card-body {
+        padding: 25px;
       }
 
-      /* Controles */
-      .controls {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: var(--shadow);
-        margin-bottom: 20px;
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        flex-wrap: wrap;
-        border: 1px solid var(--medium-gray);
-      }
-
-      .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-
-      .filter-group label {
-        font-weight: 600;
-        color: var(--primary-color);
-        font-size: 0.9rem;
-      }
-
-      .filter-group select {
-        padding: 8px 12px;
-        border: 1px solid var(--medium-gray);
-        border-radius: 8px;
-        font-size: 1rem;
-        min-width: 150px;
-        transition: var(--transition);
-      }
-
-      .filter-group select:focus {
-        border-color: var(--primary-light);
-        box-shadow: 0 0 0 0.25rem rgba(26, 60, 110, 0.15);
-      }
-
-      /* Botones */
-      .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: var(--transition);
+      /* Botones con estilo corporativo */
+      .btn-success-custom {
         background: linear-gradient(
           135deg,
           var(--primary-color) 0%,
           var(--primary-light) 100%
         );
+        border: none;
         color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
         box-shadow: 0 4px 15px rgba(26, 60, 110, 0.3);
       }
 
-      .btn:hover {
+      .btn-success-custom:hover {
         transform: translateY(-3px);
         box-shadow: 0 6px 20px rgba(26, 60, 110, 0.4);
         background: linear-gradient(
@@ -229,66 +227,134 @@
         color: white;
       }
 
-      /* Estadísticas */
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-bottom: 20px;
+      .btn-primary-custom {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color) 0%,
+          #e6c64c 100%
+        );
+        border: none;
+        color: #1a3c6e;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
       }
 
-      .stat-card {
-        background-color: white;
-        padding: 20px;
+      .btn-primary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        background: linear-gradient(
+          135deg,
+          #e6c64c 0%,
+          var(--secondary-color) 100%
+        );
+        color: #1a3c6e;
+      }
+
+      /* Controles de filtro */
+      .controls-container {
+        background: white;
         border-radius: 12px;
+        padding: 20px;
         box-shadow: var(--shadow);
-        text-align: center;
-        border-top: 4px solid var(--primary-color);
+        margin-bottom: 20px;
+        border: 1px solid var(--medium-gray);
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .filter-group label {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0;
+      }
+
+      .form-control,
+      .form-select {
+        border-radius: 8px;
+        border: 1px solid var(--medium-gray);
         transition: var(--transition);
       }
 
-      .stat-card:hover {
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 0.25rem rgba(26, 60, 110, 0.15);
+      }
+
+      /* Tarjetas de estadísticas */
+      .stats-card {
+        text-align: center;
+        padding: 25px 20px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+        transition: var(--transition);
+        border-top: 4px solid var(--primary-color);
+      }
+
+      .stats-card:hover {
         transform: translateY(-5px);
         box-shadow: var(--shadow-3d);
       }
 
-      .stat-value {
-        font-size: 2rem;
-        font-weight: bold;
-        color: var(--primary-color);
-        margin-bottom: 5px;
+      .stats-card i {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
-      .stat-label {
-        font-size: 0.9rem;
+      .stats-card h3 {
+        font-size: 2rem;
+        margin: 0;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .stats-card p {
+        margin: 0;
         color: var(--dark-gray);
         font-weight: 500;
       }
 
-      /* Lista de estudiantes */
-      .students-list {
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: var(--shadow-3d);
+      /* Tabla con estilo corporativo */
+      .table-custom {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border-radius: 10px;
         overflow: hidden;
-        border: 1px solid var(--medium-gray);
+        box-shadow: 0 0 0 1px var(--medium-gray);
       }
 
-      .list-header {
-        display: grid;
-        grid-template-columns: 2fr 2fr 1fr;
+      .table-custom thead th {
         background: linear-gradient(
           135deg,
           var(--primary-color) 0%,
           var(--primary-light) 100%
         );
         color: white;
-        padding: 15px 20px;
-        font-weight: 600;
+        font-weight: 700;
+        padding: 15px 12px;
+        border: none;
+        text-align: center;
         position: relative;
       }
 
-      .list-header::after {
+      .table-custom thead th::after {
         content: "";
         position: absolute;
         bottom: 0;
@@ -302,23 +368,46 @@
         );
       }
 
-      .student-row {
-        display: grid;
-        grid-template-columns: 2fr 2fr 1fr;
-        padding: 12px 20px;
-        border-bottom: 1px solid var(--medium-gray);
-        align-items: center;
+      .table-custom tbody tr {
         transition: var(--transition);
       }
 
-      .student-row:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-
-      .student-row:hover {
+      .table-custom tbody tr:hover {
         background-color: rgba(26, 60, 110, 0.05);
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-custom tbody td {
+        padding: 12px;
+        border-bottom: 1px solid var(--medium-gray);
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      .table-custom tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .table-container {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
       }
 
       /* Estados */
@@ -329,48 +418,85 @@
         font-size: 1.1rem;
       }
 
-      .error {
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 10px 0;
+      .empty-state {
         text-align: center;
-        border-left: 5px solid #dc3545;
+        padding: 40px 20px;
+        color: var(--dark-gray);
       }
 
-      .success {
+      .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      /* Alertas */
+      .alert {
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        border-left: 5px solid;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .alert-success {
         background-color: #d4edda;
         color: #155724;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 10px 0;
-        text-align: center;
-        border-left: 5px solid #28a745;
+        border-left-color: #28a745;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left-color: #dc3545;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border-left-color: #ffc107;
+      }
+
+      /* Footer de la tarjeta */
+      .card-footer {
+        background-color: rgba(26, 60, 110, 0.05);
+        border-top: 1px solid var(--medium-gray);
+        padding: 15px 25px;
+      }
+
+      /* Badges para laboratorios */
+      .badge-lab1 {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .badge-lab2 {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
       }
 
       /* Responsive */
       @media (max-width: 768px) {
-        .controls {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .stats {
-          grid-template-columns: 1fr;
-        }
-
-        .list-header,
-        .student-row {
-          grid-template-columns: 1fr;
-          text-align: center;
-        }
-
-        .list-header div:nth-child(2),
-        .student-row div:nth-child(2) {
-          display: none;
-        }
-
         .logo-container {
           flex-direction: column;
           text-align: center;
@@ -380,81 +506,166 @@
         .logo-container h1 {
           font-size: 1.8rem;
         }
+
+        .card-body {
+          padding: 15px;
+        }
+
+        .table-responsive {
+          font-size: 0.9rem;
+        }
+
+        .btn-success-custom,
+        .btn-primary-custom {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .stats-card {
+          margin-bottom: 15px;
+        }
+
+        .controls-container {
+          padding: 15px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <!-- Botón de regreso al inicio -->
-      <a href="inicio.html" class="btn-back">
-        <i class="bi bi-arrow-left"></i> Regresar al Inicio
-      </a>
-
-      <!-- Header con diseño corporativo -->
-      <div class="header-container">
+    <!-- Header con diseño corporativo -->
+    <header class="header-container text-white py-4 mb-5">
+      <div class="container">
         <div class="logo-container">
           <img src="img/saltLogo.png" alt="Logo SALT-UTSV" class="logo-img" />
           <div>
-            <h1>Lista de Alumnos Registrados</h1>
-            <p>Datos obtenidos de la tabla Alumnos</p>
+            <h1 class="mb-1">SALT-UTSV</h1>
+            <p class="mb-0 text-light">
+              Sistema Avanzado de Laboratorios - Lista de Alumnos
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container mb-4">
+      <!-- Botón de regreso -->
+      <a href="inicio.html" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Regresar al Inicio
+      </a>
+    </div>
+
+    <div class="container mb-5">
+      <!-- Controles de filtro -->
+      <div class="controls-container">
+        <div class="row align-items-end">
+          <div class="col-md-4 mb-3">
+            <div class="filter-group">
+              <label for="laboratorio-filter">
+                <i class="bi bi-building me-1"></i>Filtrar por Laboratorio:
+              </label>
+              <select class="form-select" id="laboratorio-filter">
+                <option value="all">Todos los laboratorios</option>
+                <option value="lab1">Laboratorio 1</option>
+                <option value="lab2">Laboratorio 2</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="filter-group">
+              <label for="carrera-filter">
+                <i class="bi bi-book me-1"></i>Filtrar por Carrera:
+              </label>
+              <select class="form-select" id="carrera-filter">
+                <option value="all">Todas las carreras</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <button class="btn btn-success-custom w-100" id="refresh-btn">
+              <i class="bi bi-arrow-clockwise me-2"></i>Actualizar Lista
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Controles originales -->
-      <div class="controls">
-        <div class="filter-group">
-          <label for="laboratorio-filter">Filtrar por Laboratorio:</label>
-          <select id="laboratorio-filter">
-            <option value="all">Todos los laboratorios</option>
-            <option value="lab1">Laboratorio 1</option>
-            <option value="lab2">Laboratorio 2</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="carrera-filter">Filtrar por Carrera:</label>
-          <select id="carrera-filter">
-            <option value="all">Todas las carreras</option>
-          </select>
-        </div>
-
-        <button class="btn" id="refresh-btn">Actualizar Lista</button>
-      </div>
-
-      <!-- Contenedor de mensajes -->
+      <!-- Alertas -->
       <div id="message-container"></div>
 
-      <!-- Estadísticas originales -->
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-value" id="total-alumnos">0</div>
-          <div class="stat-label">Total de Alumnos</div>
+      <!-- Tarjetas de estadísticas -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="stats-card">
+            <i class="bi bi-people-fill"></i>
+            <h3 id="total-alumnos">0</h3>
+            <p>Total de Alumnos</p>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="total-lab1">0</div>
-          <div class="stat-label">Laboratorio 1</div>
+        <div class="col-md-4">
+          <div class="stats-card">
+            <i class="bi bi-cpu-fill"></i>
+            <h3 id="total-lab1">0</h3>
+            <p>Laboratorio 1</p>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="total-lab2">0</div>
-          <div class="stat-label">Laboratorio 2</div>
+        <div class="col-md-4">
+          <div class="stats-card">
+            <i class="bi bi-motherboard-fill"></i>
+            <h3 id="total-lab2">0</h3>
+            <p>Laboratorio 2</p>
+          </div>
         </div>
       </div>
 
-      <!-- Lista de estudiantes original -->
-      <div class="students-list">
-        <div class="list-header">
-          <div>Nombre del Alumno</div>
-          <div>Carrera</div>
-          <div>Laboratorio</div>
+      <!-- Lista de alumnos -->
+      <div class="card card-container">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="bi bi-list-ul me-2"></i>Alumnos Registrados
+          </h4>
         </div>
-
-        <div id="alumnos-container">
-          <div class="loading">Cargando lista de alumnos...</div>
+        <div class="card-body p-0">
+          <div class="table-container">
+            <table class="table table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Nombre del Alumno</th>
+                  <th>Carrera</th>
+                  <th>Laboratorio</th>
+                </tr>
+              </thead>
+              <tbody id="alumnos-container">
+                <tr>
+                  <td colspan="3" class="text-center py-4">
+                    <div class="empty-state">
+                      <i class="bi bi-people"></i>
+                      <p>Cargando lista de alumnos...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+          <div class="row">
+            <div class="col-md-6">
+              <small class="text-muted"
+                >Total de alumnos: <span id="total-registros">0</span></small
+              >
+            </div>
+            <div class="col-md-6 text-end">
+              <small class="text-muted"
+                >Actualizado el: <span id="fecha-actualizacion"></span
+              ></small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script personalizado -->
     <script src="js/pase-lista.js"></script>
   </body>
 </html>
