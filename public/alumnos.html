@@ -687,6 +687,209 @@
         margin-bottom: 20px;
       }
 
+      /* Estilos para el modal de filtro - Diseño acorde a la página */
+      .filter-option {
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        border-radius: 12px;
+        background: white;
+        margin-bottom: 15px;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+
+      .filter-option:hover {
+        border-left-color: var(--primary-color);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-3d);
+      }
+
+      .filter-option.active {
+        border-left-color: var(--secondary-color);
+        background: linear-gradient(135deg, #fef9e7 0%, #fff3cd 100%);
+      }
+
+      .filter-options-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .filter-options-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .filter-options-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+      }
+
+      .filter-options-container::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-light);
+      }
+
+      /* Mejoras para el botón de filtro */
+      #filter-group-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      #filter-group-btn.filter-active {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        box-shadow: 0 4px 15px rgba(26, 60, 110, 0.4);
+      }
+
+      #filter-group-btn.filter-active::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        background: var(--secondary-color);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(0.8);
+          opacity: 1;
+        }
+      }
+
+      /* Estilos específicos para el modal de filtro */
+      .modal-filter .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--shadow-3d);
+      }
+
+      .modal-filter .modal-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px 25px;
+        border-bottom: 3px solid var(--secondary-color);
+      }
+
+      .modal-filter .modal-header .modal-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+      }
+
+      .modal-filter .modal-body {
+        padding: 25px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      }
+
+      .modal-filter .modal-footer {
+        background: white;
+        border-radius: 0 0 15px 15px;
+        padding: 20px 25px;
+        border-top: 1px solid var(--medium-gray);
+      }
+
+      /* Estilos para las tarjetas de opciones de filtro */
+      .filter-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+      }
+
+      .filter-card:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-3d);
+      }
+
+      .filter-card.active {
+        border-color: var(--secondary-color);
+        background: linear-gradient(135deg, #fef9e7 0%, #fff3cd 100%);
+      }
+
+      .filter-card-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--primary-light) 100%
+        );
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      .filter-card-content {
+        flex: 1;
+      }
+
+      .filter-card-title {
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+      }
+
+      .filter-card-description {
+        color: var(--dark-gray);
+        font-size: 0.9rem;
+        margin-bottom: 0;
+      }
+
+      .filter-card-arrow {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+      }
+
+      .filter-card:hover .filter-card-arrow {
+        transform: translateX(5px);
+      }
+
+      /* Badge para contar estudiantes */
+      .student-count-badge {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color) 0%,
+          #e6c64c 100%
+        );
+        color: var(--primary-color);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-left: 10px;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .logo-container {
@@ -738,6 +941,16 @@
 
         .button-group {
           flex-direction: column;
+        }
+
+        .filter-card {
+          padding: 15px;
+        }
+
+        .filter-card-icon {
+          width: 40px;
+          height: 40px;
+          font-size: 1rem;
         }
       }
     </style>
