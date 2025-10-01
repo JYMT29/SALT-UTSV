@@ -13,10 +13,18 @@ const carreraFilter = document.getElementById("carrera-filter");
 const totalAlumnosEl = document.getElementById("total-alumnos");
 const totalLab1El = document.getElementById("total-lab1");
 const totalLab2El = document.getElementById("total-lab2");
+const totalRegistrosEl = document.getElementById("total-registros");
+const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
 
 // Función para mostrar mensajes
 function showMessage(message, type = "error") {
-  messageContainer.innerHTML = `<div class="${type}">${message}</div>`;
+  const alertClass =
+    type === "success"
+      ? "alert-success"
+      : type === "warning"
+      ? "alert-warning"
+      : "alert-danger";
+  messageContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
   setTimeout(() => {
     messageContainer.innerHTML = "";
   }, 5000);
@@ -25,8 +33,13 @@ function showMessage(message, type = "error") {
 // Función para obtener alumnos desde la API
 async function fetchAlumnos() {
   try {
-    alumnosContainer.innerHTML =
-      '<div class="loading">Cargando lista de alumnos...</div>';
+    alumnosContainer.innerHTML = `
+            <tr>
+              <td colspan="3" class="text-center py-4">
+                <div class="loading">Cargando lista de alumnos...</div>
+              </td>
+            </tr>
+          `;
 
     const response = await fetch(`${API_BASE_URL}/alumnos`);
 
@@ -50,13 +63,29 @@ async function fetchAlumnos() {
     renderAlumnos();
     updateStats();
 
+    // Actualizar fecha
+    const now = new Date();
+    fechaActualizacionEl.textContent = now.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
     showMessage(
       `Datos cargados correctamente: ${alumnos.length} alumnos encontrados`,
       "success"
     );
   } catch (error) {
     console.error("Error al obtener alumnos:", error);
-    alumnosContainer.innerHTML = `<div class="error">Error al cargar los datos: ${error.message}</div>`;
+    alumnosContainer.innerHTML = `
+            <tr>
+              <td colspan="3" class="text-center py-4">
+                <div class="error">Error al cargar los datos: ${error.message}</div>
+              </td>
+            </tr>
+          `;
     showMessage("Error al conectar con el servidor", "error");
   }
 }
@@ -75,7 +104,7 @@ function updateCarreraFilter() {
   });
 }
 
-// Función para renderizar la lista de alumnos
+// Función para renderizar la lista de alumnos CORREGIDA
 function renderAlumnos() {
   const laboratorioSeleccionado = laboratorioFilter.value;
   const carreraSeleccionada = carreraFilter.value;
@@ -93,27 +122,39 @@ function renderAlumnos() {
   // Actualizar estadísticas
   updateStats(alumnosFiltrados);
 
-  // Renderizar lista
+  // Renderizar lista CORREGIDA - usando tabla HTML
   if (alumnosFiltrados.length === 0) {
-    alumnosContainer.innerHTML =
-      '<div class="loading">No hay alumnos que coincidan con los filtros seleccionados</div>';
+    alumnosContainer.innerHTML = `
+            <tr>
+              <td colspan="3" class="text-center py-4">
+                <div class="empty-state">
+                  <i class="bi bi-search"></i>
+                  <p>No hay alumnos que coincidan con los filtros seleccionados</p>
+                </div>
+              </td>
+            </tr>
+          `;
     return;
   }
 
-  alumnosContainer.innerHTML = "";
-
-  alumnosFiltrados.forEach((alumno, index) => {
-    const alumnoRow = document.createElement("div");
-    alumnoRow.className = "student-row";
-
-    alumnoRow.innerHTML = `
-                    <div>${alumno.nombre}</div>
-                    <div>${alumno.carrera}</div>
-                    <div>${alumno.laboratorio.toUpperCase()}</div>
-                `;
-
-    alumnosContainer.appendChild(alumnoRow);
-  });
+  // Usar tabla HTML tradicional en lugar de grid
+  alumnosContainer.innerHTML = alumnosFiltrados
+    .map(
+      (alumno, index) => `
+          <tr>
+            <td>${alumno.nombre}</td>
+            <td>${alumno.carrera}</td>
+            <td>
+              <span class="badge ${
+                alumno.laboratorio === "lab1" ? "badge-lab1" : "badge-lab2"
+              }">
+                ${alumno.laboratorio.toUpperCase()}
+              </span>
+            </td>
+          </tr>
+        `
+    )
+    .join("");
 }
 
 // Función para actualizar estadísticas
@@ -121,6 +162,7 @@ function updateStats(alumnosFiltrados = null) {
   const datos = alumnosFiltrados || alumnos;
 
   totalAlumnosEl.textContent = datos.length;
+  totalRegistrosEl.textContent = datos.length;
 
   const lab1Count = datos.filter((a) => a.laboratorio === "lab1").length;
   const lab2Count = datos.filter((a) => a.laboratorio === "lab2").length;
