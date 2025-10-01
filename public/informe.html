@@ -225,32 +225,6 @@
         color: white;
       }
 
-      .btn-primary-custom {
-        background: linear-gradient(
-          135deg,
-          var(--secondary-color) 0%,
-          #e6c64c 100%
-        );
-        border: none;
-        color: #1a3c6e;
-        padding: 10px 25px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: var(--transition);
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-      }
-
-      .btn-primary-custom:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-        background: linear-gradient(
-          135deg,
-          #e6c64c 0%,
-          var(--secondary-color) 100%
-        );
-        color: #1a3c6e;
-      }
-
       .btn-pdf-custom {
         background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         border: none;
@@ -412,7 +386,6 @@
         }
 
         .btn-success-custom,
-        .btn-primary-custom,
         .btn-pdf-custom {
           width: 100%;
           margin-bottom: 10px;
@@ -478,9 +451,6 @@
           <div class="action-buttons">
             <button id="load-data" class="btn btn-success-custom">
               <i class="bi bi-cloud-arrow-down-fill me-2"></i>Mostrar Datos
-            </button>
-            <button id="print-button" class="btn btn-primary-custom">
-              <i class="bi bi-printer-fill me-2"></i>Imprimir
             </button>
             <button id="pdf-button" class="btn btn-pdf-custom">
               <i class="bi bi-file-earmark-pdf-fill me-2"></i>Exportar PDF

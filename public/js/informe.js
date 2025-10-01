@@ -121,7 +121,6 @@ function extraerSoloNombre(textoCompleto) {
 }
 
 // Función para obtener el maestro y la hora según la fecha del alumno
-// Función para obtener el maestro y la hora actual según el día y la hora de la PC
 function getMaestroYHoraPorFecha() {
   let maestro = "Sin asignar";
   let hora = "Sin hora";
@@ -189,17 +188,12 @@ function convertirFechaLocal(fecha) {
     : fechaLocal.toISOString().replace("T", " ").substring(0, 19);
 }
 
-// Evento para imprimir el informe
-document.getElementById("print-button").addEventListener("click", function () {
-  window.print();
-});
-
 // Evento para generar PDF
 document.getElementById("pdf-button").addEventListener("click", function () {
   generarPDF();
 });
 
-// Función para generar PDF con diseño profesional
+// Función para generar PDF con diseño profesional y tabla centrada
 function generarPDF() {
   if (currentAlumnosData.length === 0) {
     alert("No hay datos para exportar. Por favor, carga los datos primero.");
@@ -227,7 +221,9 @@ function generarPDF() {
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
-  doc.text("Sistema Avanzado de Laboratorios", 105, 22, { align: "center" });
+  doc.text("Sistema Avanzado de Laboratorios", 105, 22, {
+    align: "center",
+  });
   doc.text("Informe de Alumnos", 105, 29, { align: "center" });
 
   // Información del reporte
@@ -258,7 +254,7 @@ function generarPDF() {
     convertirFechaLocal(alumno.fecha),
   ]);
 
-  // Configurar y generar la tabla
+  // Configurar y generar la tabla CENTRADA
   doc.autoTable({
     startY: 75,
     head: [
@@ -271,17 +267,35 @@ function generarPDF() {
       cellPadding: 3,
       lineColor: [0, 0, 0],
       lineWidth: 0.1,
+      halign: "center", // Centrar el contenido de las celdas
     },
     headStyles: {
       fillColor: primaryColor,
       textColor: 255,
       fontStyle: "bold",
+      halign: "center", // Centrar los encabezados
+    },
+    bodyStyles: {
+      halign: "center", // Centrar el contenido del cuerpo
     },
     alternateRowStyles: {
       fillColor: lightGray,
     },
-    margin: { top: 75 },
-    tableWidth: "wrap",
+    margin: {
+      top: 75,
+      left: 10, // Margen izquierdo reducido para centrar mejor
+      right: 10, // Margen derecho reducido para centrar mejor
+    },
+    tableWidth: "auto", // Cambiado a 'auto' para mejor centrado
+    columnStyles: {
+      0: { cellWidth: "auto" }, // Matrícula
+      1: { cellWidth: "auto" }, // Nombre
+      2: { cellWidth: "auto" }, // Carrera
+      3: { cellWidth: "auto" }, // Tipo
+      4: { cellWidth: "auto" }, // Número
+      5: { cellWidth: "auto" }, // Maestro
+      6: { cellWidth: "auto" }, // Fecha
+    },
   });
 
   // Pie de página
@@ -305,7 +319,9 @@ function generarPDF() {
 // Función para probar la conexión
 async function testConnection() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/hello`);
+    const response = await fetch(
+      `https://salt-utsv-production.up.railway.app/api/hello`
+    );
     const data = await response.json();
     console.log("Conexión exitosa:", data);
   } catch (error) {
