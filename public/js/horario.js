@@ -15,28 +15,15 @@ async function exportarHorarioPDF() {
     // Forzar un pequeño delay para asegurar que los elementos estén ocultos
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Capturar la tabla completa con html2canvas - configuración optimizada
+    // Capturar la tabla completa con html2canvas
     const tabla = document.getElementById("horarioTable");
 
     const canvas = await html2canvas(tabla, {
-      scale: 3, // Mayor escala para mejor calidad
+      scale: 2, // Buena calidad
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
       logging: false,
-      width: tabla.scrollWidth,
-      height: tabla.scrollHeight,
-      windowWidth: tabla.scrollWidth,
-      windowHeight: tabla.scrollHeight,
-      onclone: function (clonedDoc) {
-        // Asegurar que la tabla ocupe todo el ancho en el clon
-        const clonedTable = clonedDoc.getElementById("horarioTable");
-        if (clonedTable) {
-          clonedTable.style.width = "100%";
-          clonedTable.style.margin = "0";
-          clonedTable.style.padding = "0";
-        }
-      },
     });
 
     // Crear PDF en orientación horizontal
@@ -51,11 +38,11 @@ async function exportarHorarioPDF() {
     const pdfHeight = doc.internal.pageSize.getHeight();
 
     // Calcular dimensiones para ocupar toda la página
-    const margin = 5; // Márgenes muy pequeños
+    const margin = 5; // Márgenes mínimos
     const availableWidth = pdfWidth - margin * 2;
     const availableHeight = pdfHeight - margin * 2;
 
-    // Calcular ratio de escala para ocupar máximo espacio posible
+    // Calcular ratio de escala
     const widthRatio = availableWidth / canvas.width;
     const heightRatio = availableHeight / canvas.height;
     const ratio = Math.min(widthRatio, heightRatio);
@@ -67,18 +54,6 @@ async function exportarHorarioPDF() {
     // Centrar en la página
     const x = (pdfWidth - imgWidth) / 2;
     const y = (pdfHeight - imgHeight) / 2;
-
-    console.log("Dimensiones PDF:", {
-      pdfWidth,
-      pdfHeight,
-      canvasWidth: canvas.width,
-      canvasHeight: canvas.height,
-      ratio,
-      imgWidth,
-      imgHeight,
-      x,
-      y,
-    });
 
     // Agregar imagen al PDF ocupando toda la página
     doc.addImage(canvas, "PNG", x, y, imgWidth, imgHeight, undefined, "FAST");
@@ -138,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// ... (TODO TU CÓDIGO ORIGINAL SIGUE AQUÍ, SIN MODIFICACIONES)
+// ... (TODO TU CÓDIGO ORIGINAL SIGUE AQUÍ COMPLETO E INALTERADO)
 // Variable global para almacenar el rol del usuario
 let userRole = "user"; // Valor por defecto
 let userId = ""; // Almacenar ID del usuario
