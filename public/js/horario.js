@@ -230,16 +230,17 @@ function initializeHorarioFunctions() {
     "sabado",
   ];
 
-  // Función para transformar el formato al esperado por el backend
+  // Función para transformar el formato al esperado por el backend - CORREGIDA
   const transformarHorarios = (horarios) => {
     return horarios.map((horario) => {
       const [hora_inicio, hora_fin] = horario.hora
         .split("-")
         .map((h) => h.trim());
+
       return {
         hora_inicio: hora_inicio.length === 4 ? `0${hora_inicio}` : hora_inicio,
         hora_fin: hora_fin.length === 4 ? `0${hora_fin}` : hora_fin,
-        materia: horario.materia,
+        materia: horario.materia || "",
         maestro: "", // Siempre vacío ahora
         grupo: horario.grupo || "",
         dia:
@@ -249,7 +250,7 @@ function initializeHorarioFunctions() {
     });
   };
 
-  // 1. Función mejorada para cargar horarios
+  // 1. Función mejorada para cargar horarios - CORREGIDA
   const cargarHorarios = async () => {
     try {
       console.log(`Cargando horarios para ${laboratorio}...`);
@@ -287,21 +288,25 @@ function initializeHorarioFunctions() {
         });
       });
 
-      // Llenar con datos reales
+      // Llenar con datos reales - VERSIÓN MÁS ROBUSTA
       data.horarios.forEach((item) => {
         const hora = item.hora || "";
         const dia = item.dia
           .toLowerCase()
           .replace("miércoles", "miercoles")
           .replace("sábado", "sabado");
-        const materia = item.materia || "";
-        const grupo = item.grupo || "";
+
+        // Usar display_text si existe, si no construir manualmente
+        let contenido = "";
+        if (item.display_text) {
+          contenido = item.display_text;
+        } else if (item.materia && item.grupo) {
+          contenido = `${item.materia} / ${item.grupo}`;
+        } else if (item.materia) {
+          contenido = item.materia;
+        }
 
         if (DIAS_NORMALIZADOS.includes(dia) && horariosPorHora[hora]) {
-          // Formato: materia / grupo
-          let contenido = materia;
-          if (grupo) contenido += ` / ${grupo}`;
-
           horariosPorHora[hora][dia] = contenido;
         }
       });
@@ -391,7 +396,7 @@ function initializeHorarioFunctions() {
     });
   };
 
-  // 3. Función para guardar horarios (solo para admin) - ACTUALIZADA PARA FORMATO materia/grupo
+  // 3. Función para guardar horarios (solo para admin) - CORREGIDA
   const guardarHorario = async () => {
     if (userRole === "user") {
       alert("No tienes permisos para guardar horarios");
@@ -454,7 +459,11 @@ function initializeHorarioFunctions() {
       );
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error("Error del servidor:", errorText);
+        throw new Error(
+          `Error ${response.status}: ${response.statusText} - ${errorText}`
+        );
       }
 
       const result = await response.json();
