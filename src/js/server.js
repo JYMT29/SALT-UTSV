@@ -290,7 +290,9 @@ function agregarHoras(hora, horas) {
   return `${String(newHH).padStart(2, "0")}:${String(newMM).padStart(2, "0")}`;
 }
 
-// Función para verificar horarios activos - ACTUALIZADA CON FORMATO materia/grupo
+// Función para verificar horarios activos
+// Función para verificar horarios activos - ACTUALIZADA CON GRUPO
+// Función para verificar horarios activos - ACTUALIZADA CON HORA CDMX
 async function verificarHorario(lab) {
   const horaActualCDMX = formatearHoraCDMX();
   const ahoraCDMX = obtenerHoraCDMX();
@@ -427,7 +429,9 @@ app.post("/verificar-alumno", (req, res) => {
   }
 });
 
-// Ruta para obtener horarios por laboratorio - ACTUALIZADA CON FORMATO materia/grupo
+// Ruta para obtener horarios por laboratorio
+// Ruta para obtener horarios por laboratorio - ACTUALIZADA CON GRUPO
+// Ruta para obtener horarios por laboratorio - ACTUALIZADA CON GRUPO
 app.get("/api/horarios", (req, res) => {
   const { lab } = req.query;
 
@@ -468,17 +472,10 @@ app.get("/api/horarios", (req, res) => {
           const [hora_inicio, hora_fin] = horario.hora
             .split("-")
             .map((h) => h.trim());
-
-          // Formatear para mostrar materia/grupo (ignorar maestro)
-          const displayText = horario.grupo
-            ? `${horario.materia} / ${horario.grupo}`
-            : horario.materia;
-
           return {
             ...horario,
             hora_inicio,
             hora_fin,
-            display_text: displayText, // Nuevo campo para el formato visual
           };
         });
 
@@ -499,7 +496,8 @@ app.get("/api/horarios", (req, res) => {
   );
 });
 
-// Ruta para actualizar horarios - ACTUALIZADA CON FORMATO materia/grupo
+// Ruta para actualizar horarios
+// Ruta para actualizar horarios - ACTUALIZADA CON GRUPO
 app.put("/api/horarios", async (req, res) => {
   const { laboratorio, horarios } = req.body;
 
@@ -555,19 +553,14 @@ app.put("/api/horarios", async (req, res) => {
     for (const horario of horarios) {
       const horaCompleta = `${horario.hora_inicio.trim()}-${horario.hora_fin.trim()}`;
 
-      // Parsear el formato materia/grupo
-      const partesMateria = horario.materia.split("/").map((s) => s.trim());
-      const materia = partesMateria[0] || "";
-      const grupo = partesMateria[1] || "";
-
       inserts.push(
         connection.query(
-          `INSERT INTO horarios (hora, materia, maestro, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO horarios (hora, materia, maestro, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)`, // ← AGREGAR GRUPO
           [
             horaCompleta,
-            materia,
-            "", // Maestro siempre vacío ahora
-            grupo,
+            horario.materia.trim(),
+            horario.maestro ? horario.maestro.trim() : null,
+            horario.grupo ? horario.grupo.trim() : null, // ← NUEVO CAMPO
             horario.dia.trim(),
             laboratorio,
           ]
@@ -585,20 +578,15 @@ app.put("/api/horarios", async (req, res) => {
 
     const horariosFormateados = horariosActualizados.map((h) => {
       const [hora_inicio, hora_fin] = h.hora.split("-");
-
-      // Formatear para mostrar materia/grupo
-      const displayText = h.grupo ? `${h.materia} / ${h.grupo}` : h.materia;
-
       return {
         id: h.id,
         hora_inicio,
         hora_fin,
         materia: h.materia,
         maestro: h.maestro,
-        grupo: h.grupo,
+        grupo: h.grupo, // ← INCLUIR GRUPO EN LA RESPUESTA
         dia: h.dia,
         laboratorio: h.laboratorio,
-        display_text: displayText,
       };
     });
 
@@ -900,9 +888,10 @@ app.get("/alumnos", (req, res) => {
   });
 });
 
-// Ruta para añadir un nuevo horario - ACTUALIZADA CON FORMATO materia/grupo
+// Ruta para añadir un nuevo horario
+// Ruta para añadir un nuevo horario - ACTUALIZADA CON GRUPO
 app.post("/horarios", (req, res) => {
-  const { hora, materia, maestro, grupo, dia, laboratorio } = req.body;
+  const { hora, materia, maestro, grupo, dia, laboratorio } = req.body; // ← AGREGAR GRUPO
 
   if (!hora || !hora.match(/^\d{2}:\d{2}-\d{2}:\d{2}$/)) {
     return res.status(400).json({
@@ -910,15 +899,10 @@ app.post("/horarios", (req, res) => {
     });
   }
 
-  // Parsear formato materia/grupo
-  const partesMateria = materia.split("/").map((s) => s.trim());
-  const materiaFinal = partesMateria[0] || "";
-  const grupoFinal = partesMateria[1] || grupo || "";
-
   const query = `
-    INSERT INTO horarios (hora, materia, maestro, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO horarios (hora, materia, maestro, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)  // ← AGREGAR GRUPO
   `;
-  const values = [hora, materiaFinal, "", grupoFinal, dia, laboratorio]; // Maestro siempre vacío
+  const values = [hora, materia, maestro, grupo || null, dia, laboratorio]; // ← AGREGAR GRUPO
 
   pool.query(query, values, (err, result) => {
     if (err) {
