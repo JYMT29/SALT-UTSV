@@ -113,7 +113,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// ... (TODO TU CÓDIGO ORIGINAL SIGUE AQUÍ COMPLETO E INALTERADO)
 // Variable global para almacenar el rol del usuario
 let userRole = "user"; // Valor por defecto
 let userId = ""; // Almacenar ID del usuario
@@ -241,8 +240,8 @@ function initializeHorarioFunctions() {
         hora_inicio: hora_inicio.length === 4 ? `0${hora_inicio}` : hora_inicio,
         hora_fin: hora_fin.length === 4 ? `0${hora_fin}` : hora_fin,
         materia: horario.materia,
-        maestro: horario.maestro,
-        grupo: horario.grupo || "", // Incluir grupo
+        maestro: "", // Siempre vacío ahora
+        grupo: horario.grupo || "",
         dia:
           horario.dia.charAt(0).toUpperCase() +
           horario.dia.slice(1).toLowerCase(),
@@ -296,13 +295,11 @@ function initializeHorarioFunctions() {
           .replace("miércoles", "miercoles")
           .replace("sábado", "sabado");
         const materia = item.materia || "";
-        const maestro = item.maestro || "";
         const grupo = item.grupo || "";
 
         if (DIAS_NORMALIZADOS.includes(dia) && horariosPorHora[hora]) {
-          // Formato: materia / maestro / grupo
+          // Formato: materia / grupo
           let contenido = materia;
-          if (maestro) contenido += ` / ${maestro}`;
           if (grupo) contenido += ` / ${grupo}`;
 
           horariosPorHora[hora][dia] = contenido;
@@ -348,7 +345,7 @@ function initializeHorarioFunctions() {
     }
   };
 
-  // 2. Función para editar celdas (solo para admin) - ACTUALIZADA PARA GRUPO
+  // 2. Función para editar celdas (solo para admin) - ACTUALIZADA PARA FORMATO materia/grupo
   const editarCelda = (cell) => {
     if (userRole === "user") return;
 
@@ -360,7 +357,7 @@ function initializeHorarioFunctions() {
     input.type = "text";
     input.value = currentText;
     input.className = "form-control rounded-0 h-100 border-0";
-    input.placeholder = "materia / maestro / grupo";
+    input.placeholder = "materia / grupo"; // Solo materia/grupo
 
     cell.textContent = "";
     cell.appendChild(input);
@@ -371,16 +368,16 @@ function initializeHorarioFunctions() {
       cell.textContent = nuevoValor;
       cell.classList.remove("editando", "p-0");
 
-      // Parsear el formato: materia / maestro / grupo
+      // Parsear el formato: materia / grupo
       const partes = nuevoValor.split("/").map((s) => s.trim());
       const materia = partes[0] || "";
-      const maestro = partes[1] || "";
-      const grupo = partes[2] || "";
+      const grupo = partes[1] || "";
 
       if (materia) {
         cell.setAttribute("data-materia", materia);
-        cell.setAttribute("data-maestro", maestro);
         cell.setAttribute("data-grupo", grupo);
+        // Removemos el atributo de maestro ya que no se usará
+        cell.removeAttribute("data-maestro");
       }
     };
 
@@ -394,7 +391,7 @@ function initializeHorarioFunctions() {
     });
   };
 
-  // 3. Función para guardar horarios (solo para admin) - ACTUALIZADA PARA GRUPO
+  // 3. Función para guardar horarios (solo para admin) - ACTUALIZADA PARA FORMATO materia/grupo
   const guardarHorario = async () => {
     if (userRole === "user") {
       alert("No tienes permisos para guardar horarios");
@@ -417,17 +414,16 @@ function initializeHorarioFunctions() {
           const dia = cell.getAttribute("data-dia");
           const contenido = cell.textContent.trim();
           if (contenido) {
-            // Parsear el formato: materia / maestro / grupo
+            // Parsear el formato: materia / grupo
             const partes = contenido.split("/").map((s) => s.trim());
             const materia = partes[0] || "";
-            const maestro = partes[1] || "";
-            const grupo = partes[2] || "";
+            const grupo = partes[1] || "";
 
             horarios.push({
               hora,
               dia,
               materia: materia,
-              maestro: maestro,
+              maestro: "", // Siempre vacío ahora
               grupo: grupo,
             });
           }
