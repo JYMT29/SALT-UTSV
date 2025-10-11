@@ -241,7 +241,7 @@ function initializeHorarioFunctions() {
         hora_inicio: hora_inicio.length === 4 ? `0${hora_inicio}` : hora_inicio,
         hora_fin: hora_fin.length === 4 ? `0${hora_fin}` : hora_fin,
         materia: horario.materia || "",
-        maestro: "", // Siempre vacío ahora
+        // Siempre vacío ahora
         grupo: horario.grupo || "",
         dia:
           horario.dia.charAt(0).toUpperCase() +
@@ -381,8 +381,6 @@ function initializeHorarioFunctions() {
       if (materia) {
         cell.setAttribute("data-materia", materia);
         cell.setAttribute("data-grupo", grupo);
-        // Removemos el atributo de maestro ya que no se usará
-        cell.removeAttribute("data-maestro");
       }
     };
 
@@ -428,7 +426,7 @@ function initializeHorarioFunctions() {
               hora,
               dia,
               materia: materia,
-              maestro: "", // Siempre vacío ahora
+              // Siempre vacío ahora
               grupo: grupo,
             });
           }
