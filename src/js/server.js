@@ -554,7 +554,7 @@ app.put("/api/horarios", async (req, res) => {
 
       inserts.push(
         connection.query(
-          `INSERT INTO horarios (hora, materia, maestro, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)`, // ← AGREGAR GRUPO
+          `INSERT INTO horarios (hora, materia, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)`, // ← AGREGAR GRUPO
           [
             horaCompleta,
             horario.materia.trim(),
