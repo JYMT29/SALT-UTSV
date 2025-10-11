@@ -554,7 +554,7 @@ app.put("/api/horarios", async (req, res) => {
 
       inserts.push(
         connection.query(
-          `INSERT INTO horarios (hora, materia, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)`, // ← AGREGAR GRUPO
+          `INSERT INTO horarios (hora, materia, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?)`, // ← AGREGAR GRUPO
           [
             horaCompleta,
             horario.materia.trim(),
@@ -897,7 +897,7 @@ app.post("/horarios", (req, res) => {
   }
 
   const query = `
-    INSERT INTO horarios (hora, materia, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)  // ← AGREGAR GRUPO
+    INSERT INTO horarios (hora, materia, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?)  // ← AGREGAR GRUPO
   `;
   const values = [hora, materia, grupo || null, dia, laboratorio]; // ← AGREGAR GRUPO
 
