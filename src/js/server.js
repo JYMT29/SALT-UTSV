@@ -822,7 +822,7 @@ app.post("/alumnos", async (req, res) => {
 
     const query = `
       INSERT INTO alumnos (matricula, nombre, carrera, PC, fecha, laboratorio)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
     const values = [
       matricula,
@@ -1048,7 +1048,7 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     await pool.promise().query(
       `INSERT INTO alumnos 
         (matricula, nombre, carrera, tipo_equipo, numero_equipo, fecha, laboratorio)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [matricula, nombre, carrera, tipo, numero, fecha, laboratorio]
     );
 
