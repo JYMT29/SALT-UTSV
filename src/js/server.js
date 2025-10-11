@@ -558,7 +558,7 @@ app.put("/api/horarios", async (req, res) => {
           [
             horaCompleta,
             horario.materia.trim(),
-            horario.maestro ? horario.maestro.trim() : null,
+
             horario.grupo ? horario.grupo.trim() : null, // ← NUEVO CAMPO
             horario.dia.trim(),
             laboratorio,
@@ -582,7 +582,7 @@ app.put("/api/horarios", async (req, res) => {
         hora_inicio,
         hora_fin,
         materia: h.materia,
-        maestro: h.maestro,
+
         grupo: h.grupo, // ← INCLUIR GRUPO EN LA RESPUESTA
         dia: h.dia,
         laboratorio: h.laboratorio,
@@ -816,20 +816,18 @@ app.post("/alumnos", async (req, res) => {
 
   try {
     const { horario } = await verificarHorario(laboratorio);
-    const maestro = horario?.maestro || "No asignado";
 
     // Usar fecha y hora de CDMX
     const fechaCDMX = formatearFechaHoraCDMX();
 
     const query = `
-      INSERT INTO alumnos (matricula, nombre, carrera, maestro, PC, fecha, laboratorio)
+      INSERT INTO alumnos (matricula, nombre, carrera, PC, fecha, laboratorio)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       matricula,
       nombre,
       carrera,
-      maestro,
       PC,
       fechaCDMX, // Usar fecha de CDMX
       laboratorio,
@@ -890,7 +888,7 @@ app.get("/alumnos", (req, res) => {
 // Ruta para añadir un nuevo horario
 // Ruta para añadir un nuevo horario - ACTUALIZADA CON GRUPO
 app.post("/horarios", (req, res) => {
-  const { hora, materia, maestro, grupo, dia, laboratorio } = req.body; // ← AGREGAR GRUPO
+  const { hora, materia, grupo, dia, laboratorio } = req.body; // ← AGREGAR GRUPO
 
   if (!hora || !hora.match(/^\d{2}:\d{2}-\d{2}:\d{2}$/)) {
     return res.status(400).json({
@@ -899,9 +897,9 @@ app.post("/horarios", (req, res) => {
   }
 
   const query = `
-    INSERT INTO horarios (hora, materia, maestro, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)  // ← AGREGAR GRUPO
+    INSERT INTO horarios (hora, materia, grupo, dia, laboratorio) VALUES (?, ?, ?, ?, ?, ?)  // ← AGREGAR GRUPO
   `;
-  const values = [hora, materia, maestro, grupo || null, dia, laboratorio]; // ← AGREGAR GRUPO
+  const values = [hora, materia, grupo || null, dia, laboratorio]; // ← AGREGAR GRUPO
 
   pool.query(query, values, (err, result) => {
     if (err) {
@@ -1020,31 +1018,24 @@ app.post("/api/registrar-asignacion", async (req, res) => {
 
     // Obtener horario actual y maestro
     const { horario } = await verificarHorario(laboratorio);
-    if (!horario || !horario.hora || !horario.maestro) {
+    if (!horario || !horario.hora) {
       return res
         .status(400)
         .json({ error: "No se pudo determinar la clase actual" });
     }
 
     const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-    const maestro = horario.maestro;
+    const maestro = horario;
 
     // Verificar si ya está registrado en esta clase
     const [yaRegistrado] = await pool.promise().query(
       `SELECT id FROM alumnos
        WHERE matricula = ?
          AND laboratorio = ?
-         AND maestro = ?
+         
          AND TIME(fecha) BETWEEN ? AND ?
          AND DATE(fecha) = ?`,
-      [
-        matricula,
-        laboratorio,
-        maestro,
-        horaInicio,
-        horaFin,
-        fecha.split(" ")[0],
-      ]
+      [matricula, laboratorio, horaInicio, horaFin, fecha.split(" ")[0]]
     );
 
     if (yaRegistrado.length > 0) {
@@ -1056,9 +1047,9 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     // Insertar alumno
     await pool.promise().query(
       `INSERT INTO alumnos 
-        (matricula, nombre, carrera, maestro, tipo_equipo, numero_equipo, fecha, laboratorio)
+        (matricula, nombre, carrera, tipo_equipo, numero_equipo, fecha, laboratorio)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [matricula, nombre, carrera, maestro, tipo, numero, fecha, laboratorio]
+      [matricula, nombre, carrera, tipo, numero, fecha, laboratorio]
     );
 
     // Marcar equipo como ocupado
