@@ -447,7 +447,6 @@ app.get("/api/horarios", (req, res) => {
       id,
       hora,
       materia,
-      maestro,
       grupo,
       dia,
       laboratorio
