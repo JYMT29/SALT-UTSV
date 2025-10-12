@@ -480,17 +480,59 @@ function initializeHorarioFunctions() {
   };
 
   // 4. Función para agregar nueva fila (solo para admin)
+  // 4. Función para agregar nueva fila (solo para admin) - ACTUALIZADA
   const agregarFila = () => {
     if (userRole === "user") {
       alert("No tienes permisos para agregar filas");
       return;
     }
 
+    // Obtener todas las filas existentes
+    const rows = horarioBody.querySelectorAll("tr");
+    let nuevaHora = "07:00-07:50"; // Hora por defecto si no hay filas
+
+    if (rows.length > 0) {
+      // Obtener la última fila
+      const ultimaFila = rows[rows.length - 1];
+      const ultimaHoraCell = ultimaFila.querySelector("td.hora-cell");
+
+      if (ultimaHoraCell) {
+        const ultimoHorario = ultimaHoraCell.textContent.trim();
+
+        if (ultimoHorario && ultimoHorario.includes("-")) {
+          try {
+            // Extraer la hora de fin del último horario
+            const partes = ultimoHorario.split("-");
+            const horaInicioAnterior = partes[0].trim();
+            const horaFinAnterior = partes[1].trim();
+
+            // Convertir la hora final a minutos desde medianoche
+            const [horasFin, minutosFin] = horaFinAnterior
+              .split(":")
+              .map(Number);
+            const totalMinutosFin = horasFin * 60 + minutosFin;
+
+            // Sumar 50 minutos a la hora final
+            const nuevaHoraFinMinutos = totalMinutosFin + 50;
+
+            // Calcular nueva hora de fin
+            const nuevaHoraFin = minutosATiempo(nuevaHoraFinMinutos);
+
+            // Mantener la misma hora de inicio que la última fila
+            nuevaHora = `${horaInicioAnterior}-${nuevaHoraFin}`;
+          } catch (error) {
+            console.error("Error al calcular nueva hora:", error);
+            // En caso de error, usar la hora por defecto
+          }
+        }
+      }
+    }
+
     const row = document.createElement("tr");
 
     // Celda de hora (editable)
     const horaCell = document.createElement("td");
-    horaCell.textContent = "07:00-08:00";
+    horaCell.textContent = nuevaHora;
     horaCell.className = "hora-cell align-middle editable";
     horaCell.contentEditable = true;
     horaCell.addEventListener("dblclick", () => editarCelda(horaCell));
@@ -506,7 +548,22 @@ function initializeHorarioFunctions() {
     });
 
     horarioBody.appendChild(row);
+
+    // Hacer scroll hasta la nueva fila
+    row.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
+
+  // Función auxiliar para convertir minutos a formato de tiempo (HH:MM)
+  function minutosATiempo(minutosTotales) {
+    const horas = Math.floor(minutosTotales / 60) % 24; // Asegurar que no pase de 23
+    const minutos = minutosTotales % 60;
+
+    // Formatear a 2 dígitos
+    const horasStr = horas.toString().padStart(2, "0");
+    const minutosStr = minutos.toString().padStart(2, "0");
+
+    return `${horasStr}:${minutosStr}`;
+  }
 
   // Event listeners para admin
   if (userRole === "admin") {
