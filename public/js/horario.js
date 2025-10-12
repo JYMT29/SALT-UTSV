@@ -481,6 +481,7 @@ function initializeHorarioFunctions() {
 
   // 4. Función para agregar nueva fila (solo para admin)
   // 4. Función para agregar nueva fila (solo para admin) - ACTUALIZADA
+  // 4. Función para agregar nueva fila (solo para admin) - ACTUALIZADA
   const agregarFila = () => {
     if (userRole === "user") {
       alert("No tienes permisos para agregar filas");
@@ -503,23 +504,22 @@ function initializeHorarioFunctions() {
           try {
             // Extraer la hora de fin del último horario
             const partes = ultimoHorario.split("-");
-            const horaInicioAnterior = partes[0].trim();
             const horaFinAnterior = partes[1].trim();
 
-            // Convertir la hora final a minutos desde medianoche
+            // Convertir la hora final anterior a minutos desde medianoche
             const [horasFin, minutosFin] = horaFinAnterior
               .split(":")
               .map(Number);
             const totalMinutosFin = horasFin * 60 + minutosFin;
 
-            // Sumar 50 minutos a la hora final
-            const nuevaHoraFinMinutos = totalMinutosFin + 50;
+            // La nueva hora de inicio es la hora final anterior
+            const nuevaHoraInicio = minutosATiempo(totalMinutosFin);
 
-            // Calcular nueva hora de fin
+            // Sumar 50 minutos para la nueva hora final
+            const nuevaHoraFinMinutos = totalMinutosFin + 50;
             const nuevaHoraFin = minutosATiempo(nuevaHoraFinMinutos);
 
-            // Mantener la misma hora de inicio que la última fila
-            nuevaHora = `${horaInicioAnterior}-${nuevaHoraFin}`;
+            nuevaHora = `${nuevaHoraInicio}-${nuevaHoraFin}`;
           } catch (error) {
             console.error("Error al calcular nueva hora:", error);
             // En caso de error, usar la hora por defecto
