@@ -3,43 +3,54 @@ const API_BASE_URL = "https://salt-utsv-production.up.railway.app";
 
 // Estado global
 let alumnos = [];
+let estudiantes = []; // Para comparar con la tabla estudiantes
 let carrerasUnicas = new Set();
+let gruposUnicos = new Set(); // Para filtro por grupo
 
 // Elementos del DOM
 const alumnosContainer = document.getElementById("alumnos-container");
 const messageContainer = document.getElementById("message-container");
 const laboratorioFilter = document.getElementById("laboratorio-filter");
 const carreraFilter = document.getElementById("carrera-filter");
+const grupoFilter = document.getElementById("grupo-filter"); // Nuevo filtro
 const totalAlumnosEl = document.getElementById("total-alumnos");
 const totalLab1El = document.getElementById("total-lab1");
 const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
 
-// Función para mostrar mensajes
-function showMessage(message, type = "error") {
-  const alertClass =
-    type === "success"
-      ? "alert-success"
-      : type === "warning"
-      ? "alert-warning"
-      : "alert-danger";
-  messageContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
-  setTimeout(() => {
-    messageContainer.innerHTML = "";
-  }, 5000);
+// Función para obtener estudiantes desde la API
+async function fetchEstudiantes() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/estudiantes`);
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const estudiantesData = await response.json();
+
+    if (estudiantesData.success) {
+      estudiantes = estudiantesData.data;
+      updateGrupoFilter();
+    } else {
+      console.error("Error al obtener estudiantes:", estudiantesData.error);
+    }
+  } catch (error) {
+    console.error("Error al obtener estudiantes:", error);
+  }
 }
 
 // Función para obtener alumnos desde la API
 async function fetchAlumnos() {
   try {
     alumnosContainer.innerHTML = `
-            <tr>
-              <td colspan="3" class="text-center py-4">
-                <div class="loading">Cargando lista de alumnos...</div>
-              </td>
-            </tr>
-          `;
+      <tr>
+        <td colspan="5" class="text-center py-4">
+          <div class="loading">Cargando lista de alumnos...</div>
+        </td>
+      </tr>
+    `;
 
     const response = await fetch(`${API_BASE_URL}/alumnos`);
 
@@ -49,16 +60,30 @@ async function fetchAlumnos() {
 
     const alumnosData = await response.json();
 
-    // Procesar datos - obtener solo nombre, carrera y laboratorio
-    alumnos = alumnosData.map((alumno) => ({
-      nombre: alumno.nombre || "Sin nombre",
-      carrera: alumno.carrera || "Sin carrera",
-      laboratorio: alumno.laboratorio || "lab1",
-    }));
+    // Procesar datos - obtener nombre, carrera, laboratorio, fecha y grupo
+    alumnos = alumnosData.map((alumno) => {
+      // Buscar el estudiante correspondiente para obtener el grupo
+      const estudiante = estudiantes.find(
+        (est) => est.matricula === alumno.matricula
+      );
+
+      return {
+        nombre: alumno.nombre || "Sin nombre",
+        carrera: alumno.carrera || "Sin carrera",
+        laboratorio: alumno.laboratorio || "lab1",
+        fecha: alumno.fecha || new Date().toISOString(),
+        grupo: estudiante ? estudiante.grupo || "Sin grupo" : "Sin grupo",
+        matricula: alumno.matricula, // Necesario para la comparación
+      };
+    });
 
     // Extraer carreras únicas para el filtro
     carrerasUnicas = new Set(alumnos.map((a) => a.carrera).filter(Boolean));
     updateCarreraFilter();
+
+    // Extraer grupos únicos para el filtro
+    gruposUnicos = new Set(alumnos.map((a) => a.grupo).filter(Boolean));
+    updateGrupoFilter();
 
     renderAlumnos();
     updateStats();
@@ -80,14 +105,60 @@ async function fetchAlumnos() {
   } catch (error) {
     console.error("Error al obtener alumnos:", error);
     alumnosContainer.innerHTML = `
-            <tr>
-              <td colspan="3" class="text-center py-4">
-                <div class="error">Error al cargar los datos: ${error.message}</div>
-              </td>
-            </tr>
-          `;
+      <tr>
+        <td colspan="5" class="text-center py-4">
+          <div class="error">Error al cargar los datos: ${error.message}</div>
+        </td>
+      </tr>
+    `;
     showMessage("Error al conectar con el servidor", "error");
   }
+}
+
+// Función para actualizar el filtro de grupos
+function updateGrupoFilter() {
+  // Crear el filtro de grupos si no existe
+  if (!document.getElementById("grupo-filter")) {
+    // Agregar el filtro de grupos al HTML
+    const controlsContainer = document.querySelector(
+      ".controls-container .row"
+    );
+    const grupoFilterHTML = `
+      <div class="col-md-4 mb-3">
+        <div class="filter-group">
+          <label for="grupo-filter">
+            <i class="bi bi-people me-1"></i>Filtrar por Grupo:
+          </label>
+          <select class="form-select" id="grupo-filter">
+            <option value="all">Todos los grupos</option>
+          </select>
+        </div>
+      </div>
+    `;
+
+    // Insertar después del filtro de carrera
+    const carreraFilterDiv = controlsContainer.querySelector(
+      ".col-md-4:nth-child(2)"
+    );
+    carreraFilterDiv.insertAdjacentHTML("afterend", grupoFilterHTML);
+
+    // Agregar event listener al nuevo filtro
+    document
+      .getElementById("grupo-filter")
+      .addEventListener("change", renderAlumnos);
+  }
+
+  const grupoFilter = document.getElementById("grupo-filter");
+  grupoFilter.innerHTML = '<option value="all">Todos los grupos</option>';
+
+  gruposUnicos.forEach((grupo) => {
+    if (grupo && grupo !== "Sin grupo") {
+      const option = document.createElement("option");
+      option.value = grupo;
+      option.textContent = grupo;
+      grupoFilter.appendChild(option);
+    }
+  });
 }
 
 // Función para actualizar el filtro de carreras
@@ -104,10 +175,13 @@ function updateCarreraFilter() {
   });
 }
 
-// Función para renderizar la lista de alumnos CORREGIDA
+// Función para renderizar la lista de alumnos
 function renderAlumnos() {
   const laboratorioSeleccionado = laboratorioFilter.value;
   const carreraSeleccionada = carreraFilter.value;
+  const grupoSeleccionado = document.getElementById("grupo-filter")
+    ? document.getElementById("grupo-filter").value
+    : "all";
 
   // Filtrar alumnos
   const alumnosFiltrados = alumnos.filter((alumno) => {
@@ -116,45 +190,68 @@ function renderAlumnos() {
       alumno.laboratorio === laboratorioSeleccionado;
     const coincideCarrera =
       carreraSeleccionada === "all" || alumno.carrera === carreraSeleccionada;
-    return coincideLaboratorio && coincideCarrera;
+    const coincideGrupo =
+      grupoSeleccionado === "all" || alumno.grupo === grupoSeleccionado;
+
+    return coincideLaboratorio && coincideCarrera && coincideGrupo;
   });
 
   // Actualizar estadísticas
   updateStats(alumnosFiltrados);
 
-  // Renderizar lista CORREGIDA - usando tabla HTML
+  // Renderizar lista
   if (alumnosFiltrados.length === 0) {
     alumnosContainer.innerHTML = `
-            <tr>
-              <td colspan="3" class="text-center py-4">
-                <div class="empty-state">
-                  <i class="bi bi-search"></i>
-                  <p>No hay alumnos que coincidan con los filtros seleccionados</p>
-                </div>
-              </td>
-            </tr>
-          `;
+      <tr>
+        <td colspan="5" class="text-center py-4">
+          <div class="empty-state">
+            <i class="bi bi-search"></i>
+            <p>No hay alumnos que coincidan con los filtros seleccionados</p>
+          </div>
+        </td>
+      </tr>
+    `;
     return;
   }
 
-  // Usar tabla HTML tradicional en lugar de grid
+  // Usar tabla HTML tradicional con las nuevas columnas
   alumnosContainer.innerHTML = alumnosFiltrados
     .map(
       (alumno, index) => `
-          <tr>
-            <td>${alumno.nombre}</td>
-            <td>${alumno.carrera}</td>
-            <td>
-              <span class="badge ${
-                alumno.laboratorio === "lab1" ? "badge-lab1" : "badge-lab2"
-              }">
-                ${alumno.laboratorio.toUpperCase()}
-              </span>
-            </td>
-          </tr>
-        `
+        <tr>
+          <td>${alumno.nombre}</td>
+          <td>${alumno.carrera}</td>
+          <td>
+            <span class="badge ${
+              alumno.laboratorio === "lab1" ? "badge-lab1" : "badge-lab2"
+            }">
+              ${alumno.laboratorio.toUpperCase()}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${
+              alumno.grupo === "Sin grupo" ? "badge-secondary" : "badge-primary"
+            }">
+              ${alumno.grupo}
+            </span>
+          </td>
+          <td>${formatFecha(alumno.fecha)}</td>
+        </tr>
+      `
     )
     .join("");
+}
+
+// Función para formatear la fecha
+function formatFecha(fechaString) {
+  const fecha = new Date(fechaString);
+  return fecha.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // Función para actualizar estadísticas
@@ -173,29 +270,19 @@ function updateStats(alumnosFiltrados = null) {
 
 // Inicializar la aplicación
 document.addEventListener("DOMContentLoaded", function () {
-  // Cargar datos al iniciar
-  fetchAlumnos();
+  // Cargar estudiantes primero, luego alumnos
+  fetchEstudiantes().then(() => {
+    fetchAlumnos();
+  });
 
   // Event listeners para filtros
   laboratorioFilter.addEventListener("change", renderAlumnos);
   carreraFilter.addEventListener("change", renderAlumnos);
 
   // Event listener para botón de actualizar
-  document
-    .getElementById("refresh-btn")
-    .addEventListener("click", fetchAlumnos);
+  document.getElementById("refresh-btn").addEventListener("click", function () {
+    fetchEstudiantes().then(() => {
+      fetchAlumnos();
+    });
+  });
 });
-
-// Función para probar la conexión
-async function testConnection() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/hello`);
-    const data = await response.json();
-    console.log("Conexión exitosa:", data);
-  } catch (error) {
-    console.error("Error de conexión:", error);
-  }
-}
-
-// Probar conexión al cargar
-testConnection();

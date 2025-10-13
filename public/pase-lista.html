@@ -503,46 +503,63 @@
       }
 
       /* Responsive */
+      .logo-container h1 {
+        font-size: 1.8rem;
+      }
+
+      .card-body {
+        padding: 15px;
+      }
+
+      .table-responsive {
+        font-size: 0.9rem;
+      }
+
+      .btn-success-custom,
+      .btn-primary-custom {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .stats-card {
+        margin-bottom: 15px;
+      }
+
+      .controls-container {
+        padding: 15px;
+      }
+
+      .table-custom {
+        font-size: 0.9rem;
+      }
+      /* Badge para grupos */
+      .badge-primary {
+        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .badge-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* Ajustes responsive para la tabla con más columnas */
       @media (max-width: 768px) {
-        .logo-container {
-          flex-direction: column;
-          text-align: center;
-          gap: 10px;
-        }
-
-        .logo-container h1 {
-          font-size: 1.8rem;
-        }
-
-        .card-body {
-          padding: 15px;
-        }
-
-        .table-responsive {
-          font-size: 0.9rem;
-        }
-
-        .btn-success-custom,
-        .btn-primary-custom {
-          width: 100%;
-          margin-bottom: 10px;
-        }
-
-        .stats-card {
-          margin-bottom: 15px;
-        }
-
-        .controls-container {
-          padding: 15px;
-        }
-
         .table-custom {
-          font-size: 0.9rem;
+          font-size: 0.8rem;
         }
 
         .table-custom thead th,
         .table-custom tbody td {
-          padding: 8px 10px;
+          padding: 6px 8px;
         }
       }
     </style>
@@ -641,23 +658,21 @@
         </div>
         <div class="card-body p-0">
           <div class="table-container">
+            <!-- En la tabla, agregar columna de Grupo -->
             <table class="table-custom">
               <thead>
                 <tr>
                   <th>Nombre del Alumno</th>
                   <th>Carrera</th>
                   <th>Laboratorio</th>
+                  <th>Grupo</th>
+                  <!-- NUEVA COLUMNA -->
+                  <th>Fecha de Registro</th>
+                  <!-- NUEVA COLUMNA -->
                 </tr>
               </thead>
               <tbody id="alumnos-container">
-                <tr>
-                  <td colspan="3" class="text-center py-4">
-                    <div class="empty-state">
-                      <i class="bi bi-people"></i>
-                      <p>Cargando lista de alumnos...</p>
-                    </div>
-                  </td>
-                </tr>
+                <!-- El contenido se generará dinámicamente -->
               </tbody>
             </table>
           </div>
