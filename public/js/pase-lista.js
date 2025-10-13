@@ -12,12 +12,25 @@ const alumnosContainer = document.getElementById("alumnos-container");
 const messageContainer = document.getElementById("message-container");
 const laboratorioFilter = document.getElementById("laboratorio-filter");
 const carreraFilter = document.getElementById("carrera-filter");
-const grupoFilter = document.getElementById("grupo-filter"); // Nuevo filtro
 const totalAlumnosEl = document.getElementById("total-alumnos");
 const totalLab1El = document.getElementById("total-lab1");
 const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
+
+// Función para mostrar mensajes - ESTA ES LA FUNCIÓN QUE FALTABA
+function showMessage(message, type = "error") {
+  const alertClass =
+    type === "success"
+      ? "alert-success"
+      : type === "warning"
+      ? "alert-warning"
+      : "alert-danger";
+  messageContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+  setTimeout(() => {
+    messageContainer.innerHTML = "";
+  }, 5000);
+}
 
 // Función para obtener estudiantes desde la API
 async function fetchEstudiantes() {
@@ -35,9 +48,14 @@ async function fetchEstudiantes() {
       updateGrupoFilter();
     } else {
       console.error("Error al obtener estudiantes:", estudiantesData.error);
+      showMessage("Error al obtener la lista de estudiantes", "error");
     }
   } catch (error) {
     console.error("Error al obtener estudiantes:", error);
+    showMessage(
+      "Error al conectar con el servidor para obtener estudiantes",
+      "error"
+    );
   }
 }
 
@@ -118,7 +136,9 @@ async function fetchAlumnos() {
 // Función para actualizar el filtro de grupos
 function updateGrupoFilter() {
   // Crear el filtro de grupos si no existe
-  if (!document.getElementById("grupo-filter")) {
+  let grupoFilter = document.getElementById("grupo-filter");
+
+  if (!grupoFilter) {
     // Agregar el filtro de grupos al HTML
     const controlsContainer = document.querySelector(
       ".controls-container .row"
@@ -143,12 +163,11 @@ function updateGrupoFilter() {
     carreraFilterDiv.insertAdjacentHTML("afterend", grupoFilterHTML);
 
     // Agregar event listener al nuevo filtro
-    document
-      .getElementById("grupo-filter")
-      .addEventListener("change", renderAlumnos);
+    grupoFilter = document.getElementById("grupo-filter");
+    grupoFilter.addEventListener("change", renderAlumnos);
   }
 
-  const grupoFilter = document.getElementById("grupo-filter");
+  // Actualizar opciones del filtro
   grupoFilter.innerHTML = '<option value="all">Todos los grupos</option>';
 
   gruposUnicos.forEach((grupo) => {
@@ -244,14 +263,18 @@ function renderAlumnos() {
 
 // Función para formatear la fecha
 function formatFecha(fechaString) {
-  const fecha = new Date(fechaString);
-  return fecha.toLocaleDateString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  try {
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch (error) {
+    return "Fecha inválida";
+  }
 }
 
 // Función para actualizar estadísticas
@@ -286,3 +309,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// Función para probar la conexión
+async function testConnection() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/hello`);
+    const data = await response.json();
+    console.log("Conexión exitosa:", data);
+  } catch (error) {
+    console.error("Error de conexión:", error);
+  }
+}
+
+// Probar conexión al cargar
+testConnection();
