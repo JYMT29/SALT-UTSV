@@ -532,6 +532,8 @@
       .table-custom {
         font-size: 0.9rem;
       }
+      /* Agrega esto a tu CSS existente */
+
       /* Badge para grupos */
       .badge-primary {
         background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
@@ -551,6 +553,28 @@
         font-weight: 600;
       }
 
+      /* Ajuste para tabla con 5 columnas */
+      .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table-custom thead th:nth-child(1) {
+        width: 25%;
+      } /* Nombre */
+      .table-custom thead th:nth-child(2) {
+        width: 20%;
+      } /* Carrera */
+      .table-custom thead th:nth-child(3) {
+        width: 15%;
+      } /* Laboratorio */
+      .table-custom thead th:nth-child(4) {
+        width: 15%;
+      } /* Grupo */
+      .table-custom thead th:nth-child(5) {
+        width: 25%;
+      } /* Fecha */
+
       /* Ajustes responsive para la tabla con más columnas */
       @media (max-width: 768px) {
         .table-custom {
@@ -560,6 +584,10 @@
         .table-custom thead th,
         .table-custom tbody td {
           padding: 6px 8px;
+        }
+
+        .controls-container .row .col-md-4 {
+          margin-bottom: 15px;
         }
       }
     </style>
