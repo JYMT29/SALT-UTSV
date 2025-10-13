@@ -618,6 +618,434 @@
           font-size: 0.7rem;
         }
       }
+      /* Agrega esto a tu CSS existente */
+
+      /* Mejoras para la tabla con información de clase y fecha */
+      .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      /* Distribución de columnas para escritorio */
+      .table-custom thead th:nth-child(1) {
+        width: 22%;
+      } /* Alumno */
+      .table-custom thead th:nth-child(2) {
+        width: 18%;
+      } /* Carrera (oculta en móvil) */
+      .table-custom thead th:nth-child(3) {
+        width: 8%;
+      } /* Lab */
+      .table-custom thead th:nth-child(4) {
+        width: 10%;
+      } /* Grupo */
+      .table-custom thead th:nth-child(5) {
+        width: 22%;
+      } /* Clase */
+      .table-custom thead th:nth-child(6) {
+        width: 20%;
+      } /* Registro */
+
+      /* Estilo mejorado para la información de clase */
+      .clase-info {
+        line-height: 1.3;
+        min-width: 120px;
+      }
+
+      .clase-info .materia {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .clase-info .horario {
+        color: var(--dark-gray);
+        font-size: 0.75rem;
+        display: block;
+      }
+
+      .clase-info .grupo-horario {
+        color: var(--secondary-color);
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Estilo mejorado para la fecha de registro */
+      .fecha-registro {
+        text-align: center;
+        min-width: 100px;
+      }
+
+      .fecha-registro .fecha {
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .fecha-registro .hora {
+        font-size: 0.75rem;
+        color: var(--dark-gray);
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Badge para grupos */
+      .badge-primary {
+        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      .badge-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      /* Información del alumno */
+      .alumno-info .nombre {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark-gray);
+        display: block;
+      }
+
+      .alumno-info .carrera-mobile {
+        font-size: 0.75rem;
+        color: var(--dark-gray);
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Ajustes responsive mejorados */
+      @media (max-width: 768px) {
+        .table-custom {
+          font-size: 0.75rem;
+        }
+
+        .table-custom thead th,
+        .table-custom tbody td {
+          padding: 8px 6px;
+        }
+
+        /* Ocultar carrera en móvil (ya la mostramos en la columna alumno) */
+        .table-custom thead th:nth-child(2),
+        .table-custom tbody td:nth-child(2) {
+          display: none;
+        }
+
+        /* Redistribuir espacio en móvil */
+        .table-custom thead th:nth-child(1) {
+          width: 25%;
+        }
+        .table-custom thead th:nth-child(3) {
+          width: 10%;
+        }
+        .table-custom thead th:nth-child(4) {
+          width: 12%;
+        }
+        .table-custom thead th:nth-child(5) {
+          width: 28%;
+        }
+        .table-custom thead th:nth-child(6) {
+          width: 25%;
+        }
+
+        .clase-info {
+          min-width: 90px;
+        }
+
+        .clase-info .materia {
+          font-size: 0.8rem;
+        }
+
+        .clase-info .horario {
+          font-size: 0.7rem;
+        }
+
+        .fecha-registro {
+          min-width: 80px;
+        }
+
+        .fecha-registro .fecha {
+          font-size: 0.75rem;
+        }
+
+        .fecha-registro .hora {
+          font-size: 0.7rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .table-custom {
+          font-size: 0.7rem;
+        }
+
+        .table-custom thead th,
+        .table-custom tbody td {
+          padding: 6px 4px;
+        }
+
+        .badge-primary,
+        .badge-secondary {
+          font-size: 0.7rem;
+          padding: 3px 6px;
+          min-width: 35px;
+        }
+      }
+
+      /* Asegurar que el contenedor de la tabla se vea bien */
+      .table-container {
+        max-height: 500px;
+        overflow-y: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+      }
+      /* Agrega esto a tu CSS existente */
+
+      /* Mejoras para la tabla con información de clase y fecha */
+      .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      /* Distribución de columnas para escritorio */
+      .table-custom thead th:nth-child(1) {
+        width: 22%;
+      } /* Alumno */
+      .table-custom thead th:nth-child(2) {
+        width: 18%;
+      } /* Carrera (oculta en móvil) */
+      .table-custom thead th:nth-child(3) {
+        width: 8%;
+      } /* Lab */
+      .table-custom thead th:nth-child(4) {
+        width: 10%;
+      } /* Grupo */
+      .table-custom thead th:nth-child(5) {
+        width: 22%;
+      } /* Clase */
+      .table-custom thead th:nth-child(6) {
+        width: 20%;
+      } /* Registro */
+
+      /* Estilo mejorado para la información de clase */
+      .clase-info {
+        line-height: 1.3;
+        min-width: 120px;
+      }
+
+      .clase-info .materia {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .clase-info .horario {
+        color: var(--dark-gray);
+        font-size: 0.75rem;
+        display: block;
+      }
+
+      .clase-info .grupo-horario {
+        color: var(--secondary-color);
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Estilo mejorado para la fecha de registro */
+      .fecha-registro {
+        text-align: center;
+        min-width: 100px;
+      }
+
+      .fecha-registro .fecha {
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .fecha-registro .hora {
+        font-size: 0.75rem;
+        color: var(--dark-gray);
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Badge para grupos */
+      .badge-primary {
+        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      .badge-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      /* Información del alumno */
+      .alumno-info .nombre {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark-gray);
+        display: block;
+      }
+
+      .alumno-info .carrera-mobile {
+        font-size: 0.75rem;
+        color: var(--dark-gray);
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Ajustes responsive mejorados */
+      @media (max-width: 768px) {
+        .table-custom {
+          font-size: 0.75rem;
+        }
+
+        .table-custom thead th,
+        .table-custom tbody td {
+          padding: 8px 6px;
+        }
+
+        /* Ocultar carrera en móvil (ya la mostramos en la columna alumno) */
+        .table-custom thead th:nth-child(2),
+        .table-custom tbody td:nth-child(2) {
+          display: none;
+        }
+
+        /* Redistribuir espacio en móvil */
+        .table-custom thead th:nth-child(1) {
+          width: 25%;
+        }
+        .table-custom thead th:nth-child(3) {
+          width: 10%;
+        }
+        .table-custom thead th:nth-child(4) {
+          width: 12%;
+        }
+        .table-custom thead th:nth-child(5) {
+          width: 28%;
+        }
+        .table-custom thead th:nth-child(6) {
+          width: 25%;
+        }
+
+        .clase-info {
+          min-width: 90px;
+        }
+
+        .clase-info .materia {
+          font-size: 0.8rem;
+        }
+
+        .clase-info .horario {
+          font-size: 0.7rem;
+        }
+
+        .fecha-registro {
+          min-width: 80px;
+        }
+
+        .fecha-registro .fecha {
+          font-size: 0.75rem;
+        }
+
+        .fecha-registro .hora {
+          font-size: 0.7rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .table-custom {
+          font-size: 0.7rem;
+        }
+
+        .table-custom thead th,
+        .table-custom tbody td {
+          padding: 6px 4px;
+        }
+
+        .badge-primary,
+        .badge-secondary {
+          font-size: 0.7rem;
+          padding: 3px 6px;
+          min-width: 35px;
+        }
+      }
+
+      /* Asegurar que el contenedor de la tabla se vea bien */
+      .table-container {
+        max-height: 500px;
+        overflow-y: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+      }
     </style>
   </head>
   <body>
