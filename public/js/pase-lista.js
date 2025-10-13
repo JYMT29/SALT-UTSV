@@ -353,6 +353,7 @@ function updateCarreraFilter() {
 }
 
 // Función para renderizar la lista de alumnos
+// Función para renderizar la lista de alumnos
 function renderAlumnos() {
   const laboratorioSeleccionado = laboratorioFilter.value;
   const carreraSeleccionada = carreraFilter.value;
@@ -398,13 +399,18 @@ function renderAlumnos() {
     return;
   }
 
-  // Usar tabla HTML tradicional con las nuevas columnas
+  // Usar tabla HTML con diseño mejorado
   alumnosContainer.innerHTML = alumnosFiltrados
     .map(
       (alumno, index) => `
         <tr>
-          <td>${alumno.nombre}</td>
-          <td>${alumno.carrera}</td>
+          <td>
+            <div class="alumno-info">
+              <span class="nombre">${alumno.nombre}</span>
+              <span class="carrera-mobile d-md-none">${alumno.carrera}</span>
+            </div>
+          </td>
+          <td class="d-none d-md-table-cell">${alumno.carrera}</td>
           <td>
             <span class="badge ${
               alumno.laboratorio === "lab1" ? "badge-lab1" : "badge-lab2"
@@ -420,25 +426,54 @@ function renderAlumnos() {
             </span>
           </td>
           <td>
-            <div class="materia-info">
-              <strong>${alumno.materia}</strong>
-              <br>
-              <small class="text-muted">${alumno.horario}</small>
+            <div class="clase-info">
+              <span class="materia">${alumno.materia}</span>
+              <span class="horario">${alumno.horario}</span>
               ${
                 alumno.grupoHorario && alumno.grupoHorario !== "Sin grupo"
-                  ? `<br><small class="text-info">Grupo: ${alumno.grupoHorario}</small>`
+                  ? `<span class="grupo-horario">Grupo: ${alumno.grupoHorario}</span>`
                   : ""
               }
             </div>
           </td>
-          <td>${formatFecha(alumno.fecha)}</td>
+          <td>
+            <div class="fecha-registro">
+              ${formatFechaSeparada(alumno.fecha)}
+            </div>
+          </td>
         </tr>
       `
     )
     .join("");
 }
 
-// Función para formatear la fecha
+// Función para formatear la fecha separada (fecha y hora en líneas diferentes)
+function formatFechaSeparada(fechaString) {
+  try {
+    const fecha = new Date(fechaString);
+    const fechaFormateada = fecha.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const horaFormateada = fecha.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return `
+      <span class="fecha">${fechaFormateada}</span>
+      <span class="hora">${horaFormateada}</span>
+    `;
+  } catch (error) {
+    return `
+      <span class="fecha">Fecha inválida</span>
+      <span class="hora">--:--</span>
+    `;
+  }
+}
+
+// Mantén la función original para otros usos
 function formatFecha(fechaString) {
   try {
     const fecha = new Date(fechaString);
