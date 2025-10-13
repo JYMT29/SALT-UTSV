@@ -93,9 +93,14 @@ async function fetchEstudiantes() {
 }
 
 // Función para encontrar la materia y horario basado en la fecha de registro
+// Función para encontrar la materia y horario basado en la fecha de registro
 function encontrarMateriaYHorario(alumno) {
   if (!alumno.fecha || !alumno.laboratorio) {
-    return { materia: "No disponible", horario: "No disponible" };
+    return {
+      materia: "No disponible",
+      horario: "No disponible",
+      grupoHorario: "",
+    };
   }
 
   try {
@@ -136,20 +141,21 @@ function encontrarMateriaYHorario(alumno) {
       return {
         materia: horarioCoincidente.materia || "Sin materia",
         horario: horarioCoincidente.hora || "Sin horario",
-        grupo: horarioCoincidente.grupo || "Sin grupo",
+        grupoHorario: horarioCoincidente.grupo || "",
       };
     } else {
+      // Fuera de horario - mostrar información útil
       return {
         materia: "Fuera de horario",
         horario: `${diaTexto} ${horaRegistro}`,
+        grupoHorario: "",
       };
     }
   } catch (error) {
     console.error("Error al procesar fecha del alumno:", error, alumno);
-    return { materia: "Error en fecha", horario: "Error en fecha" };
+    return { materia: "Error en fecha", horario: "Error", grupoHorario: "" };
   }
 }
-
 // Función para obtener alumnos desde la API
 async function fetchAlumnos() {
   try {
@@ -354,6 +360,7 @@ function updateCarreraFilter() {
 
 // Función para renderizar la lista de alumnos
 // Función para renderizar la lista de alumnos
+// Función para renderizar la lista de alumnos
 function renderAlumnos() {
   const laboratorioSeleccionado = laboratorioFilter.value;
   const carreraSeleccionada = carreraFilter.value;
@@ -401,8 +408,16 @@ function renderAlumnos() {
 
   // Usar tabla HTML con diseño mejorado
   alumnosContainer.innerHTML = alumnosFiltrados
-    .map(
-      (alumno, index) => `
+    .map((alumno, index) => {
+      // Determinar el estilo según si está en horario o fuera de horario
+      const esFueraDeHorario =
+        alumno.materia === "Fuera de horario" ||
+        alumno.materia === "No disponible";
+      const claseMateria = esFueraDeHorario
+        ? "clase-info fuera-de-horario"
+        : "clase-info";
+
+      return `
         <tr>
           <td>
             <div class="alumno-info">
@@ -426,13 +441,18 @@ function renderAlumnos() {
             </span>
           </td>
           <td>
-            <div class="clase-info">
-              <span class="materia">${alumno.materia}</span>
-              <span class="horario">${alumno.horario}</span>
+            <div class="${claseMateria}">
               ${
-                alumno.grupoHorario && alumno.grupoHorario !== "Sin grupo"
-                  ? `<span class="grupo-horario">Grupo: ${alumno.grupoHorario}</span>`
-                  : ""
+                esFueraDeHorario
+                  ? `<span class="materia fuera">${alumno.materia}</span>
+                 <span class="horario">${alumno.horario}</span>`
+                  : `<span class="materia">${alumno.materia}</span>
+                 <span class="horario">${alumno.horario}</span>
+                 ${
+                   alumno.grupoHorario && alumno.grupoHorario !== "Sin grupo"
+                     ? `<span class="grupo-horario">Grupo: ${alumno.grupoHorario}</span>`
+                     : ""
+                 }`
               }
             </div>
           </td>
@@ -442,11 +462,10 @@ function renderAlumnos() {
             </div>
           </td>
         </tr>
-      `
-    )
+      `;
+    })
     .join("");
 }
-
 // Función para formatear la fecha separada (fecha y hora en líneas diferentes)
 function formatFechaSeparada(fechaString) {
   try {

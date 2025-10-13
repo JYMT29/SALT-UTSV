@@ -1046,6 +1046,148 @@
         background: var(--primary-color);
         border-radius: 3px;
       }
+      /* Estilo mejorado para la información de clase */
+      .clase-info {
+        line-height: 1.3;
+        min-width: 120px;
+      }
+
+      .clase-info .materia {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .clase-info .materia.fuera {
+        color: #dc3545; /* Rojo para fuera de horario */
+        font-weight: 500;
+      }
+
+      .clase-info .horario {
+        color: var(--dark-gray);
+        font-size: 0.75rem;
+        display: block;
+      }
+
+      .clase-info .grupo-horario {
+        color: var(--secondary-color);
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: block;
+        margin-top: 2px;
+      }
+
+      /* Estilo para fuera de horario */
+      .clase-info.fuera-de-horario .materia {
+        color: #dc3545;
+        font-weight: 500;
+      }
+
+      .clase-info.fuera-de-horario .horario {
+        color: #6c757d;
+        font-style: italic;
+      }
+
+      /* Estilo mejorado para la fecha de registro */
+      .fecha-registro {
+        text-align: center;
+        min-width: 100px;
+      }
+
+      .fecha-registro .fecha {
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--primary-color);
+        display: block;
+        line-height: 1.2;
+      }
+
+      .fecha-registro .hora {
+        font-size: 0.75rem;
+        color: var(--dark-gray);
+        display: block;
+        line-height: 1.2;
+        margin-top: 2px;
+      }
+
+      /* Badge para laboratorios */
+      .badge-lab1,
+      .badge-lab2 {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 45px;
+        text-align: center;
+        color: white;
+      }
+
+      .badge-lab1 {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      }
+
+      .badge-lab2 {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+      }
+
+      /* Información del alumno */
+      .alumno-info .nombre {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark-gray);
+        display: block;
+        line-height: 1.2;
+      }
+
+      .alumno-info .carrera-mobile {
+        font-size: 0.75rem;
+        color: #6c757d;
+        display: block;
+        margin-top: 3px;
+        line-height: 1.2;
+      }
+
+      /* Ajustes responsive mejorados */
+      @media (max-width: 768px) {
+        .table-custom {
+          font-size: 0.75rem;
+        }
+
+        .table-custom thead th,
+        .table-custom tbody td {
+          padding: 8px 4px;
+          vertical-align: middle;
+        }
+
+        /* Ocultar carrera en móvil (ya la mostramos en la columna alumno) */
+        .table-custom thead th:nth-child(2),
+        .table-custom tbody td:nth-child(2) {
+          display: none;
+        }
+
+        .clase-info .materia {
+          font-size: 0.8rem;
+        }
+
+        .clase-info .horario {
+          font-size: 0.7rem;
+        }
+
+        .fecha-registro .fecha {
+          font-size: 0.75rem;
+        }
+
+        .fecha-registro .hora {
+          font-size: 0.7rem;
+        }
+
+        .alumno-info .nombre {
+          font-size: 0.85rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1146,13 +1288,12 @@
             <table class="table-custom">
               <thead>
                 <tr>
-                  <th>Nombre del Alumno</th>
-                  <th>Carrera</th>
-                  <th>Laboratorio</th>
+                  <th>Alumno</th>
+                  <th class="d-none d-md-table-cell">Carrera</th>
+                  <th>Lab</th>
                   <th>Grupo</th>
-                  <!-- NUEVA COLUMNA -->
-                  <th>Fecha de Registro</th>
-                  <!-- NUEVA COLUMNA -->
+                  <th>Clase</th>
+                  <th>Registro</th>
                 </tr>
               </thead>
               <tbody id="alumnos-container">
