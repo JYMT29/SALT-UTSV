@@ -535,6 +535,9 @@
       /* Agrega esto a tu CSS existente */
 
       /* Badge para grupos */
+      /* Agrega esto a tu CSS existente */
+
+      /* Badge para grupos */
       .badge-primary {
         background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
         color: white;
@@ -553,41 +556,66 @@
         font-weight: 600;
       }
 
-      /* Ajuste para tabla con 5 columnas */
+      /* Estilo para la información de materia */
+      .materia-info {
+        line-height: 1.4;
+      }
+
+      .materia-info strong {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+      }
+
+      .materia-info small {
+        font-size: 0.8rem;
+      }
+
+      /* Ajuste para tabla con 6 columnas */
       .table-custom {
         width: 100%;
         border-collapse: collapse;
       }
 
       .table-custom thead th:nth-child(1) {
-        width: 25%;
+        width: 20%;
       } /* Nombre */
       .table-custom thead th:nth-child(2) {
-        width: 20%;
+        width: 15%;
       } /* Carrera */
       .table-custom thead th:nth-child(3) {
-        width: 15%;
+        width: 12%;
       } /* Laboratorio */
       .table-custom thead th:nth-child(4) {
-        width: 15%;
+        width: 12%;
       } /* Grupo */
       .table-custom thead th:nth-child(5) {
-        width: 25%;
+        width: 21%;
+      } /* Materia/Horario */
+      .table-custom thead th:nth-child(6) {
+        width: 20%;
       } /* Fecha */
 
       /* Ajustes responsive para la tabla con más columnas */
       @media (max-width: 768px) {
         .table-custom {
-          font-size: 0.8rem;
+          font-size: 0.75rem;
         }
 
         .table-custom thead th,
         .table-custom tbody td {
-          padding: 6px 8px;
+          padding: 5px 6px;
         }
 
         .controls-container .row .col-md-4 {
-          margin-bottom: 15px;
+          margin-bottom: 10px;
+        }
+
+        .materia-info strong {
+          font-size: 0.8rem;
+        }
+
+        .materia-info small {
+          font-size: 0.7rem;
         }
       }
     </style>

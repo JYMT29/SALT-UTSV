@@ -4,8 +4,10 @@ const API_BASE_URL = "https://salt-utsv-production.up.railway.app";
 // Estado global
 let alumnos = [];
 let estudiantes = []; // Para comparar con la tabla estudiantes
+let horarios = []; // Para obtener materia y hora
 let carrerasUnicas = new Set();
-let gruposUnicos = new Set(); // Para filtro por grupo
+let gruposUnicos = new Set();
+let materiasUnicas = new Set(); // Nuevo filtro por materia
 
 // Elementos del DOM
 const alumnosContainer = document.getElementById("alumnos-container");
@@ -18,7 +20,7 @@ const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
 
-// Función para mostrar mensajes - ESTA ES LA FUNCIÓN QUE FALTABA
+// Función para mostrar mensajes
 function showMessage(message, type = "error") {
   const alertClass =
     type === "success"
@@ -30,6 +32,37 @@ function showMessage(message, type = "error") {
   setTimeout(() => {
     messageContainer.innerHTML = "";
   }, 5000);
+}
+
+// Función para obtener horarios desde la API
+async function fetchHorarios() {
+  try {
+    // Obtener horarios de ambos laboratorios
+    const [responseLab1, responseLab2] = await Promise.all([
+      fetch(`${API_BASE_URL}/api/horarios?lab=lab1`),
+      fetch(`${API_BASE_URL}/api/horarios?lab=lab2`),
+    ]);
+
+    if (!responseLab1.ok || !responseLab2.ok) {
+      throw new Error(`Error HTTP al obtener horarios`);
+    }
+
+    const horariosLab1 = await responseLab1.json();
+    const horariosLab2 = await responseLab2.json();
+
+    // Combinar todos los horarios
+    horarios = [
+      ...(horariosLab1.success ? horariosLab1.horarios : []),
+      ...(horariosLab2.success ? horariosLab2.horarios : []),
+    ];
+
+    // Extraer materias únicas para el filtro
+    materiasUnicas = new Set(horarios.map((h) => h.materia).filter(Boolean));
+    updateMateriaFilter();
+  } catch (error) {
+    console.error("Error al obtener horarios:", error);
+    showMessage("Error al obtener horarios", "warning");
+  }
 }
 
 // Función para obtener estudiantes desde la API
@@ -59,12 +92,70 @@ async function fetchEstudiantes() {
   }
 }
 
+// Función para encontrar la materia y horario basado en la fecha de registro
+function encontrarMateriaYHorario(alumno) {
+  if (!alumno.fecha || !alumno.laboratorio) {
+    return { materia: "No disponible", horario: "No disponible" };
+  }
+
+  try {
+    const fechaRegistro = new Date(alumno.fecha);
+    const diaSemana = fechaRegistro.getDay();
+    const horaRegistro = fechaRegistro.toTimeString().substring(0, 5); // Formato HH:MM
+
+    // Mapear día numérico a texto
+    const dias = [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+    ];
+    const diaTexto = dias[diaSemana];
+
+    // Buscar horario que coincida
+    const horarioCoincidente = horarios.find((horario) => {
+      // Verificar laboratorio y día
+      if (
+        horario.laboratorio !== alumno.laboratorio ||
+        horario.dia !== diaTexto
+      ) {
+        return false;
+      }
+
+      // Verificar si la hora de registro está dentro del rango del horario
+      const [horaInicio, horaFin] = horario.hora
+        .split("-")
+        .map((h) => h.trim());
+      return horaRegistro >= horaInicio && horaRegistro <= horaFin;
+    });
+
+    if (horarioCoincidente) {
+      return {
+        materia: horarioCoincidente.materia || "Sin materia",
+        horario: horarioCoincidente.hora || "Sin horario",
+        grupo: horarioCoincidente.grupo || "Sin grupo",
+      };
+    } else {
+      return {
+        materia: "Fuera de horario",
+        horario: `${diaTexto} ${horaRegistro}`,
+      };
+    }
+  } catch (error) {
+    console.error("Error al procesar fecha del alumno:", error, alumno);
+    return { materia: "Error en fecha", horario: "Error en fecha" };
+  }
+}
+
 // Función para obtener alumnos desde la API
 async function fetchAlumnos() {
   try {
     alumnosContainer.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center py-4">
+        <td colspan="6" class="text-center py-4">
           <div class="loading">Cargando lista de alumnos...</div>
         </td>
       </tr>
@@ -85,6 +176,9 @@ async function fetchAlumnos() {
         (est) => est.matricula === alumno.matricula
       );
 
+      // Encontrar materia y horario basado en la fecha de registro
+      const infoHorario = encontrarMateriaYHorario(alumno);
+
       return {
         nombre: alumno.nombre || "Sin nombre",
         carrera: alumno.carrera || "Sin carrera",
@@ -92,6 +186,9 @@ async function fetchAlumnos() {
         fecha: alumno.fecha || new Date().toISOString(),
         grupo: estudiante ? estudiante.grupo || "Sin grupo" : "Sin grupo",
         matricula: alumno.matricula, // Necesario para la comparación
+        materia: infoHorario.materia,
+        horario: infoHorario.horario,
+        grupoHorario: infoHorario.grupo,
       };
     });
 
@@ -102,6 +199,12 @@ async function fetchAlumnos() {
     // Extraer grupos únicos para el filtro
     gruposUnicos = new Set(alumnos.map((a) => a.grupo).filter(Boolean));
     updateGrupoFilter();
+
+    // Extraer materias únicas para el filtro (de los horarios encontrados)
+    const materiasAlumnos = new Set(
+      alumnos.map((a) => a.materia).filter(Boolean)
+    );
+    updateMateriaFilter(materiasAlumnos);
 
     renderAlumnos();
     updateStats();
@@ -124,13 +227,68 @@ async function fetchAlumnos() {
     console.error("Error al obtener alumnos:", error);
     alumnosContainer.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center py-4">
+        <td colspan="6" class="text-center py-4">
           <div class="error">Error al cargar los datos: ${error.message}</div>
         </td>
       </tr>
     `;
     showMessage("Error al conectar con el servidor", "error");
   }
+}
+
+// Función para actualizar el filtro de materias
+function updateMateriaFilter(materiasAlumnos = null) {
+  // Crear el filtro de materias si no existe
+  let materiaFilter = document.getElementById("materia-filter");
+
+  if (!materiaFilter) {
+    // Agregar el filtro de materias al HTML
+    const controlsContainer = document.querySelector(
+      ".controls-container .row"
+    );
+    const materiaFilterHTML = `
+      <div class="col-md-4 mb-3">
+        <div class="filter-group">
+          <label for="materia-filter">
+            <i class="bi bi-book me-1"></i>Filtrar por Materia:
+          </label>
+          <select class="form-select" id="materia-filter">
+            <option value="all">Todas las materias</option>
+          </select>
+        </div>
+      </div>
+    `;
+
+    // Insertar después del filtro de grupo
+    const grupoFilterDiv = document.getElementById("grupo-filter")
+      ? document.getElementById("grupo-filter").closest(".col-md-4")
+      : controlsContainer.querySelector(".col-md-4:last-child");
+
+    grupoFilterDiv.insertAdjacentHTML("afterend", materiaFilterHTML);
+
+    // Agregar event listener al nuevo filtro
+    materiaFilter = document.getElementById("materia-filter");
+    materiaFilter.addEventListener("change", renderAlumnos);
+  }
+
+  // Actualizar opciones del filtro
+  materiaFilter.innerHTML = '<option value="all">Todas las materias</option>';
+
+  const materiasParaFiltrar = materiasAlumnos || materiasUnicas;
+
+  materiasParaFiltrar.forEach((materia) => {
+    if (
+      materia &&
+      materia !== "No disponible" &&
+      materia !== "Fuera de horario" &&
+      materia !== "Error en fecha"
+    ) {
+      const option = document.createElement("option");
+      option.value = materia;
+      option.textContent = materia;
+      materiaFilter.appendChild(option);
+    }
+  });
 }
 
 // Función para actualizar el filtro de grupos
@@ -201,6 +359,9 @@ function renderAlumnos() {
   const grupoSeleccionado = document.getElementById("grupo-filter")
     ? document.getElementById("grupo-filter").value
     : "all";
+  const materiaSeleccionada = document.getElementById("materia-filter")
+    ? document.getElementById("materia-filter").value
+    : "all";
 
   // Filtrar alumnos
   const alumnosFiltrados = alumnos.filter((alumno) => {
@@ -211,8 +372,12 @@ function renderAlumnos() {
       carreraSeleccionada === "all" || alumno.carrera === carreraSeleccionada;
     const coincideGrupo =
       grupoSeleccionado === "all" || alumno.grupo === grupoSeleccionado;
+    const coincideMateria =
+      materiaSeleccionada === "all" || alumno.materia === materiaSeleccionada;
 
-    return coincideLaboratorio && coincideCarrera && coincideGrupo;
+    return (
+      coincideLaboratorio && coincideCarrera && coincideGrupo && coincideMateria
+    );
   });
 
   // Actualizar estadísticas
@@ -222,7 +387,7 @@ function renderAlumnos() {
   if (alumnosFiltrados.length === 0) {
     alumnosContainer.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center py-4">
+        <td colspan="6" class="text-center py-4">
           <div class="empty-state">
             <i class="bi bi-search"></i>
             <p>No hay alumnos que coincidan con los filtros seleccionados</p>
@@ -253,6 +418,18 @@ function renderAlumnos() {
             }">
               ${alumno.grupo}
             </span>
+          </td>
+          <td>
+            <div class="materia-info">
+              <strong>${alumno.materia}</strong>
+              <br>
+              <small class="text-muted">${alumno.horario}</small>
+              ${
+                alumno.grupoHorario && alumno.grupoHorario !== "Sin grupo"
+                  ? `<br><small class="text-info">Grupo: ${alumno.grupoHorario}</small>`
+                  : ""
+              }
+            </div>
           </td>
           <td>${formatFecha(alumno.fecha)}</td>
         </tr>
@@ -293,8 +470,8 @@ function updateStats(alumnosFiltrados = null) {
 
 // Inicializar la aplicación
 document.addEventListener("DOMContentLoaded", function () {
-  // Cargar estudiantes primero, luego alumnos
-  fetchEstudiantes().then(() => {
+  // Cargar horarios, estudiantes y luego alumnos
+  Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
     fetchAlumnos();
   });
 
@@ -304,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event listener para botón de actualizar
   document.getElementById("refresh-btn").addEventListener("click", function () {
-    fetchEstudiantes().then(() => {
+    Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
       fetchAlumnos();
     });
   });
