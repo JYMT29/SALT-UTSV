@@ -20,50 +20,60 @@ const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
 
-// Función para formatear fecha en hora de CDMX
-function getCDMXDateTime(dateString) {
+// Función para convertir fecha a hora de CDMX
+function toCDMXTime(dateString) {
   try {
-    const fecha = new Date(dateString);
-    return fecha.toLocaleString("es-MX", {
+    // Si la fecha ya es un objeto Date, usarlo directamente
+    const date =
+      typeof dateString === "string" ? new Date(dateString) : dateString;
+
+    // Formatear a string en hora de CDMX
+    return date.toLocaleString("es-MX", {
       timeZone: "America/Mexico_City",
-      day: "2-digit",
-      month: "2-digit",
       year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
     });
   } catch (error) {
-    console.error("Error al formatear fecha CDMX:", error);
+    console.error("Error al convertir a hora CDMX:", error);
     return "Fecha inválida";
   }
 }
 
-// Función para fecha y hora separadas en CDMX
+// Función para obtener fecha y hora separadas en CDMX
 function getCDMXDateTimeSeparated(dateString) {
   try {
-    const fecha = new Date(dateString);
+    const date =
+      typeof dateString === "string" ? new Date(dateString) : dateString;
 
-    const opcionesFecha = {
+    const fechaFormateada = date.toLocaleDateString("es-MX", {
       timeZone: "America/Mexico_City",
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    };
+    });
 
-    const opcionesHora = {
+    const horaFormateada = date.toLocaleTimeString("es-MX", {
       timeZone: "America/Mexico_City",
       hour: "2-digit",
       minute: "2-digit",
+    });
+
+    return {
+      fecha: fechaFormateada,
+      hora: horaFormateada,
+      dateObj: date, // Mantener el objeto Date para cálculos
     };
-
-    const fechaFormateada = fecha.toLocaleDateString("es-MX", opcionesFecha);
-    const horaFormateada = fecha.toLocaleTimeString("es-MX", opcionesHora);
-
-    return { fecha: fechaFormateada, hora: horaFormateada };
   } catch (error) {
     console.error("Error al formatear fecha CDMX:", error);
-    return { fecha: "Fecha inválida", hora: "--:--" };
+    return {
+      fecha: "Fecha inválida",
+      hora: "--:--",
+      dateObj: new Date(),
+    };
   }
 }
 
@@ -74,11 +84,6 @@ function formatFechaSeparada(fechaString) {
     <span class="fecha">${fecha}</span>
     <span class="hora">${hora}</span>
   `;
-}
-
-// Función regular para fecha completa en CDMX
-function formatFecha(fechaString) {
-  return getCDMXDateTime(fechaString);
 }
 
 // Función para mostrar mensajes
@@ -164,14 +169,12 @@ function encontrarMateriaYHorario(alumno) {
   }
 
   try {
-    // Convertir a hora de CDMX
-    const fechaRegistro = new Date(alumno.fecha);
-    const fechaCDMX = new Date(
-      fechaRegistro.toLocaleString("en-US", { timeZone: "America/Mexico_City" })
-    );
+    // Convertir la fecha del servidor a objeto Date y luego a CDMX
+    const fechaOriginal = new Date(alumno.fecha);
+    const { dateObj: fechaCDMX, hora: horaCDMX } =
+      getCDMXDateTimeSeparated(fechaOriginal);
 
     const diaSemana = fechaCDMX.getDay();
-    const horaRegistro = fechaCDMX.toTimeString().substring(0, 5); // Formato HH:MM
 
     // Mapear día numérico a texto
     const dias = [
@@ -184,6 +187,11 @@ function encontrarMateriaYHorario(alumno) {
       "Sábado",
     ];
     const diaTexto = dias[diaSemana];
+
+    console.log(`Procesando alumno: ${alumno.nombre}`);
+    console.log(`Fecha original: ${alumno.fecha}`);
+    console.log(`Fecha CDMX: ${toCDMXTime(fechaOriginal)}`);
+    console.log(`Día: ${diaTexto}, Hora: ${horaCDMX}`);
 
     // Buscar horario que coincida
     const horarioCoincidente = horarios.find((horario) => {
@@ -199,20 +207,30 @@ function encontrarMateriaYHorario(alumno) {
       const [horaInicio, horaFin] = horario.hora
         .split("-")
         .map((h) => h.trim());
-      return horaRegistro >= horaInicio && horaRegistro <= horaFin;
+
+      console.log(
+        `Comparando con horario: ${horario.hora}, Materia: ${horario.materia}`
+      );
+      console.log(
+        `Hora registro: ${horaCDMX}, Hora inicio: ${horaInicio}, Hora fin: ${horaFin}`
+      );
+
+      return horaCDMX >= horaInicio && horaCDMX <= horaFin;
     });
 
     if (horarioCoincidente) {
+      console.log(`✅ Coincidencia encontrada: ${horarioCoincidente.materia}`);
       return {
         materia: horarioCoincidente.materia || "Sin materia",
         horario: horarioCoincidente.hora || "Sin horario",
         grupoHorario: horarioCoincidente.grupo || "",
       };
     } else {
+      console.log(`❌ Fuera de horario`);
       // Fuera de horario - mostrar información útil
       return {
         materia: "Fuera de horario",
-        horario: `${diaTexto} ${horaRegistro}`,
+        horario: `${diaTexto} ${horaCDMX}`,
         grupoHorario: "",
       };
     }
@@ -261,6 +279,8 @@ async function fetchAlumnos() {
         materia: infoHorario.materia,
         horario: infoHorario.horario,
         grupoHorario: infoHorario.grupo,
+        // Guardar también la fecha formateada en CDMX para mostrar
+        fechaCDMX: toCDMXTime(alumno.fecha),
       };
     });
 
@@ -281,16 +301,9 @@ async function fetchAlumnos() {
     renderAlumnos();
     updateStats();
 
-    // Actualizar fecha con hora de CDMX
+    // Actualizar fecha con hora actual de CDMX
     const now = new Date();
-    fechaActualizacionEl.textContent = now.toLocaleString("es-MX", {
-      timeZone: "America/Mexico_City",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    fechaActualizacionEl.textContent = toCDMXTime(now);
 
     showMessage(
       `Datos cargados correctamente: ${alumnos.length} alumnos encontrados`,
@@ -524,6 +537,7 @@ function renderAlumnos() {
           <td>
             <div class="fecha-registro">
               ${formatFechaSeparada(alumno.fecha)}
+              <small class="text-muted d-block">CDMX</small>
             </div>
           </td>
         </tr>
