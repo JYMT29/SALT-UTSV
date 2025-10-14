@@ -20,6 +20,67 @@ const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
 
+// Función para formatear fecha en hora de CDMX
+function getCDMXDateTime(dateString) {
+  try {
+    const fecha = new Date(dateString);
+    return fecha.toLocaleString("es-MX", {
+      timeZone: "America/Mexico_City",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  } catch (error) {
+    console.error("Error al formatear fecha CDMX:", error);
+    return "Fecha inválida";
+  }
+}
+
+// Función para fecha y hora separadas en CDMX
+function getCDMXDateTimeSeparated(dateString) {
+  try {
+    const fecha = new Date(dateString);
+
+    const opcionesFecha = {
+      timeZone: "America/Mexico_City",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    };
+
+    const opcionesHora = {
+      timeZone: "America/Mexico_City",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
+    const fechaFormateada = fecha.toLocaleDateString("es-MX", opcionesFecha);
+    const horaFormateada = fecha.toLocaleTimeString("es-MX", opcionesHora);
+
+    return { fecha: fechaFormateada, hora: horaFormateada };
+  } catch (error) {
+    console.error("Error al formatear fecha CDMX:", error);
+    return { fecha: "Fecha inválida", hora: "--:--" };
+  }
+}
+
+// Función para formatear la fecha separada en hora CDMX
+function formatFechaSeparada(fechaString) {
+  const { fecha, hora } = getCDMXDateTimeSeparated(fechaString);
+  return `
+    <span class="fecha">${fecha}</span>
+    <span class="hora">${hora}</span>
+  `;
+}
+
+// Función regular para fecha completa en CDMX
+function formatFecha(fechaString) {
+  return getCDMXDateTime(fechaString);
+}
+
 // Función para mostrar mensajes
 function showMessage(message, type = "error") {
   const alertClass =
@@ -93,7 +154,6 @@ async function fetchEstudiantes() {
 }
 
 // Función para encontrar la materia y horario basado en la fecha de registro
-// Función para encontrar la materia y horario basado en la fecha de registro
 function encontrarMateriaYHorario(alumno) {
   if (!alumno.fecha || !alumno.laboratorio) {
     return {
@@ -104,9 +164,14 @@ function encontrarMateriaYHorario(alumno) {
   }
 
   try {
+    // Convertir a hora de CDMX
     const fechaRegistro = new Date(alumno.fecha);
-    const diaSemana = fechaRegistro.getDay();
-    const horaRegistro = fechaRegistro.toTimeString().substring(0, 5); // Formato HH:MM
+    const fechaCDMX = new Date(
+      fechaRegistro.toLocaleString("en-US", { timeZone: "America/Mexico_City" })
+    );
+
+    const diaSemana = fechaCDMX.getDay();
+    const horaRegistro = fechaCDMX.toTimeString().substring(0, 5); // Formato HH:MM
 
     // Mapear día numérico a texto
     const dias = [
@@ -156,6 +221,7 @@ function encontrarMateriaYHorario(alumno) {
     return { materia: "Error en fecha", horario: "Error", grupoHorario: "" };
   }
 }
+
 // Función para obtener alumnos desde la API
 async function fetchAlumnos() {
   try {
@@ -215,9 +281,10 @@ async function fetchAlumnos() {
     renderAlumnos();
     updateStats();
 
-    // Actualizar fecha
+    // Actualizar fecha con hora de CDMX
     const now = new Date();
-    fechaActualizacionEl.textContent = now.toLocaleDateString("es-ES", {
+    fechaActualizacionEl.textContent = now.toLocaleString("es-MX", {
+      timeZone: "America/Mexico_City",
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -359,8 +426,6 @@ function updateCarreraFilter() {
 }
 
 // Función para renderizar la lista de alumnos
-// Función para renderizar la lista de alumnos
-// Función para renderizar la lista de alumnos
 function renderAlumnos() {
   const laboratorioSeleccionado = laboratorioFilter.value;
   const carreraSeleccionada = carreraFilter.value;
@@ -465,47 +530,6 @@ function renderAlumnos() {
       `;
     })
     .join("");
-}
-// Función para formatear la fecha separada (fecha y hora en líneas diferentes)
-function formatFechaSeparada(fechaString) {
-  try {
-    const fecha = new Date(fechaString);
-    const fechaFormateada = fecha.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-    const horaFormateada = fecha.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    return `
-      <span class="fecha">${fechaFormateada}</span>
-      <span class="hora">${horaFormateada}</span>
-    `;
-  } catch (error) {
-    return `
-      <span class="fecha">Fecha inválida</span>
-      <span class="hora">--:--</span>
-    `;
-  }
-}
-
-// Mantén la función original para otros usos
-function formatFecha(fechaString) {
-  try {
-    const fecha = new Date(fechaString);
-    return fecha.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch (error) {
-    return "Fecha inválida";
-  }
 }
 
 // Función para actualizar estadísticas
