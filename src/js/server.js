@@ -15,7 +15,55 @@ const __dirname = dirname(__filename);
 app.use(cors());
 app.use(express.json()); // Parsear JSON
 app.use(express.urlencoded({ extended: true })); // Parsear formularios
+// ==== 🔐 MIDDLEWARE DE AUTENTICACIÓN GLOBAL - AGREGAR ESTO ====
+function authenticateUser(req, res, next) {
+  const publicRoutes = [
+    "/",
+    "/index.html",
+    "/login",
+    "/api/hello",
+    "/logout",
+    "/api/hora-servidor",
+    "/api/verificar-alumno", // Para el registro de alumnos
+    "/api/horario-actual", // Para verificar disponibilidad
+  ];
 
+  // Permitir acceso a rutas públicas y archivos estáticos
+  if (
+    publicRoutes.includes(req.path) ||
+    req.path.startsWith("/css/") ||
+    req.path.startsWith("/js/") ||
+    req.path.startsWith("/img/") ||
+    req.path.endsWith(".css") ||
+    req.path.endsWith(".js") ||
+    req.path.endsWith(".png") ||
+    req.path.endsWith(".jpg") ||
+    req.path.endsWith(".ico")
+  ) {
+    return next();
+  }
+
+  // Verificar autenticación para rutas protegidas
+  if (!req.session.user_id) {
+    console.log(`🔒 Intento de acceso no autorizado a: ${req.path}`);
+
+    if (req.path.startsWith("/api/")) {
+      return res.status(401).json({
+        success: false,
+        error: "No autenticado",
+        redirect: "/index.html",
+      });
+    }
+    return res.redirect("/index.html");
+  }
+
+  // Usuario autenticado, continuar
+  console.log(`✅ Usuario ${req.session.user_id} accediendo a: ${req.path}`);
+  next();
+}
+
+// Aplicar el middleware de autenticación
+app.use(authenticateUser);
 // Rutas de tu API
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hola desde el backend 🚀" });
