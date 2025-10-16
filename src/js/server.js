@@ -28,22 +28,23 @@ app.use(
 
 // Sirve los archivos estáticos de la carpeta "public"
 app.use(express.static(join(__dirname, "../../public")));
-// ==== 🔐 MIDDLEWARE DE AUTENTICACIÓN GLOBAL - AGREGAR ESTO ====
-function authenticateUser(req, res, next) {
+// ========== 🔐 PROTECCIÓN GLOBAL MEJORADA ==========
+app.use((req, res, next) => {
+  // Definir rutas explícitamente públicas
   const publicRoutes = [
     "/",
     "/index.html",
     "/login",
-    "/api/hello",
     "/logout",
+    "/api/hello",
     "/api/hora-servidor",
-    "/api/verificar-alumno", // Para el registro de alumnos
-    "/api/horario-actual", // Para verificar disponibilidad
+    "/api/verificar-alumno",
+    "/api/horario-actual",
+    "/api/asientos-ocupados",
   ];
 
-  // Permitir acceso a rutas públicas y archivos estáticos
-  if (
-    publicRoutes.includes(req.path) ||
+  // Permitir archivos estáticos (CSS, JS, imágenes)
+  const isStaticFile =
     req.path.startsWith("/css/") ||
     req.path.startsWith("/js/") ||
     req.path.startsWith("/img/") ||
@@ -51,15 +52,18 @@ function authenticateUser(req, res, next) {
     req.path.endsWith(".js") ||
     req.path.endsWith(".png") ||
     req.path.endsWith(".jpg") ||
-    req.path.endsWith(".ico")
-  ) {
+    req.path.endsWith(".ico");
+
+  // Si es ruta pública o archivo estático, permitir acceso
+  if (publicRoutes.includes(req.path) || isStaticFile) {
     return next();
   }
 
-  // Verificar autenticación para rutas protegidas
-  if (!req.session.user_id) {
-    console.log(`🔒 Intento de acceso no autorizado a: ${req.path}`);
+  // 🔒 VERIFICAR AUTENTICACIÓN para todas las demás rutas
+  if (!req.session || !req.session.user_id) {
+    console.log(`🔒 Redirigiendo al login desde: ${req.path}`);
 
+    // Para APIs, responder con error JSON
     if (req.path.startsWith("/api/")) {
       return res.status(401).json({
         success: false,
@@ -67,16 +71,14 @@ function authenticateUser(req, res, next) {
         redirect: "/index.html",
       });
     }
+
+    // Para HTML, redirigir al login
     return res.redirect("/index.html");
   }
 
   // Usuario autenticado, continuar
-  console.log(`✅ Usuario ${req.session.user_id} accediendo a: ${req.path}`);
   next();
-}
-
-// Aplicar el middleware de autenticación
-app.use(authenticateUser);
+});
 
 const port = 3001;
 // Rutas de tu API
