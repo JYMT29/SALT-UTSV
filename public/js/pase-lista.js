@@ -8,7 +8,6 @@ let horarios = []; // Para obtener materia y hora
 let carrerasUnicas = new Set();
 let gruposUnicos = new Set();
 let materiasUnicas = new Set(); // Nuevo filtro por materia
-let usuarioLogueado = null;
 
 // Elementos del DOM
 const alumnosContainer = document.getElementById("alumnos-container");
@@ -20,122 +19,6 @@ const totalLab1El = document.getElementById("total-lab1");
 const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
-const loginModal = document.getElementById("loginModal");
-const loginForm = document.getElementById("loginForm");
-const logoutBtn = document.getElementById("logout-btn");
-
-// Función para verificar sesión
-async function verificarSesion() {
-  try {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      return false;
-    }
-
-    const response = await fetch(`${API_BASE_URL}/api/verify-session`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      usuarioLogueado = data.usuario;
-      return true;
-    } else {
-      localStorage.removeItem("authToken");
-      return false;
-    }
-  } catch (error) {
-    console.error("Error al verificar sesión:", error);
-    localStorage.removeItem("authToken");
-    return false;
-  }
-}
-
-// Función para mostrar/ocultar interfaz según autenticación
-function toggleInterfaz(autenticado) {
-  const elementosProtegidos = document.querySelectorAll(".protegido");
-  const loginSection = document.getElementById("login-section");
-
-  if (autenticado) {
-    elementosProtegidos.forEach((el) => (el.style.display = ""));
-    if (loginSection) loginSection.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "block";
-
-    // Mostrar información del usuario
-    const userInfo = document.getElementById("user-info");
-    if (userInfo && usuarioLogueado) {
-      userInfo.textContent = `Bienvenido, ${
-        usuarioLogueado.nombre || usuarioLogueado.email
-      }`;
-      userInfo.style.display = "block";
-    }
-  } else {
-    elementosProtegidos.forEach((el) => (el.style.display = "none"));
-    if (loginSection) loginSection.style.display = "block";
-    if (logoutBtn) logoutBtn.style.display = "none";
-
-    const userInfo = document.getElementById("user-info");
-    if (userInfo) userInfo.style.display = "none";
-
-    // Mostrar modal de login automáticamente
-    if (loginModal) {
-      const modal = new bootstrap.Modal(loginModal);
-      modal.show();
-    }
-  }
-}
-
-// Función de login
-async function login(email, password) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      localStorage.setItem("authToken", data.token);
-      usuarioLogueado = data.usuario;
-
-      // Cerrar modal
-      const modal = bootstrap.Modal.getInstance(loginModal);
-      modal.hide();
-
-      // Mostrar interfaz principal
-      toggleInterfaz(true);
-
-      // Cargar datos
-      Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
-        fetchAlumnos();
-      });
-
-      showMessage("Inicio de sesión exitoso", "success");
-      return true;
-    } else {
-      showMessage(data.error || "Error en el inicio de sesión", "error");
-      return false;
-    }
-  } catch (error) {
-    console.error("Error en login:", error);
-    showMessage("Error de conexión al servidor", "error");
-    return false;
-  }
-}
-
-// Función de logout
-function logout() {
-  localStorage.removeItem("authToken");
-  usuarioLogueado = null;
-  toggleInterfaz(false);
-  showMessage("Sesión cerrada correctamente", "success");
-}
 
 // Función para convertir fecha a hora de CDMX (GMT-6)
 function toCDMXTime(dateString) {
@@ -227,30 +110,13 @@ function showMessage(message, type = "error") {
 // Función para obtener horarios desde la API
 async function fetchHorarios() {
   try {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      throw new Error("No autenticado");
-    }
-
     // Obtener horarios de ambos laboratorios
     const [responseLab1, responseLab2] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/horarios?lab=lab1`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      fetch(`${API_BASE_URL}/api/horarios?lab=lab2`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
+      fetch(`${API_BASE_URL}/api/horarios?lab=lab1`),
+      fetch(`${API_BASE_URL}/api/horarios?lab=lab2`),
     ]);
 
     if (!responseLab1.ok || !responseLab2.ok) {
-      if (responseLab1.status === 401 || responseLab2.status === 401) {
-        logout();
-        throw new Error("Sesión expirada");
-      }
       throw new Error(`Error HTTP al obtener horarios`);
     }
 
@@ -268,36 +134,16 @@ async function fetchHorarios() {
     updateMateriaFilter();
   } catch (error) {
     console.error("Error al obtener horarios:", error);
-    if (error.message === "Sesión expirada") {
-      showMessage(
-        "Sesión expirada. Por favor inicie sesión nuevamente.",
-        "error"
-      );
-    } else {
-      showMessage("Error al obtener horarios", "warning");
-    }
+    showMessage("Error al obtener horarios", "warning");
   }
 }
 
 // Función para obtener estudiantes desde la API
 async function fetchEstudiantes() {
   try {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      throw new Error("No autenticado");
-    }
-
-    const response = await fetch(`${API_BASE_URL}/api/estudiantes`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(`${API_BASE_URL}/api/estudiantes`);
 
     if (!response.ok) {
-      if (response.status === 401) {
-        logout();
-        throw new Error("Sesión expirada");
-      }
       throw new Error(`Error HTTP: ${response.status}`);
     }
 
@@ -312,17 +158,10 @@ async function fetchEstudiantes() {
     }
   } catch (error) {
     console.error("Error al obtener estudiantes:", error);
-    if (error.message === "Sesión expirada") {
-      showMessage(
-        "Sesión expirada. Por favor inicie sesión nuevamente.",
-        "error"
-      );
-    } else {
-      showMessage(
-        "Error al conectar con el servidor para obtener estudiantes",
-        "error"
-      );
-    }
+    showMessage(
+      "Error al conectar con el servidor para obtener estudiantes",
+      "error"
+    );
   }
 }
 
@@ -420,11 +259,6 @@ function encontrarMateriaYHorario(alumno) {
 // Función para obtener alumnos desde la API
 async function fetchAlumnos() {
   try {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      throw new Error("No autenticado");
-    }
-
     alumnosContainer.innerHTML = `
       <tr>
         <td colspan="6" class="text-center py-4">
@@ -433,17 +267,9 @@ async function fetchAlumnos() {
       </tr>
     `;
 
-    const response = await fetch(`${API_BASE_URL}/alumnos`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(`${API_BASE_URL}/alumnos`);
 
     if (!response.ok) {
-      if (response.status === 401) {
-        logout();
-        throw new Error("Sesión expirada");
-      }
       throw new Error(`Error HTTP: ${response.status}`);
     }
 
@@ -501,23 +327,13 @@ async function fetchAlumnos() {
     );
   } catch (error) {
     console.error("Error al obtener alumnos:", error);
-    if (error.message === "Sesión expirada") {
-      alumnosContainer.innerHTML = `
-        <tr>
-          <td colspan="6" class="text-center py-4">
-            <div class="error">Sesión expirada. Por favor inicie sesión nuevamente.</div>
-          </td>
-        </tr>
-      `;
-    } else {
-      alumnosContainer.innerHTML = `
-        <tr>
-          <td colspan="6" class="text-center py-4">
-            <div class="error">Error al cargar los datos: ${error.message}</div>
-          </td>
-        </tr>
-      `;
-    }
+    alumnosContainer.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center py-4">
+          <div class="error">Error al cargar los datos: ${error.message}</div>
+        </td>
+      </tr>
+    `;
     showMessage("Error al conectar con el servidor", "error");
   }
 }
@@ -775,45 +591,25 @@ function debugHoras() {
 }
 
 // Inicializar la aplicación
-document.addEventListener("DOMContentLoaded", async function () {
-  // Verificar sesión al cargar
-  const autenticado = await verificarSesion();
-  toggleInterfaz(autenticado);
+document.addEventListener("DOMContentLoaded", function () {
+  // Debug de horas al inicio
+  debugHoras();
 
-  if (autenticado) {
-    // Debug de horas al inicio
-    debugHoras();
-
-    // Cargar horarios, estudiantes y luego alumnos
-    Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
-      fetchAlumnos();
-    });
-  }
+  // Cargar horarios, estudiantes y luego alumnos
+  Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
+    fetchAlumnos();
+  });
 
   // Event listeners para filtros
   laboratorioFilter.addEventListener("change", renderAlumnos);
   carreraFilter.addEventListener("change", renderAlumnos);
 
   // Event listener para botón de actualizar
-  document
-    .getElementById("refresh-btn")
-    ?.addEventListener("click", function () {
-      Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
-        fetchAlumnos();
-      });
+  document.getElementById("refresh-btn").addEventListener("click", function () {
+    Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
+      fetchAlumnos();
     });
-
-  // Event listener para login form
-  loginForm?.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    await login(email, password);
   });
-
-  // Event listener para logout
-  logoutBtn?.addEventListener("click", logout);
 });
 
 // Función para probar la conexión
