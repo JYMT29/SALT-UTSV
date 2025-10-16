@@ -20,16 +20,19 @@ const totalLab2El = document.getElementById("total-lab2");
 const totalRegistrosEl = document.getElementById("total-registros");
 const fechaActualizacionEl = document.getElementById("fecha-actualizacion");
 
-// Función para convertir fecha a hora de CDMX
+// Función para convertir fecha a hora de CDMX (GMT-6)
 function toCDMXTime(dateString) {
   try {
-    // Si la fecha ya es un objeto Date, usarlo directamente
     const date =
       typeof dateString === "string" ? new Date(dateString) : dateString;
 
-    // Formatear a string en hora de CDMX
-    return date.toLocaleString("es-MX", {
-      timeZone: "America/Mexico_City",
+    // Aplicar offset manual para GMT-6
+    const offset = -6 * 60; // GMT-6 en minutos
+    const localDate = new Date(
+      date.getTime() + (offset - date.getTimezoneOffset()) * 60000
+    );
+
+    return localDate.toLocaleString("es-MX", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -43,21 +46,25 @@ function toCDMXTime(dateString) {
   }
 }
 
-// Función para obtener fecha y hora separadas en CDMX
+// Función para obtener fecha y hora separadas en CDMX (GMT-6)
 function getCDMXDateTimeSeparated(dateString) {
   try {
     const date =
       typeof dateString === "string" ? new Date(dateString) : dateString;
 
-    const fechaFormateada = date.toLocaleDateString("es-MX", {
-      timeZone: "America/Mexico_City",
+    // Aplicar offset manual para GMT-6
+    const offset = -6 * 60; // GMT-6 en minutos
+    const localDate = new Date(
+      date.getTime() + (offset - date.getTimezoneOffset()) * 60000
+    );
+
+    const fechaFormateada = localDate.toLocaleDateString("es-MX", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
 
-    const horaFormateada = date.toLocaleTimeString("es-MX", {
-      timeZone: "America/Mexico_City",
+    const horaFormateada = localDate.toLocaleTimeString("es-MX", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -65,7 +72,7 @@ function getCDMXDateTimeSeparated(dateString) {
     return {
       fecha: fechaFormateada,
       hora: horaFormateada,
-      dateObj: date, // Mantener el objeto Date para cálculos
+      dateObj: localDate, // Usar la fecha ajustada
     };
   } catch (error) {
     console.error("Error al formatear fecha CDMX:", error);
@@ -169,7 +176,7 @@ function encontrarMateriaYHorario(alumno) {
   }
 
   try {
-    // Convertir la fecha del servidor a objeto Date y luego a CDMX
+    // Convertir la fecha usando nuestra función corregida
     const fechaOriginal = new Date(alumno.fecha);
     const { dateObj: fechaCDMX, hora: horaCDMX } =
       getCDMXDateTimeSeparated(fechaOriginal);
@@ -190,7 +197,7 @@ function encontrarMateriaYHorario(alumno) {
 
     console.log(`Procesando alumno: ${alumno.nombre}`);
     console.log(`Fecha original: ${alumno.fecha}`);
-    console.log(`Fecha CDMX: ${toCDMXTime(fechaOriginal)}`);
+    console.log(`Fecha CDMX (GMT-6): ${toCDMXTime(fechaOriginal)}`);
     console.log(`Día: ${diaTexto}, Hora: ${horaCDMX}`);
 
     // Buscar horario que coincida
@@ -212,10 +219,20 @@ function encontrarMateriaYHorario(alumno) {
         `Comparando con horario: ${horario.hora}, Materia: ${horario.materia}`
       );
       console.log(
-        `Hora registro: ${horaCDMX}, Hora inicio: ${horaInicio}, Hora fin: ${horaFin}`
+        `Hora registro (GMT-6): ${horaCDMX}, Hora inicio: ${horaInicio}, Hora fin: ${horaFin}`
       );
 
-      return horaCDMX >= horaInicio && horaCDMX <= horaFin;
+      // Convertir horas a minutos para comparación
+      const horaToMinutes = (horaStr) => {
+        const [horas, minutos] = horaStr.split(":").map(Number);
+        return horas * 60 + (minutos || 0);
+      };
+
+      const registroMinutos = horaToMinutes(horaCDMX);
+      const inicioMinutos = horaToMinutes(horaInicio);
+      const finMinutos = horaToMinutes(horaFin);
+
+      return registroMinutos >= inicioMinutos && registroMinutos <= finMinutos;
     });
 
     if (horarioCoincidente) {
@@ -227,7 +244,6 @@ function encontrarMateriaYHorario(alumno) {
       };
     } else {
       console.log(`❌ Fuera de horario`);
-      // Fuera de horario - mostrar información útil
       return {
         materia: "Fuera de horario",
         horario: `${diaTexto} ${horaCDMX}`,
@@ -537,7 +553,7 @@ function renderAlumnos() {
           <td>
             <div class="fecha-registro">
               ${formatFechaSeparada(alumno.fecha)}
-              <small class="text-muted d-block">CDMX</small>
+              <small class="text-muted d-block">CDMX (GMT-6)</small>
             </div>
           </td>
         </tr>
@@ -560,8 +576,25 @@ function updateStats(alumnosFiltrados = null) {
   totalLab2El.textContent = lab2Count;
 }
 
+// Función auxiliar para debug de horas
+function debugHoras() {
+  const ahora = new Date();
+  console.log("=== DEBUG HORAS ===");
+  console.log("Hora servidor (UTC):", ahora.toISOString());
+  console.log("Hora local navegador:", ahora.toLocaleString("es-MX"));
+  console.log("Hora CDMX (GMT-6):", toCDMXTime(ahora));
+  console.log(
+    "Zona horaria navegador:",
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+  console.log("===================");
+}
+
 // Inicializar la aplicación
 document.addEventListener("DOMContentLoaded", function () {
+  // Debug de horas al inicio
+  debugHoras();
+
   // Cargar horarios, estudiantes y luego alumnos
   Promise.all([fetchHorarios(), fetchEstudiantes()]).then(() => {
     fetchAlumnos();
