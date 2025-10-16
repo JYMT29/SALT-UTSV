@@ -73,6 +73,7 @@ function filterAlumnos(data, fechaFiltro, laboratorio) {
 
 // Función para cargar los datos en la tabla de alumnos
 // Función para cargar los datos en la tabla de alumnos
+// Función para cargar los datos en la tabla de alumnos - CORREGIDA
 function loadTableData(data) {
   const tableBody = document.querySelector("#alumno-table tbody");
   tableBody.innerHTML = "";
@@ -81,6 +82,9 @@ function loadTableData(data) {
     console.error("El formato de los datos de alumnos no es correcto.");
     return;
   }
+
+  // DEBUG: Ver qué datos están llegando
+  console.log("Datos recibidos para la tabla:", data);
 
   data.forEach((alumno) => {
     const newRow = document.createElement("tr");
@@ -91,12 +95,13 @@ function loadTableData(data) {
       return celda;
     };
 
+    // USAR EL NOMBRE DIRECTAMENTE - NO EXTRAER
     newRow.appendChild(crearCelda(alumno.matricula));
-    newRow.appendChild(crearCelda(nombreCompleto));
+    newRow.appendChild(crearCelda(alumno.nombre)); // ← CAMBIO AQUÍ
     newRow.appendChild(crearCelda(alumno.carrera));
     newRow.appendChild(crearCelda(alumno.tipo_equipo || "No definido"));
     newRow.appendChild(crearCelda(alumno.numero_equipo || "No definido"));
-    newRow.appendChild(crearCelda(alumno.materia || "Sin asignar")); // Cambiado de maestro a materia
+    newRow.appendChild(crearCelda(alumno.materia || "Sin asignar"));
     const fechaLocal = convertirFechaLocal(alumno.fecha);
     newRow.appendChild(crearCelda(fechaLocal));
 
@@ -106,7 +111,6 @@ function loadTableData(data) {
   // Actualizar contador de registros
   document.getElementById("total-registros").textContent = data.length;
 }
-
 // Función para extraer solo el nombre del campo combinado
 function extraerSoloNombre(textoCompleto) {
   if (!textoCompleto) return "No disponible";
