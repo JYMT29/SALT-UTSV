@@ -28,52 +28,53 @@ app.use(
 
 // Sirve los archivos estáticos de la carpeta "public"
 app.use(express.static(join(__dirname, "../../public")));
-// ==== 🔐 MIDDLEWARE DE AUTENTICACIÓN GLOBAL - AGREGAR ESTO ====
-function authenticateUser(req, res, next) {
-  const publicRoutes = [
-    "/",
-    "/index.html",
-    "/login",
-    "/api/hello",
-    "/logout",
-    "/api/hora-servidor",
-    "/api/verificar-alumno", // Para el registro de alumnos
-    "/api/horario-actual", // Para verificar disponibilidad
-  ];
-
-  // Permitir acceso a rutas públicas y archivos estáticos
-  if (
-    publicRoutes.includes(req.path) ||
-    req.path.startsWith("/css/") ||
-    req.path.startsWith("/js/") ||
-    req.path.startsWith("/img/") ||
-    req.path.endsWith(".css") ||
-    req.path.endsWith(".js") ||
-    req.path.endsWith(".png") ||
-    req.path.endsWith(".jpg") ||
-    req.path.endsWith(".ico")
-  ) {
+// ========== 🔐 MIDDLEWARE DE AUTENTICACIÓN MEJORADO ==========
+function requireAuth(req, res, next) {
+  // Si ya está autenticado, continuar
+  if (req.session && req.session.user_id) {
     return next();
   }
 
-  // Verificar autenticación para rutas protegidas
-  if (!req.session.user_id) {
-    console.log(`🔒 Intento de acceso no autorizado a: ${req.path}`);
-
-    if (req.path.startsWith("/api/")) {
-      return res.status(401).json({
-        success: false,
-        error: "No autenticado",
-        redirect: "/index.html",
-      });
-    }
-    return res.redirect("/index.html");
+  // Si es una API, responder con error JSON
+  if (req.path.startsWith("/api/")) {
+    return res.status(401).json({
+      success: false,
+      error: "No autenticado",
+      redirect: "/index.html",
+    });
   }
 
-  // Usuario autenticado, continuar
-  console.log(`✅ Usuario ${req.session.user_id} accediendo a: ${req.path}`);
-  next();
+  // Para rutas HTML, redirigir al login
+  console.log(`🔒 Redirigiendo al login desde: ${req.path}`);
+  return res.redirect("/index.html");
 }
+
+// ========== 🎯 APLICAR PROTECCIÓN SOLO A RUTAS ESPECÍFICAS ==========
+
+// Proteger todas las rutas HTML principales
+app.get("/inicio.html", requireAuth);
+app.get("/horario.html", requireAuth);
+app.get("/registro.html", requireAuth);
+app.get("/informe.html", requireAuth);
+app.get("/usuarios.html", requireAuth);
+app.get("/pase-lista.html", requireAuth);
+app.get("/alumnos.html", requireAuth);
+
+// Proteger rutas de dashboard/panel
+app.get("/dashboard.html", requireAuth);
+app.get("/panel.html", requireAuth);
+app.get("/admin.html", requireAuth);
+
+// Proteger todas las rutas API que requieren autenticación
+app.use("/api/usuarios", requireAuth);
+app.use("/api/horarios", requireAuth);
+app.use("/api/equipos", requireAuth);
+app.use("/api/estudiantes", requireAuth);
+app.use("/api/solicitudes", requireAuth);
+app.use("/api/user-info", requireAuth);
+app.use("/api/liberar-lugares", requireAuth);
+app.use("/api/update-equipment", requireAuth);
+app.use("/api/lab-config", requireAuth);
 
 // Aplicar el middleware de autenticación
 app.use(authenticateUser);
@@ -317,12 +318,10 @@ app.get("/logout", (req, res) => {
 });
 
 // -------------------- RUTA PROTEGIDA --------------------
-app.get("/inicio", (req, res) => {
+app.get("/inicio", requireAuth, (req, res) => {
   if (!req.session.role) {
     return res.redirect("/index.html");
   }
-
-  // Render the EJS template instead of sending HTML directly
   res.render("inicio", {
     role: req.session.role,
     username: req.session.nombre || "Usuario",
