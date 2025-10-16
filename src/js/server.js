@@ -15,6 +15,19 @@ const __dirname = dirname(__filename);
 app.use(cors());
 app.use(express.json()); // Parsear JSON
 app.use(express.urlencoded({ extended: true })); // Parsear formularios
+
+// Session configuration
+app.use(
+  session({
+    secret: "clave_super_secreta",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // pon en true si usas HTTPS
+  })
+);
+
+// Sirve los archivos estáticos de la carpeta "public"
+app.use(express.static(join(__dirname, "../../public")));
 // ==== 🔐 MIDDLEWARE DE AUTENTICACIÓN GLOBAL - AGREGAR ESTO ====
 function authenticateUser(req, res, next) {
   const publicRoutes = [
@@ -69,20 +82,7 @@ app.get("/api/hello", (req, res) => {
   res.json({ message: "Hola desde el backend 🚀" });
 });
 
-// Sirve los archivos estáticos de la carpeta "public"
-app.use(express.static(join(__dirname, "../../public")));
-
 const port = 3001;
-
-// Session configuration
-app.use(
-  session({
-    secret: "clave_super_secreta",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }, // pon en true si usas HTTPS
-  })
-);
 
 // Configuración de conexión a MySQL con pool de conexiones
 const pool = mysql.createPool({
