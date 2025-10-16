@@ -91,9 +91,6 @@ function loadTableData(data) {
       return celda;
     };
 
-    // Extraer solo el nombre del campo nombre (que contiene nombre + carrera)
-    const nombreCompleto = extraerSoloNombre(alumno.nombre);
-
     newRow.appendChild(crearCelda(alumno.matricula));
     newRow.appendChild(crearCelda(nombreCompleto));
     newRow.appendChild(crearCelda(alumno.carrera));
