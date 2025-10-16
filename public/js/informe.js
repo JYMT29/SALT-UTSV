@@ -72,6 +72,7 @@ function filterAlumnos(data, fechaFiltro, laboratorio) {
 }
 
 // Función para cargar los datos en la tabla de alumnos
+// Función para cargar los datos en la tabla de alumnos
 function loadTableData(data) {
   const tableBody = document.querySelector("#alumno-table tbody");
   tableBody.innerHTML = "";
@@ -98,7 +99,7 @@ function loadTableData(data) {
     newRow.appendChild(crearCelda(alumno.carrera));
     newRow.appendChild(crearCelda(alumno.tipo_equipo || "No definido"));
     newRow.appendChild(crearCelda(alumno.numero_equipo || "No definido"));
-    newRow.appendChild(crearCelda(alumno.maestro || "Sin asignar"));
+    newRow.appendChild(crearCelda(alumno.materia || "Sin asignar")); // Cambiado de maestro a materia
     const fechaLocal = convertirFechaLocal(alumno.fecha);
     newRow.appendChild(crearCelda(fechaLocal));
 
@@ -121,8 +122,9 @@ function extraerSoloNombre(textoCompleto) {
 }
 
 // Función para obtener el maestro y la hora según la fecha del alumno
-function getMaestroYHoraPorFecha() {
-  let maestro = "Sin asignar";
+// Función para obtener la materia y la hora según la fecha del alumno
+function getMateriaYHoraPorFecha() {
+  let materia = "Sin asignar";
   let hora = "Sin hora";
 
   // Obtener la fecha y hora actual
@@ -146,7 +148,7 @@ function getMaestroYHoraPorFecha() {
   // Verificar si `horarioData` está disponible
   if (!horarioData || horarioData.length === 0) {
     console.warn("horarioData está vacío o no se ha cargado correctamente.");
-    return { maestro, hora };
+    return { materia, hora };
   }
 
   // Buscar un horario que coincida con el día actual
@@ -157,14 +159,14 @@ function getMaestroYHoraPorFecha() {
 
   if (horarioEncontrado) {
     const intervaloHorario = horarioEncontrado.hora; // Ejemplo: "08:00 - 10:00"
-    const maestroAsignado = horarioEncontrado.maestro || "Sin asignar";
+    const materiaAsignada = horarioEncontrado.materia || "Sin asignar";
 
     if (intervaloHorario) {
       const [horaInicio, horaFin] = intervaloHorario.split(" - ");
 
       // Comparar si la hora actual está dentro del intervalo
       if (horaActual >= horaInicio && horaActual <= horaFin) {
-        maestro = maestroAsignado;
+        materia = materiaAsignada;
         hora = intervaloHorario;
       } else {
         console.warn(
@@ -176,8 +178,8 @@ function getMaestroYHoraPorFecha() {
     console.warn(`No se encontró horario para el día: ${diaActual}`);
   }
 
-  console.log(`Horario asignado: ${hora} - Maestro: ${maestro}`);
-  return { maestro, hora };
+  console.log(`Horario asignado: ${hora} - Materia: ${materia}`);
+  return { materia, hora };
 }
 
 // Función para convertir la fecha en formato 'YYYY-MM-DD HH:MM:SS'
@@ -289,16 +291,17 @@ function generarPDF() {
       doc.text(`Total de registros: ${currentAlumnosData.length}`, 105, 70);
 
       // Preparar datos para la tabla
+      // Preparar datos para la tabla
       const tableData = currentAlumnosData.map((alumno) => [
         alumno.matricula || "N/A",
         extraerSoloNombre(alumno.nombre),
         alumno.carrera || "N/A",
         alumno.tipo_equipo || "N/A",
         alumno.numero_equipo || "N/A",
-        alumno.maestro || "Sin asignar",
+        alumno.materia || "Sin asignar", // Cambiado de maestro a materia
         convertirFechaLocal(alumno.fecha),
       ]);
-
+      // Configurar y generar la tabla CENTRADA
       // Configurar y generar la tabla CENTRADA
       doc.autoTable({
         startY: 80,
@@ -309,7 +312,7 @@ function generarPDF() {
             "Carrera",
             "Tipo",
             "Número",
-            "Maestro",
+            "Materia", // Cambiado de "Maestro" a "Materia"
             "Fecha",
           ],
         ],
@@ -346,11 +349,10 @@ function generarPDF() {
           2: { cellWidth: "auto" },
           3: { cellWidth: "auto" },
           4: { cellWidth: "auto" },
-          5: { cellWidth: "auto" },
+          5: { cellWidth: "auto" }, // Materia
           6: { cellWidth: "auto" },
         },
       });
-
       // Pie de página
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
