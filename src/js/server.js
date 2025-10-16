@@ -343,6 +343,7 @@ function agregarHoras(hora, horas) {
 // Función para verificar horarios activos
 // Función para verificar horarios activos - ACTUALIZADA CON GRUPO
 // Función para verificar horarios activos - ACTUALIZADA CON HORA CDMX
+// Función para verificar horarios activos - ACTUALIZADA CON MATERIA
 async function verificarHorario(lab) {
   const horaActualCDMX = formatearHoraCDMX();
   const ahoraCDMX = obtenerHoraCDMX();
@@ -870,17 +871,21 @@ app.post("/alumnos", async (req, res) => {
     // Usar fecha y hora de CDMX
     const fechaCDMX = formatearFechaHoraCDMX();
 
+    // Obtener materia del horario activo
+    const materia = horario ? horario.materia : "Sin asignar";
+
     const query = `
-      INSERT INTO alumnos (matricula, nombre, carrera, PC, fecha, laboratorio)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO alumnos (matricula, nombre, carrera, PC, fecha, laboratorio, materia)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       matricula,
       nombre,
       carrera,
       PC,
-      fechaCDMX, // Usar fecha de CDMX
+      fechaCDMX,
       laboratorio,
+      materia, // Agregar materia
     ];
 
     pool.query(query, values, (err, result) => {
@@ -897,6 +902,7 @@ app.post("/alumnos", async (req, res) => {
         message: "Alumno registrado correctamente",
         id: result.insertId,
         fechaRegistro: fechaCDMX,
+        materia: materia, // Incluir materia en la respuesta
       });
     });
   } catch (error) {
@@ -921,6 +927,7 @@ app.get("/api/hora-servidor", (req, res) => {
   });
 });
 // Ruta para obtener todos los alumnos
+// Ruta para obtener todos los alumnos - ACTUALIZADA CON MATERIA
 app.get("/alumnos", (req, res) => {
   const query = "SELECT * FROM alumnos";
 
@@ -931,11 +938,17 @@ app.get("/alumnos", (req, res) => {
         .status(500)
         .json({ error: "Error al obtener la lista de alumnos" });
     }
-    res.status(200).json(results);
+
+    // Asegurarse de que cada alumno tenga el campo materia
+    const alumnosConMateria = results.map((alumno) => ({
+      ...alumno,
+      materia: alumno.materia || "Sin asignar",
+    }));
+
+    res.status(200).json(alumnosConMateria);
   });
 });
 
-// Ruta para añadir un nuevo horario
 // Ruta para añadir un nuevo horario - ACTUALIZADA CON GRUPO
 app.post("/horarios", (req, res) => {
   const { hora, materia, grupo, dia, laboratorio } = req.body; // ← AGREGAR GRUPO
@@ -1066,7 +1079,7 @@ app.post("/api/registrar-asignacion", async (req, res) => {
 
     const equipoId = equipoResult[0].id;
 
-    // Obtener horario actual y maestro
+    // Obtener horario actual y MATERIA (no maestro)
     const { horario } = await verificarHorario(laboratorio);
     if (!horario || !horario.hora) {
       return res
@@ -1075,14 +1088,13 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     }
 
     const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-    const maestro = horario;
+    const materia = horario.materia; // Cambiado de maestro a materia
 
     // Verificar si ya está registrado en esta clase
     const [yaRegistrado] = await pool.promise().query(
       `SELECT id FROM alumnos
        WHERE matricula = ?
          AND laboratorio = ?
-         
          AND TIME(fecha) BETWEEN ? AND ?
          AND DATE(fecha) = ?`,
       [matricula, laboratorio, horaInicio, horaFin, fecha.split(" ")[0]]
@@ -1094,12 +1106,12 @@ app.post("/api/registrar-asignacion", async (req, res) => {
       });
     }
 
-    // Insertar alumno
+    // Insertar alumno con MATERIA
     await pool.promise().query(
       `INSERT INTO alumnos 
-        (matricula, nombre, carrera, tipo_equipo, numero_equipo, fecha, laboratorio)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [matricula, nombre, carrera, tipo, numero, fecha, laboratorio]
+        (matricula, nombre, carrera, tipo_equipo, numero_equipo, fecha, laboratorio, materia)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [matricula, nombre, carrera, tipo, numero, fecha, laboratorio, materia] // Agregado materia
     );
 
     // Marcar equipo como ocupado
@@ -1119,7 +1131,6 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     });
   }
 });
-
 // Ruta para verificar si hay un horario activo actualmente en un laboratorio
 app.get("/api/horario-actual", async (req, res) => {
   const { lab } = req.query;
