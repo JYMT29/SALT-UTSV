@@ -77,12 +77,12 @@ function authenticateUser(req, res, next) {
 
 // Aplicar el middleware de autenticación
 app.use(authenticateUser);
+
+const port = 3001;
 // Rutas de tu API
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hola desde el backend 🚀" });
 });
-
-const port = 3001;
 
 // Configuración de conexión a MySQL con pool de conexiones
 const pool = mysql.createPool({
