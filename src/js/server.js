@@ -1046,11 +1046,16 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     if (
       !matricula ||
       !nombre ||
+      !carrera || // Asegurar que carrera esté presente
       (!PC && (!tipo_equipo || !numero_equipo)) ||
       !laboratorio ||
       !fecha
     ) {
-      return res.status(400).json({ error: "Faltan campos requeridos" });
+      return res.status(400).json({
+        error: "Faltan campos requeridos",
+        detalles:
+          "Matrícula, nombre, carrera, laboratorio y fecha son obligatorios",
+      });
     }
 
     // Obtener tipo y número de equipo desde lugar (PC-13 → PC y 13)
@@ -1079,7 +1084,7 @@ app.post("/api/registrar-asignacion", async (req, res) => {
 
     const equipoId = equipoResult[0].id;
 
-    // Obtener horario actual y MATERIA (no maestro)
+    // Obtener horario actual y materia
     const { horario } = await verificarHorario(laboratorio);
     if (!horario || !horario.hora) {
       return res
@@ -1088,7 +1093,7 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     }
 
     const [horaInicio, horaFin] = horario.hora.split("-").map((h) => h.trim());
-    const materia = horario.materia; // Cambiado de maestro a materia
+    const materia = horario.materia;
 
     // Verificar si ya está registrado en esta clase
     const [yaRegistrado] = await pool.promise().query(
@@ -1106,12 +1111,12 @@ app.post("/api/registrar-asignacion", async (req, res) => {
       });
     }
 
-    // Insertar alumno con MATERIA
+    // Insertar alumno con datos separados correctamente
     await pool.promise().query(
       `INSERT INTO alumnos 
         (matricula, nombre, carrera, tipo_equipo, numero_equipo, fecha, laboratorio, materia)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [matricula, nombre, carrera, tipo, numero, fecha, laboratorio, materia] // Agregado materia
+      [matricula, nombre, carrera, tipo, numero, fecha, laboratorio, materia]
     );
 
     // Marcar equipo como ocupado
@@ -1122,6 +1127,15 @@ app.post("/api/registrar-asignacion", async (req, res) => {
     res.json({
       success: true,
       message: "Asignación registrada con éxito",
+      datos: {
+        matricula,
+        nombre,
+        carrera,
+        equipo: `${tipo}-${numero}`,
+        materia,
+        laboratorio,
+        fecha,
+      },
     });
   } catch (error) {
     console.error("Error al registrar asignación:", error);
