@@ -147,8 +147,11 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
     />
-
-    <link rel="stylesheet" href="./assets/css/dark-theme.css" />
+    <link rel="stylesheet" href="./assets/css/darkmode.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
   </head>
 
   <body>
@@ -199,6 +202,32 @@
         </tbody>
       </table>
     </div>
+    <button id="toggleDark">
+      <i id="darkIcon" class="fa-solid fa-moon"></i>
+    </button>
+    <script>
+      const toggleDark = document.getElementById("toggleDark");
+      const icon = document.getElementById("darkIcon");
+      const body = document.body;
+
+      // Cargar tema guardado
+      if (localStorage.getItem("dark-mode") === "enabled") {
+        body.classList.add("dark-mode");
+        icon.classList.replace("fa-moon", "fa-sun");
+      }
+
+      toggleDark.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+
+        if (body.classList.contains("dark-mode")) {
+          icon.classList.replace("fa-moon", "fa-sun");
+          localStorage.setItem("dark-mode", "enabled");
+        } else {
+          icon.classList.replace("fa-sun", "fa-moon");
+          localStorage.removeItem("dark-mode");
+        }
+      });
+    </script>
 
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
