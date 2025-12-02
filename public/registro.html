@@ -484,6 +484,52 @@
           font-size: 0.9rem;
         }
       }
+      /* === PARA EL FONDO DEL FORMULARIO DE REGISTRO === */
+
+      /* El contenedor principal del registro actual */
+      #current-register {
+        transition: all 0.3s ease !important;
+      }
+
+      /* Modo claro (por defecto) - fondo blanco */
+      #current-register {
+        background-color: #ffffff !important;
+      }
+
+      /* Modo oscuro - fondo oscuro */
+      [data-theme="dark"] #current-register {
+        background-color: #1e1e1e !important;
+        border-color: #333333 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      /* También cambiar el fondo del registro-activo (contenedor exterior) */
+      .registro-activo {
+        transition: all 0.3s ease !important;
+      }
+
+      [data-theme="dark"] .registro-activo {
+        background-color: #1a1a1a !important;
+        border-color: #333333 !important;
+      }
+
+      /* Cambiar el color del texto dentro del formulario */
+      [data-theme="dark"] #current-register h4,
+      [data-theme="dark"] #current-register h5,
+      [data-theme="dark"] #current-register .text-muted {
+        color: #e0e0e0 !important;
+      }
+
+      /* Los textos de etiqueta (NOMBRE COMPLETO, MATRÍCULA, CARRERA) */
+      [data-theme="dark"] #current-register .text-muted {
+        color: #b0b0b0 !important;
+      }
+
+      /* El badge de hora */
+      [data-theme="dark"] #current-register .badge.bg-secondary {
+        background-color: #2d3748 !important;
+        color: #e0e0e0 !important;
+      }
     </style>
     <head>
       <!-- ... otros estilos ... -->
