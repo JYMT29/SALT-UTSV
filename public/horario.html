@@ -141,7 +141,12 @@
         /* Esta clase se usa para elementos que no deben aparecer en el PDF */
       }
     </style>
-
+    <head>
+      <!-- ... otros estilos ... -->
+      <!-- CSS Global para modo oscuro -->
+      <link href="css/styles.css" rel="stylesheet" />
+      <!-- ... resto del head ... -->
+    </head>
     <!-- Iconos de Bootstrap -->
     <link
       rel="stylesheet"
@@ -208,5 +213,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script src="js/horario.js"></script>
+    <!-- Al final de cada archivo HTML, antes de </body> -->
+    <script src="js/theme.js"></script>
   </body>
 </html>

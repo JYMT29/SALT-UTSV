@@ -397,6 +397,12 @@
         }
       }
     </style>
+    <head>
+      <!-- ... otros estilos ... -->
+      <!-- CSS Global para modo oscuro -->
+      <link href="css/styles.css" rel="stylesheet" />
+      <!-- ... resto del head ... -->
+    </head>
   </head>
   <body>
     <header class="header-container text-white py-4 mb-5">
@@ -512,5 +518,7 @@
 
     <!-- Script personalizado existente + funcionalidad PDF -->
     <script src="js/informe.js"></script>
+    <!-- Al final de cada archivo HTML, antes de </body> -->
+    <script src="js/theme.js"></script>
   </body>
 </html>

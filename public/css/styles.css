@@ -1,0 +1,276 @@
+/* styles.css - Archivo de estilos globales con modo oscuro */
+:root {
+  /* Variables para modo claro (valores por defecto) */
+  --primary-color: #1a3c6e;
+  --primary-light: #2a5ca0;
+  --secondary-color: #d4af37;
+  --accent-color: #e63946;
+  --light-gray: #f5f7fa;
+  --medium-gray: #e0e5ec;
+  --dark-gray: #4a5568;
+  --white: #ffffff;
+  --black: #000000;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-3d: 0 10px 30px rgba(0, 0, 0, 0.15), 0 1px 8px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+
+  /* Variables para fondos y textos */
+  --bg-primary: var(--light-gray);
+  --bg-secondary: var(--white);
+  --bg-card: var(--white);
+  --bg-header: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 100%
+  );
+  --text-primary: var(--dark-gray);
+  --text-secondary: var(--dark-gray);
+  --text-header: var(--white);
+  --border-color: var(--medium-gray);
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --table-bg: var(--white);
+  --table-header-bg: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 100%
+  );
+  --table-row-hover: rgba(26, 60, 110, 0.05);
+  --input-bg: var(--white);
+  --input-border: var(--medium-gray);
+  --input-text: var(--dark-gray);
+}
+
+/* Modo oscuro */
+[data-theme="dark"] {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --bg-header: linear-gradient(135deg, #0d1b3e 0%, #15325c 100%);
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-header: #ffffff;
+  --border-color: #333333;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --table-bg: #1e1e1e;
+  --table-header-bg: linear-gradient(135deg, #0d1b3e 0%, #15325c 100%);
+  --table-row-hover: rgba(255, 255, 255, 0.05);
+  --input-bg: #2d2d2d;
+  --input-border: #444444;
+  --input-text: #e0e0e0;
+
+  /* Ajustes específicos para elementos */
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-3d: 0 10px 30px rgba(0, 0, 0, 0.4), 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Aplicar variables a elementos base */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+/* Header */
+.header-container {
+  background: var(--bg-header);
+  color: var(--text-header);
+}
+
+/* Tarjetas */
+.card-container,
+.card,
+.card-registro,
+.controls-container,
+.stats-card,
+.form-icon,
+.registro-activo,
+.status-message,
+.qr-container {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Tablas */
+.table-custom,
+.table,
+.table-hover {
+  background-color: var(--table-bg);
+  color: var(--text-primary);
+}
+
+.table-custom thead th {
+  background: var(--table-header-bg);
+  color: var(--text-header);
+}
+
+.table-custom tbody tr:hover {
+  background-color: var(--table-row-hover);
+}
+
+/* Formularios */
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-text);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--primary-light);
+}
+
+.input-group-text {
+  background: var(--bg-header);
+  color: var(--text-header);
+  border-color: var(--primary-light);
+}
+
+/* Botones (mantienen sus colores pero ajustan texto) */
+.btn-success-custom,
+.btn-primary-custom,
+.btn-warning-custom,
+.btn-secondary-custom,
+.btn-back,
+.btn-pdf-custom {
+  transition: var(--transition);
+}
+
+/* Botón de modo oscuro/claro */
+.theme-toggle {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #e6c64c 100%);
+  color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-3d);
+  transition: var(--transition);
+  z-index: 1000;
+  border: none;
+  font-size: 1.5rem;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajustes para elementos específicos */
+.empty-state i {
+  color: var(--border-color);
+}
+
+.status-indicator {
+  background-color: rgba(26, 60, 110, 0.1);
+  color: var(--text-secondary);
+}
+
+.status-indicator.ready {
+  background-color: rgba(212, 175, 55, 0.15);
+  color: var(--secondary-color);
+}
+
+.status-indicator.scanning {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--accent-color);
+}
+
+/* Ajustes para alertas */
+.alert-success {
+  background-color: rgba(212, 237, 218, 0.1);
+  color: #d4edda;
+  border-left-color: #28a745;
+}
+
+.alert-danger {
+  background-color: rgba(248, 215, 218, 0.1);
+  color: #f8d7da;
+  border-left-color: #dc3545;
+}
+
+.alert-warning {
+  background-color: rgba(255, 243, 205, 0.1);
+  color: #fff3cd;
+  border-left-color: #ffc107;
+}
+
+/* Ajustes para badges */
+.badge-lab1,
+.badge-lab2,
+.badge-admin,
+.badge-user,
+.badge-primary,
+.badge-secondary {
+  color: white;
+}
+
+/* Ajustes para el sidebar en modo oscuro */
+[data-theme="dark"] .sidebar {
+  background: linear-gradient(180deg, #0d1b3e 0%, #15325c 100%);
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Ajustes para el main content */
+[data-theme="dark"] .main-content .header {
+  background-color: var(--bg-secondary);
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .action-btn,
+[data-theme="dark"] .card {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+/* Ajustes para el botón de logout */
+[data-theme="dark"] .btn-logout {
+  background: linear-gradient(135deg, #0d1b3e 0%, #15325c 100%);
+}
+
+/* Ajustes para inputs en modo oscuro */
+[data-theme="dark"] ::placeholder {
+  color: #888888;
+}
+
+/* Ajustes para scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-light);
+}
+
+/* Transiciones suaves */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
