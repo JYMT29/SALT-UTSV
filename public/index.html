@@ -505,11 +505,6 @@
     </style>
     <!-- Favicon -->
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
-    <link rel="stylesheet" href="./assets/css/darkmode.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
   </head>
   <body>
     <div class="container">
@@ -582,31 +577,5 @@
         </form>
       </div>
     </div>
-    <button id="toggleDark">
-      <i id="darkIcon" class="fa-solid fa-moon"></i>
-    </button>
-    <script>
-      const toggleDark = document.getElementById("toggleDark");
-      const icon = document.getElementById("darkIcon");
-      const body = document.body;
-
-      // Cargar tema guardado
-      if (localStorage.getItem("dark-mode") === "enabled") {
-        body.classList.add("dark-mode");
-        icon.classList.replace("fa-moon", "fa-sun");
-      }
-
-      toggleDark.addEventListener("click", () => {
-        body.classList.toggle("dark-mode");
-
-        if (body.classList.contains("dark-mode")) {
-          icon.classList.replace("fa-moon", "fa-sun");
-          localStorage.setItem("dark-mode", "enabled");
-        } else {
-          icon.classList.replace("fa-sun", "fa-moon");
-          localStorage.removeItem("dark-mode");
-        }
-      });
-    </script>
   </body>
 </html>
