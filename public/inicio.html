@@ -714,6 +714,25 @@
           padding: 10px;
         }
       }
+      .user-info {
+        background-color: #f5f7fa !important; /* light-gray */
+        transition: background-color 0.3s ease !important;
+      }
+
+      /* Modo oscuro */
+      [data-theme="dark"] .user-info {
+        background-color: #1e1e1e !important; /* fondo oscuro */
+      }
+
+      /* Opcional: fondo del panel de avatar upload */
+      .avatar-upload {
+        background-color: white !important;
+        transition: background-color 0.3s ease !important;
+      }
+
+      [data-theme="dark"] .avatar-upload {
+        background-color: #1e1e1e !important;
+      }
     </style>
     <head>
       <!-- ... otros estilos ... -->
