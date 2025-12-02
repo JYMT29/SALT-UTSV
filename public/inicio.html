@@ -710,6 +710,95 @@
           padding: 10px;
         }
       }
+      /* Modo oscuro específico para inicio.html */
+      .theme-toggle {
+        left: 310px !important; /* sidebar width (280px) + margen */
+        transition: var(--transition);
+      }
+
+      /* Cuando el sidebar está colapsado en móvil */
+      .sidebar.active ~ .theme-toggle {
+        left: 30px !important;
+      }
+
+      /* En móvil, el botón se ajusta */
+      @media (max-width: 992px) {
+        .theme-toggle {
+          left: 30px !important;
+        }
+      }
+      /* AJUSTES ESPECÍFICOS PARA MODO OSCURO EN INICIO.HTML */
+
+      /* Botón de toggle en páginas con sidebar */
+      .theme-toggle {
+        position: fixed;
+        bottom: 30px;
+        left: 310px; /* sidebar width (280px) + 30px margen */
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color) 0%,
+          #e6c64c 100%
+        );
+        color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-3d);
+        transition: var(--transition);
+        z-index: 9999;
+        border: none;
+        font-size: 1.5rem;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Cuando el sidebar está colapsado */
+      @media (max-width: 992px) {
+        .theme-toggle {
+          left: 30px !important;
+        }
+
+        .sidebar.active ~ .theme-toggle {
+          left: 280px !important;
+        }
+      }
+
+      /* Ajuste para otras páginas sin sidebar */
+      body:not(.has-sidebar) .theme-toggle {
+        left: 30px !important;
+      }
+
+      /* Notificación de cambio de tema */
+      .theme-notification {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--bg-card);
+        color: var(--text-primary);
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: var(--shadow-3d);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--secondary-color);
+        font-weight: 500;
+      }
+
+      .theme-notification i {
+        font-size: 1.2rem;
+      }
     </style>
     <head>
       <!-- ... otros estilos ... -->
