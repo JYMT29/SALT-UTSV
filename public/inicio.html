@@ -733,6 +733,33 @@
       [data-theme="dark"] .avatar-upload {
         background-color: #1e1e1e !important;
       }
+      /* === VERSIÓN MEJORADA PARA EL BADGE DEL ROL === */
+
+      .user-role {
+        transition: all 0.3s ease !important;
+        font-weight: 500 !important;
+      }
+
+      /* Modo claro - estilo original */
+      .user-role {
+        background-color: #ffffff !important;
+        color: #4a5568 !important;
+        border: 1px solid #e0e5ec !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      }
+
+      /* Modo oscuro - estilo adaptado */
+      [data-theme="dark"] .user-role {
+        background: linear-gradient(
+          135deg,
+          #2d3748 0%,
+          #4a5568 100%
+        ) !important;
+        color: #ffffff !important;
+        border: 1px solid #4a5568 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+      }
     </style>
     <head>
       <!-- ... otros estilos ... -->
